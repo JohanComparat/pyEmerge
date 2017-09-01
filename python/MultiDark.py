@@ -8,7 +8,7 @@ The class MultiDark is a wrapper to handle Multidark simulations results / outpu
 
 """
 #from os.path import join
-#import os
+import os
 #import glob
 #import time
 
