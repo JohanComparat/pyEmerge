@@ -24,7 +24,7 @@ main_text = lambda snap_name : """
 # @ tasks_per_node = 1
 # @ resources = ConsumableCpus(1)
 # @ wall_clock_limit = 01:00:00
-# @ notification = complete
+# @ notification = error
 # @ notify_user = comparat@mpe.mpg.de
 # @ queue 
 

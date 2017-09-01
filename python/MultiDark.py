@@ -102,7 +102,7 @@ class MultiDarkSimulation :
 			print("command to be executed: ",gawk_command)
 			os.system(gawk_command)
 	
-	def convert_to_emerge_input_catalog_to_h5_format(self, snap_name):
+	def convert_to_emerge_input_catalog_to_h5_format(self, snap_name, aexp, redshift, age_yr, rho_crit, delta_vir):
 		"""
 		Converts these files to h5 format
 		Reads into a numpy array
@@ -148,16 +148,14 @@ class MultiDarkSimulation :
 		f.attrs['HDF5_Version']     = h5py.version.hdf5_version
 		f.attrs['h5py_version']     = h5py.version.version
 
-		f.attrs['aexp']      = aexp[snap_id]
-		f.attrs['redshift']  = redshift[snap_id]
-		f.attrs['age_yr']    = age_yr[snap_id] 
-		f.attrs['rho_crit']  = rho_crit[snap_id] 
-		f.attrs['delta_vir'] = delta_vir[snap_id]
+		f.attrs['aexp']      = float(aexp)#[snap_id]
+		f.attrs['redshift']  = float(redshift)#[snap_id]
+		f.attrs['age_yr']    = float(age_yr)#[snap_id] 
+		f.attrs['rho_crit']  = float(rho_crit)#[snap_id] 
+		f.attrs['delta_vir'] = float(delta_vir)#[snap_id]
 
 		halo_data = f.create_group('halo_data')
 		halo_data.attrs['N_halos'] =  N_halo
-
-		ds = halo_data.create_dataset()
 
 		ds = halo_data.create_dataset('id'                   , data = id                       )
 		ds.attrs['units'] = '-'

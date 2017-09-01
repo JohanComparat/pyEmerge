@@ -7,10 +7,11 @@ import glob
 import numpy as n
 
 aexp, redshift, age_yr, rho_crit, delta_vir = n.loadtxt("/u/joco/data/MD/MD_1.0Gpc/hlists_MD_1.0Gpc.ascii", unpack=True)
-snap_names = n.array([ el.zfill(6)[0]+"."+el.zfill(6)[1:] for el in (aexp*10**5).astype('int').astype('str') ])
-#snap_id = -10
+snap_names = n.array([ el.zfill(5)[0]+"."+el.zfill(5)[1:]+"0" for el in (aexp*10**4).astype('int').astype('str') ])
+snap_ids = n.arange(len(aexp))[:-10]
 #snap_name = snap_names[snap_id]
 
+import sys
 
 main_text = lambda snap_name : """
 # @ shell=/bin/bash
@@ -24,8 +25,8 @@ main_text = lambda snap_name : """
 # @ node = 1
 # @ tasks_per_node = 1
 # @ resources = ConsumableCpus(1)
-# @ wall_clock_limit = 00:30:00
-# @ notification = complete
+# @ wall_clock_limit = 01:00:00
+# @ notification = error
 # @ notify_user = comparat@mpe.mpg.de
 # @ queue 
 
@@ -35,16 +36,16 @@ export PYTHONPATH="${PYTHONPATH}:/u/joco/software/pyEmerge/python/"
 
 cd /u/joco/software/pyEmerge/bin/
 """
-
-for snap_name in snapshot_names[:-10][::-1][:3]:
-    print(snap_name)
-    batch_file = os.path.join(batch_dir, "h5_"+snap_name+".sh")
+print("snap ids considered", snap_ids )
+for snap_id in snap_ids[::-1]:
+    print(snap_id)
+    batch_file = os.path.join(batch_dir, "h5_"+snap_names[snap_id]+".sh")
     f=open( batch_file, 'w')
-    f.write(main_text(snap_name))
-    command = "python MD10-write-convert-2-h5.py "+snap_name
+    f.write(main_text(snap_names[snap_id]))
+    command = "python convert-2-h5.py " + snap_names[snap_id] +" "+str(aexp[snap_id])+" "+str( redshift[snap_id])+" "+str( age_yr[snap_id])+" "+str( rho_crit[snap_id])+" "+str( delta_vir[snap_id])
     print(command)
     f.write(command)
     f.close()
     
-    #os.system("llsubmit " + batch_file )
+    os.system("llsubmit " + batch_file )
 
