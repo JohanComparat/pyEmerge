@@ -9,6 +9,11 @@ The class MultiDark is a wrapper to handle Multidark simulations results / outpu
 """
 #from os.path import join
 import os
+import h5py
+import numpy as n
+import os
+import time
+
 #import glob
 #import time
 
@@ -82,6 +87,7 @@ class MultiDarkSimulation :
 		:param path_2_output: path where the output is written
 		:param mmin: minimum mass needed to be selected from the input and written in the output
 		:param option: 'complete' copy of all columns or 'ultra-light' copy of 12 columns.
+		#module load anaconda
 		"""
 		if option == 'complete':
 			#self.header='scale id desc_scale desc_id': 3, 'num_prog': 4, 'pid': 5, 'upid': 6, 'desc_pid': 7, 'phantom': 8, 'sam_mvir': 9, 'mvir': 10, 'rvir': 11, 'rs': 12, 'vrms': 13, 'mmp?': 14, 'scale_of_last_MM': 15, 'vmax': 16, 'x': 17, 'y': 18, 'z': 19, 'vx': 20, 'vy': 21, 'vz': 22, 'Jx': 23, 'Jy': 24, 'Jz': 25, 'Spin': 26, 'Breadth_first_ID': 27, 'Depth_first_ID': 28, 'Tree_root_ID': 29, 'Orig_halo_ID': 30, 'Snap_num': 31, 'Next_coprogenitor_depthfirst_ID': 32, 'Last_progenitor_depthfirst_ID': 33, 'Last_mainleaf_depthfirst_ID': 34, 'Tidal_Force': 35, 'Tidal_ID': 36, 'Rs_Klypin': 37, 'Mmvir_all': 38, 'M200b': 39, 'M200c': 40, 'M500c': 41, 'M2500c': 42, 'Xoff': 43, 'Voff': 44, 'Spin_Bullock': 45, 'b_to_a': 46, 'c_to_a': 47, 'Ax': 48, 'Ay': 49, 'Az': 50, 'b_to_a_500c' : 51, 'c_to_a_500c' : 52, 'Ax_500c' : 53, 'Ay_500c' : 54, 'Az_500c' : 55, 'TU': 56, 'M_pe_Behroozi': 57, 'M_pe_Diemer': 58, 'Macc': 59, 'Mpeak': 60, 'Vacc': 61, 'Vpeak': 62, 'Halfmass_Scale': 63, 'Acc_Rate_Inst': 64, 'Acc_Rate_100Myr': 65, 'Acc_Rate_1Tdyn': 66, 'Acc_Rate_2Tdyn': 67, 'Acc_Rate_Mpeak': 68, 'Mpeak_Scale': 69, 'Acc_Scale': 70, 'First_Acc_Scale': 71, 'First_Acc_Mvir': 72, 'First_Acc_Vmax': 73, 'VmaxAtMpeak': 74, 'Tidal_Force_Tdyn': 75, 'logVmaxVmaxmaxTdynTmpeak': 76, 'Time_to_future_merger': 77, 'Future_merger_MMP_ID': 78 
@@ -95,5 +101,105 @@ class MultiDarkSimulation :
 			gawk_command = """gawk 'NR>63 {if ( $11 >= """ +str(mmin)+ """ ) print $2, $3, $4, $6, $11, $12, $13, $61, $70, $67, $78, $79 }' """ + path_2_input +" > " + path_2_output
 			print("command to be executed: ",gawk_command)
 			os.system(gawk_command)
-			
 	
+	def convert_to_emerge_input_catalog_to_h5_format(self, snap_name):
+		"""
+		Converts these files to h5 format
+		Reads into a numpy array
+		:param path_2_input: path to hlist input catalog
+		:param path_2_output: path where the output is written
+		:param mmin: minimum mass needed to be selected from the input and written in the output
+		:param option: 'complete' copy of all columns or 'ultra-light' copy of 12 columns.
+		#module load python33/python/3.3    
+		#module load python33/scipy/2015.10
+		#module load python33/h5py/2.2      
+		"""
+		timestr = time.strftime("%Y%m%d-%H%M%S")
+		
+		path_2_snap = "/u/joco/data/MD/MD_1.0Gpc/emerge/hlist_" + snap_name + ".data"
+		path_2_h5_file = "/u/joco/data/MD/MD_1.0Gpc/h5/hlist_"  + snap_name + "_emerge.hdf5"
+		if os.path.isfile(path_2_h5_file):
+			os.system("rm "+path_2_h5_file)
+		
+		dtype1 = n.dtype([
+		('id'                     , 'i4' )
+		,('desc_scale'             , 'f4' )
+		,('desc_id'                , 'i4' )
+		,('pid'                    , 'i4' )
+		,('mvir'                   , 'f4' )
+		,('rvir'                   , 'f4' )
+		,('rs'                     , 'f4' )
+		,('Mpeak'                  , 'f4' )
+		,('Mpeak_scale'            , 'f4' )
+		,('Acc_Rate_1Tdyn'         , 'f4' )
+		,('Time_to_future_merger'  , 'f4' )
+		,('Future_merger_MMP_ID'   , 'i4' )
+		])
+
+		id, desc_scale, desc_id, pid, mvir, rvir, rs, Mpeak, Mpeak_scale, Acc_Rate_1Tdyn, Time_to_future_merger, Future_merger_MMP_ID =  n.loadtxt(path_2_snap, unpack=True, dtype = dtype1)
+		N_halo = len(id)
+
+		# create the h5 container to host the data
+
+		f = h5py.File(path_2_h5_file, "a")
+		f.attrs['file_name'] = os.path.basename(path_2_h5_file)
+		f.attrs['file_time'] = timestr
+		f.attrs['creator']   = 'JC'
+		f.attrs['HDF5_Version']     = h5py.version.hdf5_version
+		f.attrs['h5py_version']     = h5py.version.version
+
+		f.attrs['aexp']      = aexp[snap_id]
+		f.attrs['redshift']  = redshift[snap_id]
+		f.attrs['age_yr']    = age_yr[snap_id] 
+		f.attrs['rho_crit']  = rho_crit[snap_id] 
+		f.attrs['delta_vir'] = delta_vir[snap_id]
+
+		halo_data = f.create_group('halo_data')
+		halo_data.attrs['N_halos'] =  N_halo
+
+		ds = halo_data.create_dataset()
+
+		ds = halo_data.create_dataset('id'                   , data = id                       )
+		ds.attrs['units'] = '-'
+		ds.attrs['long_name'] = 'halo identifier' 
+
+		ds = halo_data.create_dataset('desc_scale'           , data = desc_scale               )
+		ds.attrs['units'] = '-'
+		ds.attrs['long_name'] = 'scale factor of the descendant halo' 
+
+		ds = halo_data.create_dataset('desc_id'              , data = desc_id                  )
+		ds.attrs['units'] = '-'
+		ds.attrs['long_name'] = 'identifier of the descendant halo in the snapshot at desc_scale' 
+
+		ds = halo_data.create_dataset('pid'                  , data = pid                      )
+		ds.attrs['units'] = '-'
+		ds.attrs['long_name'] = 'parent identifier, -1 if distinct halo' 
+
+		ds = halo_data.create_dataset('mvir'                 , data = mvir                     )
+		ds.attrs['units'] = r'$h^{-1} M_\odot$'
+		ds.attrs['long_name'] = r'$M_{vir}$' 
+
+		ds = halo_data.create_dataset('rvir'                 , data = rvir                     )
+		ds.attrs['units'] = r'$h^{-1} kpc$'
+		ds.attrs['long_name'] = r'$r_{vir}$' 
+
+		ds = halo_data.create_dataset('rs'                   , data = rs                       )
+		ds.attrs['units'] = r'$h^{-1} kpc$'
+		ds.attrs['long_name'] = r'$r_{s}$' 
+
+		ds = halo_data.create_dataset('Mpeak'                , data = Mpeak                    )
+		ds.attrs['units'] = r'$h^{-1} M_\odot$'
+		ds.attrs['long_name'] = r'$M_{peak}$' 
+
+		ds = halo_data.create_dataset('Mpeak_scale'          , data = Mpeak_scale              )
+		ds.attrs['units'] = '-'
+		ds.attrs['long_name'] = 'scale factor where M peak is reached' 
+
+		ds = halo_data.create_dataset('Acc_Rate_1Tdyn'       , data = Acc_Rate_1Tdyn           )
+
+		ds = halo_data.create_dataset('Time_to_future_merger', data = Time_to_future_merger    )
+
+		ds = halo_data.create_dataset('Future_merger_MMP_ID' , data = Future_merger_MMP_ID     )
+
+		f.close()
+
