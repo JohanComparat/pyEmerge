@@ -35,7 +35,7 @@ export PYTHONPATH="${PYTHONPATH}:/u/joco/software/pyEmerge/python/"
 cd /u/joco/software/pyEmerge/bin/
 """
 
-for path_2_in, path_2_out, snap_name in zip(input_list,output_list, snapshot_names):
+for path_2_in, path_2_out, snap_name in zip(input_list,output_list, snapshot_names)[:13]:
     print(path_2_in, path_2_out, snap_name)
     batch_file = os.path.join(batch_dir, snap_name+".sh")
     f=open( batch_file, 'w')

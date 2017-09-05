@@ -1,5 +1,8 @@
 # Running sequence to obtain EMERGE galaxies in the MultiDark simulation
 
+module load git
+module load anaconda
+
 #preliminary pipeline
 #--------------------
 
@@ -48,7 +51,14 @@ convert-2-h5.py
 # it writes files here :
 ls /ptmp/joco/MD/MD_1.0Gpc/h5/hlist_?.?????_emerge.hdf5
 
-# ports information from a snapshot onto the next one
+# add the emerge information: star formation rate, stellar mass and icm mass.
+python emerge_init.py # first snapshot
+# all following snapshots
+python emerge_iterate.py
+
+
+
+
 
 read_h5_test.sh  
 submit_test.sh

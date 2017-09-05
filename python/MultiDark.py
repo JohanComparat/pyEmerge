@@ -31,7 +31,7 @@ import time
 #cosmoDS = FlatLambdaCDM(H0=68.46*u.km/u.s/u.Mpc, Om0=0.298734, Ob0=0.046961)
 #import astropy.constants as constants
 
-#G =  constants.G.to(u.kpc**3/(u.solMass * u.yr**2)).value
+#G =  constants.G.to(u.kpc**3/(u.solMass * u.yr**2)).value/cosmoMD.h**2.
 
 #t_dynamical = lambda rvir, mvir : (rvir**3./(G*mvir))**0.5
 #def tau_quenching(tdyn, tau_0, tau_s, m_star):
