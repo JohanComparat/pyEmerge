@@ -110,6 +110,11 @@ class MultiDarkSimulation :
 		:param path_2_output: path where the output is written
 		:param mmin: minimum mass needed to be selected from the input and written in the output
 		:param option: 'complete' copy of all columns or 'ultra-light' copy of 12 columns.
+		
+		#module load anaconda
+		
+		or
+		
 		#module load python33/python/3.3    
 		#module load python33/scipy/2015.10
 		#module load python33/h5py/2.2      
