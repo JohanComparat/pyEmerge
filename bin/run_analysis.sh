@@ -2,6 +2,7 @@
 
 module load git
 module load anaconda
+export PYTHONPATH="${PYTHONPATH}:/u/joco/software/pyEmerge/python/"
 
 #preliminary pipeline
 #--------------------
@@ -54,7 +55,11 @@ ls /ptmp/joco/MD/MD_1.0Gpc/h5/hlist_?.?????_emerge.hdf5
 # add the emerge information: star formation rate, stellar mass and icm mass.
 python emerge_init.py # first snapshot
 # all following snapshots
-python emerge_iterate.py
+python generate_and_submit_emerge_iterate.py
+cd /u/joco/batch_emerge
+llsubmit emerge_iterate_batch.sh
+# it uses the command :
+python emerge_iterate.py $ID
 
 
 
