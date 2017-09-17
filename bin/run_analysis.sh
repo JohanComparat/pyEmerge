@@ -50,7 +50,7 @@ python generate_and_submit_convert-2-h5.py
 # it uses the script :
 convert-2-h5.py  
 # it writes files here :
-ls /ptmp/joco/MD/MD_1.0Gpc/h5/hlist_?.?????_emerge.hdf5
+ls -lh /ptmp/joco/MD/MD_1.0Gpc/h5/hlist_?.?????_emerge.hdf5
 
 # add the emerge information: star formation rate, stellar mass and icm mass.
 python emerge_init.py # first snapshot

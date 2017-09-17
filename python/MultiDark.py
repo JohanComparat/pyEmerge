@@ -111,20 +111,23 @@ class MultiDarkSimulation :
 
 	def convert_to_emerge_input_catalog_to_h5_format_light(self, snap_name, aexp, redshift, age_yr, rho_crit, delta_vir):
 		"""
-		Converts these files to h5 format
-		Reads into a numpy array
-		:param path_2_input: path to hlist input catalog
-		:param path_2_output: path where the output is written
-		:param mmin: minimum mass needed to be selected from the input and written in the output
-		:param option: 'complete' copy of all columns or 'ultra-light' copy of 12 columns.
+		Converts the ascii files to h5 format.
 		
-		#module load anaconda
+		Use the summary file 
+		aexp, redshift, age_yr, rho_crit, delta_vir = n.loadtxt("/u/joco/data/MD/MD_1.0Gpc/hlists_MD_1.0Gpc.ascii", unpack=True)
+		to provide input parameters
 		
-		or
+		See bin/generate_and_submit_convert-2-h5.py
+		that shows how to do it
 		
-		#module load python33/python/3.3    
-		#module load python33/scipy/2015.10
-		#module load python33/h5py/2.2      
+		:param snap_name: name of the snapshot e.g. "1.00000" for the snapshot at z=0
+		:param aexp: expansion factor
+		:param redshift: redshift
+		:param age_yr: age of the Universe in years
+		:param rho_crit: critical density at this redshift
+		:param delta_vir: virial overdensity at this redshift (Bryan and Norman 98 approximation
+		
+		needed: module load anaconda
 		"""
 		timestr = time.strftime("%Y%m%d-%H%M%S")
 		
