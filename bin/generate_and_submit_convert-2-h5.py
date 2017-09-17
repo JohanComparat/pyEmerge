@@ -37,7 +37,7 @@ export PYTHONPATH="${PYTHONPATH}:/u/joco/software/pyEmerge/python/"
 cd /u/joco/software/pyEmerge/bin/
 """
 print("snap ids considered", snap_ids )
-for snap_id in snap_ids[::-1]:
+for snap_id in snap_ids:
     print(snap_id)
     batch_file = os.path.join(batch_dir, "h5_"+snap_names[snap_id]+".sh")
     f=open( batch_file, 'w')

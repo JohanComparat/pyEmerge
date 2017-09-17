@@ -13,7 +13,8 @@ box = md.MultiDarkSimulation(L_box=1000.0)
 import time
 t0=time.time()
 
-box.convert_to_emerge_input_catalog_to_h5_format(snap_name, aexp, redshift, age_yr, rho_crit, delta_vir)
+box.convert_to_emerge_input_catalog_to_h5_format_light(snap_name, aexp, redshift, age_yr, rho_crit, delta_vir)
+#box.convert_to_emerge_input_catalog_to_h5_format_ultralight(snap_name, aexp, redshift, age_yr, rho_crit, delta_vir)
 
 print time.time()-t0
 

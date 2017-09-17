@@ -108,8 +108,145 @@ class MultiDarkSimulation :
 			gawk_command = """gawk 'NR>63 {if ( $11 >= """ +str(mmin)+ """ ) print $2, $3, $4, $6, $11, $12, $13, $61, $70, $67, $78, $79 }' """ + path_2_input +" > " + path_2_output
 			print("command to be executed: ",gawk_command)
 			os.system(gawk_command)
+
+	def convert_to_emerge_input_catalog_to_h5_format_light(self, snap_name, aexp, redshift, age_yr, rho_crit, delta_vir):
+		"""
+		Converts these files to h5 format
+		Reads into a numpy array
+		:param path_2_input: path to hlist input catalog
+		:param path_2_output: path where the output is written
+		:param mmin: minimum mass needed to be selected from the input and written in the output
+		:param option: 'complete' copy of all columns or 'ultra-light' copy of 12 columns.
+		
+		#module load anaconda
+		
+		or
+		
+		#module load python33/python/3.3    
+		#module load python33/scipy/2015.10
+		#module load python33/h5py/2.2      
+		"""
+		timestr = time.strftime("%Y%m%d-%H%M%S")
+		
+		path_2_snap = "/u/joco/data/MD/MD_1.0Gpc/emerge/hlist_" + snap_name + ".data"
+		path_2_h5_file = "/u/joco/data/MD/MD_1.0Gpc/h5/hlist_"  + snap_name + "_emerge.hdf5"
+		if os.path.isfile(path_2_h5_file):
+			os.system("rm "+path_2_h5_file)
+		
+		dtype1 = n.dtype([
+		('id'                     , 'i4' )
+		,('desc_scale'             , 'f4' )
+		,('desc_id'                , 'i4' )
+		,('pid'                    , 'i4' )
+		,('mvir'                   , 'f4' )
+		,('rvir'                   , 'f4' )
+		,('rs'                     , 'f4' )
+		,('Mpeak'                  , 'f4' )
+		,('Mpeak_scale'            , 'f4' )
+		,('Acc_Rate_1Tdyn'         , 'f4' )
+		,('Time_to_future_merger'  , 'f4' )
+		,('Future_merger_MMP_ID'   , 'i4' )
+		,('Vmax'    	           , 'f4' )
+		,('x'    	               , 'f4' )
+		,('y'    	               , 'f4' )
+		,('z'    	               , 'f4' )
+		,('vy'    	               , 'f4' )
+		,('vx'    	               , 'f4' )
+		,('vz'    	               , 'f4' )
+		])
+
+		id, desc_scale, desc_id, pid, mvir, rvir, rs, Mpeak, Mpeak_scale, Acc_Rate_1Tdyn, Time_to_future_merger, Future_merger_MMP_ID, Vmax, x, y, z, vx, vy, vz =  n.loadtxt(path_2_snap, unpack=True, dtype = dtype1)
+		N_halo = len(id)
+
+		# create the h5 container to host the data
+
+		f = h5py.File(path_2_h5_file, "a")
+		f.attrs['file_name'] = os.path.basename(path_2_h5_file)
+		f.attrs['file_time'] = timestr
+		f.attrs['creator']   = 'JC'
+		f.attrs['HDF5_Version']     = h5py.version.hdf5_version
+		f.attrs['h5py_version']     = h5py.version.version
+
+		f.attrs['aexp']      = float(aexp)#[snap_id]
+		f.attrs['redshift']  = float(redshift)#[snap_id]
+		f.attrs['age_yr']    = float(age_yr)#[snap_id] 
+		f.attrs['rho_crit']  = float(rho_crit)#[snap_id] 
+		f.attrs['delta_vir'] = float(delta_vir)#[snap_id]
+
+		halo_data = f.create_group('halo_position')
+		
+		ds = halo_data.create_dataset('x', data = x )
+		ds.attrs['units'] = 'Mpc/h'
+		ds.attrs['long_name'] = 'x' 
+		ds = halo_data.create_dataset('y', data = y )
+		ds.attrs['units'] = 'Mpc/h'
+		ds.attrs['long_name'] = 'y' 
+		ds = halo_data.create_dataset('z', data = z )
+		ds.attrs['units'] = 'Mpc/h'
+		ds.attrs['long_name'] = 'z' 
+
+		ds = halo_data.create_dataset('vx', data = vx )
+		ds.attrs['units'] = 'km/s'
+		ds.attrs['long_name'] = 'vx' 
+		ds = halo_data.create_dataset('vy', data = vy )
+		ds.attrs['units'] = 'km/s'
+		ds.attrs['long_name'] = 'vy' 
+		ds = halo_data.create_dataset('vz', data = vz )
+		ds.attrs['units'] = 'km/s'
+		ds.attrs['long_name'] = 'vz' 
+		
+		halo_data = f.create_group('halo_properties')
+		halo_data.attrs['N_halos'] =  N_halo
+
+		ds = halo_data.create_dataset('id'                   , data = id                       )
+		ds.attrs['units'] = '-'
+		ds.attrs['long_name'] = 'halo identifier' 
+
+		ds = halo_data.create_dataset('desc_scale'           , data = desc_scale               )
+		ds.attrs['units'] = '-'
+		ds.attrs['long_name'] = 'scale factor of the descendant halo' 
+
+		ds = halo_data.create_dataset('desc_id'              , data = desc_id                  )
+		ds.attrs['units'] = '-'
+		ds.attrs['long_name'] = 'identifier of the descendant halo in the snapshot at desc_scale' 
+
+		ds = halo_data.create_dataset('pid'                  , data = pid                      )
+		ds.attrs['units'] = '-'
+		ds.attrs['long_name'] = 'parent identifier, -1 if distinct halo' 
+
+		ds = halo_data.create_dataset('mvir'                 , data = mvir                     )
+		ds.attrs['units'] = r'$h^{-1} M_\odot$'
+		ds.attrs['long_name'] = r'$M_{vir}$' 
+
+		ds = halo_data.create_dataset('rvir'                 , data = rvir                     )
+		ds.attrs['units'] = r'$h^{-1} kpc$'
+		ds.attrs['long_name'] = r'$r_{vir}$' 
+
+		ds = halo_data.create_dataset('rs'                   , data = rs                       )
+		ds.attrs['units'] = r'$h^{-1} kpc$'
+		ds.attrs['long_name'] = r'$r_{s}$' 
+
+		ds = halo_data.create_dataset('Vmax'                , data = Vmax                    )
+		ds.attrs['units'] = 'km/s'
+		ds.attrs['long_name'] = r'$V_{max}$' 
+		
+		ds = halo_data.create_dataset('Mpeak'                , data = Mpeak                    )
+		ds.attrs['units'] = r'$h^{-1} M_\odot$'
+		ds.attrs['long_name'] = r'$M_{peak}$' 
+
+		ds = halo_data.create_dataset('Mpeak_scale'          , data = Mpeak_scale              )
+		ds.attrs['units'] = '-'
+		ds.attrs['long_name'] = 'scale factor where M peak is reached' 
+
+		ds = halo_data.create_dataset('Acc_Rate_1Tdyn'       , data = Acc_Rate_1Tdyn           )
+
+		ds = halo_data.create_dataset('Time_to_future_merger', data = Time_to_future_merger    )
+
+		ds = halo_data.create_dataset('Future_merger_MMP_ID' , data = Future_merger_MMP_ID     )
+
+		f.close()
 	
-	def convert_to_emerge_input_catalog_to_h5_format(self, snap_name, aexp, redshift, age_yr, rho_crit, delta_vir):
+	def convert_to_emerge_input_catalog_to_h5_format_ultralight(self, snap_name, aexp, redshift, age_yr, rho_crit, delta_vir):
 		"""
 		Converts these files to h5 format
 		Reads into a numpy array
