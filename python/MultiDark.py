@@ -95,6 +95,13 @@ class MultiDarkSimulation :
 			print("command to be executed: ",gawk_command)
 			os.system(gawk_command)
 		
+		if option == 'light':
+			self.header = """# id desc_scale desc_id pid mvir rvir rs Mpeak Mpeak_scale Acc_Rate_1Tdyn Time_to_future_merger Future_merger_MMP_ID vmax x y z vx vy vz """
+			print(self.header)
+			gawk_command = """gawk 'NR>63 {if ( $11 >= """ +str(mmin)+ """ ) print $2, $3, $4, $6, $11, $12, $13, $61, $70, $67, $78, $79, $17, $18, $19, $20, $21, $22, $23 }' """ + path_2_input +" > " + path_2_output
+			print("command to be executed: ",gawk_command)
+			os.system(gawk_command)
+		
 		if option == 'ultra-light':
 			self.header = """# id desc_scale desc_id pid mvir rvir rs Mpeak Mpeak_scale Acc_Rate_1Tdyn Time_to_future_merger Future_merger_MMP_ID"""
 			print(self.header)

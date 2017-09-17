@@ -9,7 +9,7 @@ box = md.MultiDarkSimulation(L_box=1000.0)
 import time
 t0=time.time()
 
-box.transform_rockstar_hlist_catalog_into_emerge_input_catalog(path_2_snap, path_2_output, mmin=1.51e11, option='ultra-light')
+box.transform_rockstar_hlist_catalog_into_emerge_input_catalog(path_2_snap, path_2_output, mmin=1.51e11, option='light')
 
 print time.time()-t0
 
