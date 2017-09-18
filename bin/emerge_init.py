@@ -3,12 +3,14 @@ import h5py    # HDF5 support
 import os
 import glob
 import numpy as n
-import StellarMass as sm
+import EmergeStellarMass as sm
 model = sm.StellarMass()
 
 f_loss = lambda t : 0.05*n.log( 1 + t / (1.4*10**6))
 
-h5_dir = os.path.join(os.environ['HOME'], 'MD10', 'h5' )
+#h5_dir = os.path.join(os.environ['HOME'], 'MD10', 'h5' )
+h5_dir = os.path.join(os.environ['MD10'], 'h5' )
+h5_dir = os.path.join(os.environ['MD04'], 'h5' )
 
 input_list = n.array(glob.glob(os.path.join(h5_dir, "hlist_?.?????_emerge.hdf5")))
 input_list.sort()
@@ -26,14 +28,14 @@ for item in f0.attrs.keys():
 
 # procedure for new halos, first snapshot :
 # evaluate equation (4)
-mvir_dot = f0['/halo_data/mvir'].value / f0.attrs['age_yr']
-rvir_dot = f0['/halo_data/rvir'].value / f0.attrs['age_yr']
-c = f0['/halo_data/rvir'].value / f0['/halo_data/rs'].value
-rho_nfw = f0['/halo_data/mvir'].value / (f0['/halo_data/rs'].value**3. * 4. * n.pi * c * (1+c)**2. * (n.log(1.+c)-c/(1.+c)))
+mvir_dot = f0['/halo_properties/mvir'].value / f0.attrs['age_yr']
+rvir_dot = f0['/halo_properties/rvir'].value / f0.attrs['age_yr']
+c = f0['/halo_properties/rvir'].value / f0['/halo_properties/rs'].value
+rho_nfw = f0['/halo_properties/mvir'].value / (f0['/halo_properties/rs'].value**3. * 4. * n.pi * c * (1+c)**2. * (n.log(1.+c)-c/(1.+c)))
 # result
-dMdt = mvir_dot - 4.*n.pi*f0['/halo_data/rvir'].value *f0['/halo_data/rvir'].value * rvir_dot * rho_nfw
+dMdt = mvir_dot - 4.*n.pi*f0['/halo_properties/rvir'].value *f0['/halo_properties/rvir'].value * rvir_dot * rho_nfw
 # evaluate equation (1)
-dmdt_star = model.f_b * dMdt * model.epsilon(f0['/halo_data/mvir'].value, f0.attrs['redshift']*n.ones_like(f0['/halo_data/mvir'].value))
+dmdt_star = model.f_b * dMdt * model.epsilon(f0['/halo_properties/mvir'].value, f0.attrs['redshift']*n.ones_like(f0['/halo_properties/mvir'].value))
 # evaluate accretion: 0 in this first step
 dmdt_star_accretion = n.zeros_like(dmdt_star)
 # evaluate equation (11)

@@ -7,7 +7,7 @@ rho_crit  = sys.argv[5]
 delta_vir = sys.argv[6]
 
 
-import MultiDark as md
+import EmergeMultiDark as md
 box = md.MultiDarkSimulation(L_box=1000.0)
 
 import time

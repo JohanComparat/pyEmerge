@@ -10,7 +10,7 @@ import h5py
 import os
 import glob
 import numpy as n
-import StellarMass as sm
+import EmergeStellarMass as sm
 model = sm.StellarMass()
 import pandas as pd
 from astropy.cosmology import FlatLambdaCDM
@@ -35,7 +35,8 @@ def tau_quenching( m_star, tdyn, tau_0=4.282, tau_s=0.363):
 # opens the files  
 # ================
 
-h5_dir = os.path.join(os.environ['HOME'], 'MD10', 'h5' )
+#h5_dir = os.path.join(os.environ['HOME'], 'MD10', 'h5' )
+h5_dir = os.path.join(os.environ['MD10'], 'h5' )
 
 input_list = n.array(glob.glob(os.path.join(h5_dir, "hlist_?.?????_emerge.hdf5")))
 input_list.sort()
@@ -58,16 +59,16 @@ f1_scale = os.path.basename(file_1).split('_')[1]
 # id mapping for halos present in the previous snapshot
 # =====================================================
 
-f0_desc_id_unique_list_all_descendents = n.unique(f0['/halo_data/desc_id'].value)
+f0_desc_id_unique_list_all_descendents = n.unique(f0['/halo_properties/desc_id'].value)
 
-f1_id_unique_list_descendents_detected_at_next_scale = n.intersect1d(f0_desc_id_unique_list_all_descendents, f1['/halo_data/id'].value)
+f1_id_unique_list_descendents_detected_at_next_scale = n.intersect1d(f0_desc_id_unique_list_all_descendents, f1['/halo_properties/id'].value)
 
-mask_f0_to_propagate = n.in1d(f0['/halo_data/desc_id'].value, f1_id_unique_list_descendents_detected_at_next_scale)
+mask_f0_to_propagate = n.in1d(f0['/halo_properties/desc_id'].value, f1_id_unique_list_descendents_detected_at_next_scale)
 
 mask_f0_lost = (mask_f0_to_propagate == False )
 
 # evolving halos are given after applying this boolean mask to a f1 quantity :
-mask_f1_evolved_from_previous = n.in1d( f1['/halo_data/id'].value,  f1_id_unique_list_descendents_detected_at_next_scale )
+mask_f1_evolved_from_previous = n.in1d( f1['/halo_properties/id'].value,  f1_id_unique_list_descendents_detected_at_next_scale )
 
 # new halos are given after applying this boolean mask to a f1 quantity :
 # new halos in f1, not present in f0
@@ -78,12 +79,12 @@ print('new halos', len(mask_f1_new_halos.nonzero()[0]))
 # mask_f0_to_propagate
 # mask_f1_evolved_from_previous
 
-s = pd.Series(f0['/halo_data/desc_id'].value[mask_f0_to_propagate])
+s = pd.Series(f0['/halo_properties/desc_id'].value[mask_f0_to_propagate])
 f1_id_with_multiple_progenitors = s[s.duplicated()].get_values()
 # also = f0_desc_id merging into 1 halo in f1
 # merging systems [many halos in f0 into a single f1 halo]
-mask_f1_in_a_merging = n.in1d( f1['/halo_data/id'].value,  f1_id_with_multiple_progenitors )
-mask_f0_in_a_merging = n.in1d( f0['/halo_data/desc_id'].value,  f1_id_with_multiple_progenitors )
+mask_f1_in_a_merging = n.in1d( f1['/halo_properties/id'].value,  f1_id_with_multiple_progenitors )
+mask_f0_in_a_merging = n.in1d( f0['/halo_properties/desc_id'].value,  f1_id_with_multiple_progenitors )
 
 # halos mapped 1::1 between snapshots	
 mask_f0_evolving_11_halos = ( mask_f0_to_propagate ) & ( mask_f0_in_a_merging == False )
@@ -94,14 +95,14 @@ print('11 mapping', len(mask_f0_evolving_11_halos.nonzero()[0]), len(mask_f1_evo
 print('merging systems', len(f1_id_with_multiple_progenitors))
 
 #for dede in f1_id_with_multiple_progenitors :
-	#sel = f0['/halo_data/desc_id'].value == dede
+	#sel = f0['/halo_properties/desc_id'].value == dede
 	#print( dede )
-	#print('desc id', f0['/halo_data/desc_id'].value[sel])
-	#print('id', f0['/halo_data/id'].value[sel])
-	#print('pid', f0['/halo_data/pid'].value[sel])
-	#print('mvir', f0['/halo_data/mvir'].value[sel])
-	#print('futur merger mmpid', f0['/halo_data/Future_merger_MMP_ID'].value[sel])
-	#print('time to future merger', f0['/halo_data/Time_to_future_merger'].value[sel])
+	#print('desc id', f0['/halo_properties/desc_id'].value[sel])
+	#print('id', f0['/halo_properties/id'].value[sel])
+	#print('pid', f0['/halo_properties/pid'].value[sel])
+	#print('mvir', f0['/halo_properties/mvir'].value[sel])
+	#print('futur merger mmpid', f0['/halo_properties/Future_merger_MMP_ID'].value[sel])
+	#print('time to future merger', f0['/halo_properties/Time_to_future_merger'].value[sel])
 	#print('Ms', f0['/emerge_data/stellar_mass'].value[sel])
 	#print('SFR',f0['/emerge_data/star_formation_rate'].value[sel])
 	#print('mCIM',f0['/emerge_data/m_icm'].value[sel])
@@ -113,9 +114,9 @@ print('merging systems', len(f1_id_with_multiple_progenitors))
 
 # initializing outputs to 0
 
-mvir_dot, rvir_dot, dMdt, dmdt_star, dmdt_star_accretion, f_lost, stellar_mass, star_formation_rate, m_icm = n.zeros_like(f1['/halo_data/mvir'].value), n.zeros_like(f1['/halo_data/mvir'].value), n.zeros_like(f1['/halo_data/mvir'].value), n.zeros_like(f1['/halo_data/mvir'].value), n.zeros_like(f1['/halo_data/mvir'].value), 0., n.zeros_like(f1['/halo_data/mvir'].value), n.zeros_like(f1['/halo_data/mvir'].value), n.zeros_like(f1['/halo_data/mvir'].value)
+mvir_dot, rvir_dot, dMdt, dmdt_star, dmdt_star_accretion, f_lost, stellar_mass, star_formation_rate, m_icm = n.zeros_like(f1['/halo_properties/mvir'].value), n.zeros_like(f1['/halo_properties/mvir'].value), n.zeros_like(f1['/halo_properties/mvir'].value), n.zeros_like(f1['/halo_properties/mvir'].value), n.zeros_like(f1['/halo_properties/mvir'].value), 0., n.zeros_like(f1['/halo_properties/mvir'].value), n.zeros_like(f1['/halo_properties/mvir'].value), n.zeros_like(f1['/halo_properties/mvir'].value)
 
-t_dynamical = t_dynamical( f1['/halo_data/rvir'].value, f1['/halo_data/mvir'].value )
+t_dynamical = t_dynamical( f1['/halo_properties/rvir'].value, f1['/halo_properties/mvir'].value )
 # in years
 
 # new halos are initiated :
@@ -125,16 +126,16 @@ def compute_qtys_new_halos(f_snap, selection):
 	Integrates since the start of the Universe.
 	"""
 	# evaluate equation (4)
-	mvir_dot = f_snap['/halo_data/mvir'].value[selection] / f_snap.attrs['age_yr']
-	rvir_dot = f_snap['/halo_data/rvir'].value[selection] / f_snap.attrs['age_yr']
-	c = f_snap['/halo_data/rvir'].value[selection] / f_snap['/halo_data/rs'].value[selection]
-	rho_nfw = f_snap['/halo_data/mvir'].value[selection] / (f_snap['/halo_data/rs'].value[selection]**3. * 4. * n.pi * c * (1+c)**2. * (n.log(1.+c)-c/(1.+c)))
+	mvir_dot = f_snap['/halo_properties/mvir'].value[selection] / f_snap.attrs['age_yr']
+	rvir_dot = f_snap['/halo_properties/rvir'].value[selection] / f_snap.attrs['age_yr']
+	c = f_snap['/halo_properties/rvir'].value[selection] / f_snap['/halo_properties/rs'].value[selection]
+	rho_nfw = f_snap['/halo_properties/mvir'].value[selection] / (f_snap['/halo_properties/rs'].value[selection]**3. * 4. * n.pi * c * (1+c)**2. * (n.log(1.+c)-c/(1.+c)))
 	# result: dMdt to intialize the halos (not corrected from pseudo evolution)
-	#pseudo_evolution_correction = 4.*n.pi*f_snap['/halo_data/rvir'].value[selection] *f_snap['/halo_data/rvir'].value[selection] * rvir_dot * rho_nfw
+	#pseudo_evolution_correction = 4.*n.pi*f_snap['/halo_properties/rvir'].value[selection] *f_snap['/halo_properties/rvir'].value[selection] * rvir_dot * rho_nfw
 	dMdt = mvir_dot #- pseudo_evolution_correction
 	#dMdt[pseudo_evolution_correction > mvir_dot] = mvir_dot[pseudo_evolution_correction > mvir_dot] 
 	# evaluate equation (1)
-	dmdt_star = model.f_b * dMdt * model.epsilon(f_snap['/halo_data/mvir'].value[selection], f_snap.attrs['redshift'] * n.ones_like(f_snap['/halo_data/mvir'].value[selection]))
+	dmdt_star = model.f_b * dMdt * model.epsilon(f_snap['/halo_properties/mvir'].value[selection], f_snap.attrs['redshift'] * n.ones_like(f_snap['/halo_properties/mvir'].value[selection]))
 	# evaluate accretion: 0 in this first step
 	dmdt_star_accretion = n.zeros_like(dmdt_star)
 	# evaluate equation (11)
@@ -148,18 +149,18 @@ def compute_qtys_new_halos(f_snap, selection):
 
 def compute_qtys_evolving_halos(f_snap, f_previous, selection, selection_previous):
 	# computing dMdt for the halo
-	mvir_dot = (f_snap['/halo_data/mvir'].value[selection]-f_previous['/halo_data/mvir'].value[selection_previous]) / (f_snap.attrs['age_yr'] - f_previous.attrs['age_yr'])
-	rvir_dot = (f_snap['/halo_data/rvir'].value[selection]-f_previous['/halo_data/rvir'].value[selection_previous]) / (f_snap.attrs['age_yr'] - f_previous.attrs['age_yr'])
-	c = f_snap['/halo_data/rvir'].value[selection] / f_snap['/halo_data/rs'].value[selection]
-	rho_nfw = f_snap['/halo_data/mvir'].value[selection] / (f_snap['/halo_data/rs'].value[selection]**3. * 4. * n.pi * c * (1+c)**2. * (n.log(1.+c)-c/(1.+c)))
-	pseudo_evolution_correction = 4.*n.pi*f_snap['/halo_data/rvir'].value[selection] *f_snap['/halo_data/rvir'].value[selection] * rvir_dot * rho_nfw
+	mvir_dot = (f_snap['/halo_properties/mvir'].value[selection]-f_previous['/halo_properties/mvir'].value[selection_previous]) / (f_snap.attrs['age_yr'] - f_previous.attrs['age_yr'])
+	rvir_dot = (f_snap['/halo_properties/rvir'].value[selection]-f_previous['/halo_properties/rvir'].value[selection_previous]) / (f_snap.attrs['age_yr'] - f_previous.attrs['age_yr'])
+	c = f_snap['/halo_properties/rvir'].value[selection] / f_snap['/halo_properties/rs'].value[selection]
+	rho_nfw = f_snap['/halo_properties/mvir'].value[selection] / (f_snap['/halo_properties/rs'].value[selection]**3. * 4. * n.pi * c * (1+c)**2. * (n.log(1.+c)-c/(1.+c)))
+	pseudo_evolution_correction = 4.*n.pi*f_snap['/halo_properties/rvir'].value[selection] *f_snap['/halo_properties/rvir'].value[selection] * rvir_dot * rho_nfw
 	dMdt = mvir_dot - pseudo_evolution_correction
 	
 	# initialize the ICM mass to the previous value
 	m_icm = f_previous['/emerge_data/m_icm'].value[selection_previous]
 	
 	# Direct estimates of stellar mass and SFR
-	dmdt_star = model.f_b * dMdt * model.epsilon(f_snap['/halo_data/mvir'].value[selection], f_snap.attrs['redshift'] * n.ones_like(f_snap['/halo_data/mvir'].value[selection]))
+	dmdt_star = model.f_b * dMdt * model.epsilon(f_snap['/halo_properties/mvir'].value[selection], f_snap.attrs['redshift'] * n.ones_like(f_snap['/halo_properties/mvir'].value[selection]))
 	# evaluate accretion: 0 in this first step
 	dmdt_star_accretion = n.zeros_like(dmdt_star)
 	# evaluate equation (11)
@@ -172,9 +173,9 @@ def compute_qtys_evolving_halos(f_snap, f_previous, selection, selection_previou
 	
 
 	# quenching
-	quenching = (f_snap['/halo_data/mvir'].value[selection] < f_snap['/halo_data/Mpeak'].value[selection]) & (f_snap['/halo_data/Mpeak_scale'].value[selection] < float(f1_scale))
+	quenching = (f_snap['/halo_properties/mvir'].value[selection] < f_snap['/halo_properties/Mpeak'].value[selection]) & (f_snap['/halo_properties/Mpeak_scale'].value[selection] < float(f1_scale))
 	t_quench = tau_quenching( f_previous['/emerge_data/stellar_mass'].value[selection_previous], t_dynamical[selection] )
-	t_mpeak = cosmoMD.age(1./f_snap['/halo_data/Mpeak_scale'].value[selection]-1.).to(u.yr).value
+	t_mpeak = cosmoMD.age(1./f_snap['/halo_properties/Mpeak_scale'].value[selection]-1.).to(u.yr).value
 	
 	# case 1. mdot = mdot at tpeak
 	quench_1 = (quenching) & (f_snap.attrs['age_yr'] >= t_mpeak ) & ( f_snap.attrs['age_yr'] <= t_mpeak + t_quench) 
@@ -204,7 +205,7 @@ def compute_qtys_evolving_halos(f_snap, f_previous, selection, selection_previou
 	# stripping, case 2
 	# after reaching its peak mass,
 	# if M < 0.122 * Mpeak, all mass goes to ICM, m=0, mdot=0
-	stripping_2 = (f_snap['/halo_data/mvir'].value[selection] < 0.122*f_snap['/halo_data/Mpeak'].value[selection]) & (f_snap['/halo_data/Mpeak_scale'].value[selection] < float(f1_scale))
+	stripping_2 = (f_snap['/halo_properties/mvir'].value[selection] < 0.122*f_snap['/halo_properties/Mpeak'].value[selection]) & (f_snap['/halo_properties/Mpeak_scale'].value[selection] < float(f1_scale))
 	if len(stripping_2.nonzero()[0])>0:
 		print("stripping2")
 		m_icm[stripping_2] += f_previous['/emerge_data/stellar_mass'].value[selection_previous][stripping_2]
@@ -214,18 +215,18 @@ def compute_qtys_evolving_halos(f_snap, f_previous, selection, selection_previou
 	return mvir_dot, rvir_dot, dMdt, dmdt_star, dmdt_star_accretion, f_lost, stellar_mass, star_formation_rate, m_icm
 
 def merging_single_system(f_snap, f_previous, selection, selection_previous, selection_previous_merging):
-	mvir_dot = (f_snap['/halo_data/mvir'].value[selection]-f_previous['/halo_data/mvir'].value[selection_previous]) / (f_snap.attrs['age_yr'] - f_previous.attrs['age_yr'])
-	rvir_dot = (f_snap['/halo_data/rvir'].value[selection]-f_previous['/halo_data/rvir'].value[selection_previous]) / (f_snap.attrs['age_yr'] - f_previous.attrs['age_yr'])
-	c = f_snap['/halo_data/rvir'].value[selection] / f_snap['/halo_data/rs'].value[selection]
-	rho_nfw = f_snap['/halo_data/mvir'].value[selection] / (f_snap['/halo_data/rs'].value[selection]**3. * 4. * n.pi * c * (1+c)**2. * (n.log(1.+c)-c/(1.+c)))
-	pseudo_evolution_correction = 4.*n.pi*f_snap['/halo_data/rvir'].value[selection] *f_snap['/halo_data/rvir'].value[selection] * rvir_dot * rho_nfw
+	mvir_dot = (f_snap['/halo_properties/mvir'].value[selection]-f_previous['/halo_properties/mvir'].value[selection_previous]) / (f_snap.attrs['age_yr'] - f_previous.attrs['age_yr'])
+	rvir_dot = (f_snap['/halo_properties/rvir'].value[selection]-f_previous['/halo_properties/rvir'].value[selection_previous]) / (f_snap.attrs['age_yr'] - f_previous.attrs['age_yr'])
+	c = f_snap['/halo_properties/rvir'].value[selection] / f_snap['/halo_properties/rs'].value[selection]
+	rho_nfw = f_snap['/halo_properties/mvir'].value[selection] / (f_snap['/halo_properties/rs'].value[selection]**3. * 4. * n.pi * c * (1+c)**2. * (n.log(1.+c)-c/(1.+c)))
+	pseudo_evolution_correction = 4.*n.pi*f_snap['/halo_properties/rvir'].value[selection] *f_snap['/halo_properties/rvir'].value[selection] * rvir_dot * rho_nfw
 	dMdt = mvir_dot - pseudo_evolution_correction
 	
 	# initialize the ICM mass to the previous value
 	m_icm = f_previous['/emerge_data/m_icm'].value[selection_previous]
 	
 	# Direct estimates of stellar mass and SFR
-	dmdt_star = model.f_b * dMdt * model.epsilon(f_snap['/halo_data/mvir'].value[selection], f_snap.attrs['redshift'] * n.ones_like(f_snap['/halo_data/mvir'].value[selection]))
+	dmdt_star = model.f_b * dMdt * model.epsilon(f_snap['/halo_properties/mvir'].value[selection], f_snap.attrs['redshift'] * n.ones_like(f_snap['/halo_properties/mvir'].value[selection]))
 	# evaluate accretion: 0 in this first step
 	dmdt_star_accretion = n.zeros_like(dmdt_star)
 	# evaluate equation (11)
@@ -249,16 +250,16 @@ def merging_single_system(f_snap, f_previous, selection, selection_previous, sel
 
 def compute_qtys_merging_halos(f_snap, f_previous, selection, selection_previous):
 	# computing dMdt for the halo
-	merger_ids = f_snap['/halo_data/id'].value[selection]
+	merger_ids = f_snap['/halo_properties/id'].value[selection]
 	# merger_ids
 	DATA = n.zeros((len(merger_ids),8))
 	for jj, merger_id in enumerate(merger_ids):
-		mask_f1_host = (selection) & (f_snap['/halo_data/id'].value == merger_id)
-		mask_f0_all = (selection_previous) & (f_previous['/halo_data/desc_id'].value == merger_id)
-		f0_host_id = f_previous['/halo_data/id'].value[mask_f0_all][n.in1d(f_previous['/halo_data/id'].value[mask_f0_all], n.unique(f_previous['/halo_data/Future_merger_MMP_ID'].value[mask_f0_all]))][0]
+		mask_f1_host = (selection) & (f_snap['/halo_properties/id'].value == merger_id)
+		mask_f0_all = (selection_previous) & (f_previous['/halo_properties/desc_id'].value == merger_id)
+		f0_host_id = f_previous['/halo_properties/id'].value[mask_f0_all][n.in1d(f_previous['/halo_properties/id'].value[mask_f0_all], n.unique(f_previous['/halo_properties/Future_merger_MMP_ID'].value[mask_f0_all]))][0]
 		print "host id", f0_host_id
-		mask_f0_host = (mask_f0_all) & (f_previous['/halo_data/id'].value == f0_host_id)
-		mask_f0_merging = (mask_f0_all) & (f_previous['/halo_data/id'].value != f0_host_id)
+		mask_f0_host = (mask_f0_all) & (f_previous['/halo_properties/id'].value == f0_host_id)
+		mask_f0_merging = (mask_f0_all) & (f_previous['/halo_properties/id'].value != f0_host_id)
 		print merger_id, len(mask_f1_host.nonzero()[0]), len(mask_f0_host.nonzero()[0]), len(mask_f0_merging.nonzero()[0])
 		out = n.hstack((merging_single_system(f_snap, f_previous, mask_f1_host, mask_f0_host, mask_f0_merging)))
 		#print out, out.shape

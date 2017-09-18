@@ -3,7 +3,7 @@ import sys
 path_2_snap = sys.argv[1]
 path_2_output = sys.argv[2]
 
-import MultiDark as md
+import EmergeMultiDark as md
 box = md.MultiDarkSimulation(L_box=400.0)
 
 import time
