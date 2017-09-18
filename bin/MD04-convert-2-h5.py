@@ -13,8 +13,8 @@ box = md.MultiDarkSimulation(L_box=400.0)
 import time
 t0=time.time()
 
-path_2_snap = "/u/joco/data/MD/MD_1.0Gpc/emerge/hlist_" + snap_name + ".data"
-path_2_h5_file = "/u/joco/data/MD/MD_1.0Gpc/h5/hlist_"  + snap_name + "_emerge.hdf5"
+path_2_snap = "/u/joco/data/MD/MD_0.4Gpc/emerge/hlist_" + snap_name + ".data"
+path_2_h5_file = "/u/joco/data/MD/MD_0.4Gpc/h5/hlist_"  + snap_name + "_emerge.hdf5"
 
 box.convert_to_emerge_input_catalog_to_h5_format_light(path_2_snap, path_2_h5_file, aexp, redshift, age_yr, rho_crit, delta_vir)
 #box.convert_to_emerge_input_catalog_to_h5_format_ultralight(snap_name, aexp, redshift, age_yr, rho_crit, delta_vir)
