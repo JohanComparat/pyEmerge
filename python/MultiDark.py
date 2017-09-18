@@ -109,7 +109,7 @@ class MultiDarkSimulation :
 			print("command to be executed: ",gawk_command)
 			os.system(gawk_command)
 
-	def convert_to_emerge_input_catalog_to_h5_format_light(self, snap_name, aexp, redshift, age_yr, rho_crit, delta_vir):
+	def convert_to_emerge_input_catalog_to_h5_format_light(self, path_2_snap, path_2_h5_file, aexp, redshift, age_yr, rho_crit, delta_vir):
 		"""
 		Converts the ascii files to h5 format.
 		
@@ -131,8 +131,8 @@ class MultiDarkSimulation :
 		"""
 		timestr = time.strftime("%Y%m%d-%H%M%S")
 		
-		path_2_snap = "/u/joco/data/MD/MD_1.0Gpc/emerge/hlist_" + snap_name + ".data"
-		path_2_h5_file = "/u/joco/data/MD/MD_1.0Gpc/h5/hlist_"  + snap_name + "_emerge.hdf5"
+		#path_2_snap = "/u/joco/data/MD/MD_1.0Gpc/emerge/hlist_" + snap_name + ".data"
+		#path_2_h5_file = "/u/joco/data/MD/MD_1.0Gpc/h5/hlist_"  + snap_name + "_emerge.hdf5"
 		if os.path.isfile(path_2_h5_file):
 			os.system("rm "+path_2_h5_file)
 		

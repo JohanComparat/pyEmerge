@@ -8,7 +8,7 @@ delta_vir = sys.argv[6]
 
 
 import MultiDark as md
-box = md.MultiDarkSimulation(L_box=1000.0)
+box = md.MultiDarkSimulation(L_box=400.0)
 
 import time
 t0=time.time()
