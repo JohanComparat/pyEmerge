@@ -61,6 +61,16 @@ llsubmit emerge_iterate_batch.sh
 # it uses the command :
 python emerge_iterate.py $ID
 
+# HERE 
+# remap the coordinates to have a cuboid
+cd $MD04/h5
+sh run_remap.sh
+
+cd $MD10/h5
+sh run_remap.sh
+
+# executes the remapping for the MD04 box
+python remap_lc.py $ID
 
 
 
