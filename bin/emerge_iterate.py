@@ -36,7 +36,8 @@ def tau_quenching( m_star, tdyn, tau_0=4.282, tau_s=0.363):
 # ================
 
 #h5_dir = os.path.join(os.environ['HOME'], 'MD10', 'h5' )
-h5_dir = os.path.join(os.environ['MD10'], 'h5' )
+#h5_dir = os.path.join(os.environ['MD10'], 'h5' )
+h5_dir = os.path.join(os.environ['MD04'], 'h5' )
 
 input_list = n.array(glob.glob(os.path.join(h5_dir, "hlist_?.?????_emerge.hdf5")))
 input_list.sort()
