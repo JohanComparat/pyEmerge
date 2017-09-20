@@ -29,7 +29,7 @@ import glob
 import numpy as n
 import sys
 
-ii = sys.argv[1]
+ii = int(sys.argv[1])
 
 h5_dir = os.path.join(os.environ['MD04'], 'h5' )
 L_box = 400.
@@ -43,9 +43,10 @@ f1 = h5py.File(file_1,  "r+")
 print "n halos=",f1['/halo_properties/'].attrs['N_halos']
 
 if f1['/halo_properties/'].attrs['N_halos'] > 0:
-	x,y,z = n.transpose([C6.Transform(aa,bb,cc) for aa,bb,cc in zip(f1['/halo_position/x'].value/L_box, f1['/halo_position/y'].value/L_box, f1['/halo_position/z'].value/L_box)])
-
-	halo_data = f.create_group('/remaped_position_L6')
+	#print f1['/halo_position/x'].value, f1['/halo_position/y'].value, f1['/halo_position/z'].value
+	x,y,z = n.transpose([C6.Transform(aa,bb,cc) for aa,bb,cc in zip(f1['/halo_position/x'].value/L_box, f1['/halo_position/y'].value/L_box, f1['/halo_position/z'].value/L_box)])*L_box
+	#print x,y,z
+	halo_data = f1.create_group('remaped_position_L6')
 	ds = halo_data.create_dataset('x', data = x )
 	ds.attrs['units'] = 'Mpc/h'
 	ds.attrs['long_name'] = 'x' 
@@ -56,10 +57,9 @@ if f1['/halo_properties/'].attrs['N_halos'] > 0:
 	ds.attrs['units'] = 'Mpc/h'
 	ds.attrs['long_name'] = 'z' 
 
-
-	x,y,z = n.transpose([C3.Transform(aa,bb,cc) for aa,bb,cc in zip(f1['/halo_position/x']/L_box, f1['/halo_position/y']/L_box, f1['/halo_position/z']/L_box)])
-
-	halo_data = f.create_group('/remaped_position_L3')
+	x,y,z = n.transpose([C3.Transform(aa,bb,cc) for aa,bb,cc in zip(f1['/halo_position/x'].value/L_box, f1['/halo_position/y'].value/L_box, f1['/halo_position/z'].value/L_box)])*L_box
+	#print x,y,z
+	halo_data = f1.create_group('remaped_position_L3')
 	ds = halo_data.create_dataset('x', data = x )
 	ds.attrs['units'] = 'Mpc/h'
 	ds.attrs['long_name'] = 'x' 
