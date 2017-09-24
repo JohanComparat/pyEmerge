@@ -220,7 +220,7 @@ class Cuboid:
 				z += c.iz
 				p = vec3(x,y,z)
 				return (dot(p, self.n1), dot(p, self.n2), dot(p, self.n3))
-		raise RuntimeError, "(%g, %g, %g) not contained in any cell" % (x,y,z)
+		raise RuntimeError( "(%g, %g, %g) not contained in any cell" % (x,y,z) )
 
 	def InverseTransform(self, r1, r2, r3):
 		p = r1*self.n1 + r2*self.n2 + r3*self.n3
