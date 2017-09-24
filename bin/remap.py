@@ -108,7 +108,7 @@ class Cuboid:
 		u3 = vec3(u3)
 
 		if triple_scalar_product(u1, u2, u3) != 1:
-			#print >> sys.stderr, "!! Invalid lattice vectors: u1 = %s, u2 = %s, u3 = %s" % (u1,u2,u3)
+			print( "!! Invalid lattice vectors: u1 = %s, u2 = %s, u3 = %s" % (u1,u2,u3)  )
 			self.e1 = vec3(1,0,0)
 			self.e2 = vec3(0,1,0)
 			self.e3 = vec3(0,0,1)
@@ -126,9 +126,9 @@ class Cuboid:
 			self.e3 = u3 + beta*u1 + gamma*u2
 
 		if verbose:
-			#print "e1 = %s" % self.e1
-			#print "e2 = %s" % self.e2
-			#print "e3 = %s" % self.e3
+			print( "e1 = %s" % self.e1)
+			print( "e2 = %s" % self.e2)
+			print( "e3 = %s" % self.e3)
 
 		self.L1 = length(self.e1)
 		self.L2 = length(self.e2)
@@ -163,9 +163,9 @@ class Cuboid:
 		izmin = int(floor(vmin.z))
 		izmax = int(ceil(vmax.z))
 		if verbose:
-			#print "ixmin, ixmax = %d, %d" % (ixmin,ixmax)
-			#print "iymin, iymax = %d, %d" % (iymin,iymax)
-			#print "izmin, izmax = %d, %d" % (izmin,izmax)
+			print( "ixmin, ixmax = %d, %d" % (ixmin,ixmax) )
+			print( "iymin, iymax = %d, %d" % (iymin,iymax) )
+			print( "izmin, izmax = %d, %d" % (izmin,izmax) )
 
 		# Determine which cells (and which faces within those cells) are non-trivial
 		for ix in range(ixmin, ixmax):
@@ -195,12 +195,12 @@ class Cuboid:
 
 					if skipcell or len(c.faces) == 0:
 						if verbose:
-							#print "Skipping cell at (%d,%d,%d)" % (ix,iy,iz)
+							print( "Skipping cell at (%d,%d,%d)" % (ix,iy,iz))
 						continue
 					else:
 						self.cells.append(c)
 						if verbose:
-							#print "Adding cell at (%d,%d,%d)" % (ix,iy,iz)
+							print( "Adding cell at (%d,%d,%d)" % (ix,iy,iz) )
 
 		# For the identity remapping, use exactly one cell
 		if len(self.cells) == 0:
@@ -208,9 +208,9 @@ class Cuboid:
 
 		# Print the full list of cells
 		if verbose:
-			#print "%d non-empty cells" % len(self.cells)
+			print( "%d non-empty cells" % len(self.cells))
 			for c in self.cells:
-				#print "Cell at (%d,%d,%d) has %d non-trivial planes" % (c.ix, c.iy, c.iz, len(c.faces))
+				print( "Cell at (%d,%d,%d) has %d non-trivial planes" % (c.ix, c.iy, c.iz, len(c.faces)) )
 
 	def Transform(self, x, y, z):
 		for c in self.cells:
@@ -232,7 +232,7 @@ class Cuboid:
 
 def abort(msg=None, code=1):
 	if msg:
-		#print >> sys.stderr, msg
+		print(msg) #>> sys.stderr, msg
 	sys.exit(code)
 
 if __name__ == '__main__':
@@ -255,7 +255,7 @@ if __name__ == '__main__':
 			if arg == "-v" or arg == "--verbose":
 				verbose = True
 			elif arg == "-h" or arg == "--help":
-				#print "Usage: python remap.py [OPTIONS] PARAMS"
+				print( "Usage: python remap.py [OPTIONS] PARAMS" )
 			else:
 				abort("Unrecognized option '%s'" % arg)
 
@@ -289,13 +289,13 @@ if __name__ == '__main__':
 		u2 = params['u2']
 		u3 = params['u3']
 	else:
-		#print >> sys.stderr, "?? Cuboid geometry not specified, assuming trivial remapping"
+		print( "?? Cuboid geometry not specified, assuming trivial remapping" )
 		u1 = (1,0,0)
 		u2 = (0,1,0)
 		u3 = (0,0,1)
 
 	if verbose:
-		#print "u1 = %s, u2 = %s, u3 = %s" % (u1,u2,u3)
+		print( "u1 = %s, u2 = %s, u3 = %s" % (u1,u2,u3))
 	C = Cuboid(u1, u2, u3)
 
 	for line in fin:
@@ -304,11 +304,11 @@ if __name__ == '__main__':
 			continue
 		coords = line.replace(',', ' ').split()
 		if len(coords) != 3:
-			#print >> sys.stderr, "?? Expecting 3 coordinates per line, not '%s'" % line
+			print("?? Expecting 3 coordinates per line, not '%s'" % line)
 			continue
 		(xin,yin,zin) = float(coords[0]), float(coords[1]), float(coords[2])
 		(xout,yout,zout) = C.Transform(xin, yin, zin)
-		#print >> fout, "%e %e %e" % (xout,yout,zout)
+		print( "%e %e %e" % (xout,yout,zout ))
 
 	fin.close()
 	fout.close()
