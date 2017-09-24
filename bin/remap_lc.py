@@ -19,15 +19,24 @@ writes in the h5 files
 
 
 """
-from remap import *
-C6 = Cuboid(u1=(5, 3, 1), u2=(1, 1, 0), u3=(0, 1, 0))
-C3 = Cuboid(u1=(2, 1, 1), u2=(1, 1, 0), u3=(0, 1, 0))
-
 import h5py    # HDF5 support
 import os
 import glob
 import numpy as n
 import sys
+
+from multiprocessing import Pool
+from remap import *
+C6 = Cuboid(u1=(5, 3, 1), u2=(1, 1, 0), u3=(0, 1, 0))
+C3 = Cuboid(u1=(2, 1, 1), u2=(1, 1, 0), u3=(0, 1, 0))
+
+def f(x,y,z,L_box=1000.):
+	return n.transpose([C6.Transform(aa,bb,cc) for aa,bb,cc in zip(x/L_box, y/L_box, z/L_box)])*L_box
+    
+
+
+
+
 
 ii = int(sys.argv[1])
 
@@ -74,3 +83,7 @@ if f1['/halo_properties/'].attrs['N_halos'] > 0:
 
 else:
 	f1.close()
+
+if __name__ == '__main__':
+    p = Pool(5)
+    print(p.map(f, [1, 2, 3]))
