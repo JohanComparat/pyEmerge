@@ -70,8 +70,9 @@ cd $MD10/h5
 sh run_remap.sh
 
 # executes the remapping for the MD04 box
-python remap_lc.py $ID
-
+# adapt the following script to actually do the job 
+# 12 cores seems the mas on ds52
+python3 test_remap.py
 
 
 
