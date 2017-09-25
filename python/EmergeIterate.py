@@ -27,8 +27,6 @@ import astropy.constants as constants
 f_loss = lambda t : 0.05*n.log( 1 + t / (1.4*10**6))
 t_dyn = lambda rvir, mvir : (rvir**3./(9.797465327217671e-24*mvir))**0.5
 
-out = p.starmap(t_dyn, n.transpose([n.arange(10), 10**n.arange(12)]) )
-
 def tau_quenching( m_star, tdyn, tau_0=4.282, tau_s=0.363):
 	out = n.zeros_like(m_star)
 	case_1 = (m_star < 1e10 )
