@@ -7,7 +7,7 @@ import sys
 import time
 t0 = time.time()
 from multiprocessing import Pool
-p=Pool(12)
+#p=Pool(12)
 
 import h5py    
 import os
@@ -26,6 +26,8 @@ import astropy.constants as constants
 
 f_loss = lambda t : 0.05*n.log( 1 + t / (1.4*10**6))
 t_dyn = lambda rvir, mvir : (rvir**3./(9.797465327217671e-24*mvir))**0.5
+
+out = p.starmap(t_dyn, n.transpose([n.arange(10), 10**n.arange(12)]) )
 
 def tau_quenching( m_star, tdyn, tau_0=4.282, tau_s=0.363):
 	out = n.zeros_like(m_star)
@@ -347,7 +349,9 @@ class EmergeIterate():
 		"""
 		computes all quantities for merging halos
 		"""
-		self.out3 = p.starmap(self.merging_set_of_system, self.f1['/halo_properties/id'].value[ self.mask_f1_in_a_merging ])
+		pool = Pool(processes=12)
+		self.out3 = pool.map(self.merging_set_of_system, self.f1['/halo_properties/id'].value[ self.mask_f1_in_a_merging ])
+		#self.out3 = p.starmap(self.merging_set_of_system, self.f1['/halo_properties/id'].value[ self.mask_f1_in_a_merging ])
 		
 	def write_results(self):
 		"""
@@ -398,19 +402,17 @@ class EmergeIterate():
 
 
 
-
-#if __name__ == '__main__':
-	#p = Pool(12)
-	## reads the data
-	#L_box = 400.
-	#env= 'MD04'
-	#f1, x0, y0, z0 = read_data(ii, L_box, env)
-	## maps coordinates to L6
-	#out3 = p.starmap(f3, n.transpose([x0, y0, z0]))
-	#out6 = p.starmap(f6, n.transpose([x0, y0, z0]))
-	## writes the results
-	#write_mapped_coordinates(f1, out6, L_box,  group_name = 
-#'remaped_position_L6')
-	#write_mapped_coordinates(f1, out3, L_box,  group_name = 
-#'remaped_position_L3')
-	#f1.close()
+if __name__ == '__main__':
+	iterate = EmergeIterate.EmergeIterate(22, 'MD10')
+	iterate.open_snapshots()
+	iterate.map_halos_between_snapshots()
+	iterate.init_new_quantities()
+	
+	if len((iterate.mask_f1_new_halos).nonzero()[0]) > 0 :
+		iterate.compute_qtys_new_halos()
+	if len((iterate.mask_f0_evolving_11_halos).nonzero()[0]) > 0 :
+		iterate.compute_qtys_evolving_halos() 
+	if len(iterate.mask_f1_in_a_merging.nonzero()[0]) > 0 :
+		iterate.compute_qtys_merging_halos()
+		
+	# iterate.write_results()
