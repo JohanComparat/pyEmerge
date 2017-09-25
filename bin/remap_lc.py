@@ -19,71 +19,65 @@ writes in the h5 files
 
 
 """
+import time
+print("start", time.time())
+import sys
+ii = int(sys.argv[1])
+print("snapshot", ii)
 import h5py    # HDF5 support
 import os
 import glob
 import numpy as n
-import sys
-
 from multiprocessing import Pool
-from remap import *
+# imports the remapping library
+from remap import Cuboid
 C6 = Cuboid(u1=(5, 3, 1), u2=(1, 1, 0), u3=(0, 1, 0))
 C3 = Cuboid(u1=(2, 1, 1), u2=(1, 1, 0), u3=(0, 1, 0))
 
-def f(x,y,z,L_box=1000.):
-	return n.transpose([C6.Transform(aa,bb,cc) for aa,bb,cc in zip(x/L_box, y/L_box, z/L_box)])*L_box
+def f6(aa,bb,cc):
+	return C6.Transform(aa,bb,cc)
+
+def f3(aa,bb,cc):
+	return C3.Transform(aa,bb,cc)
     
-
-
-
-
-
-ii = int(sys.argv[1])
-
-h5_dir = os.path.join(os.environ['MD04'], 'h5' )
-L_box = 400.
-
+def read_data(ii, L_box = 400., env= 'MD04'):
+	"""
+	Read all input data and returns 
+	 - the h5 file: f1
+	 - the coordinates to be mapped: x, y, z
+	"""
+h5_dir = os.path.join(os.environ[env], 'h5' )
 input_list = n.array(glob.glob(os.path.join(h5_dir, "hlist_?.?????_emerge.hdf5")))
 input_list.sort()
-
 file_1 = input_list[ii]
 f1 = h5py.File(file_1,  "r+")
+	print( "n halos=",f1['/halo_properties/'].attrs['N_halos'])
+	return f1, f1['/halo_position/x'].value/L_box, f1['/halo_position/y'].value/L_box, f1['/halo_position/z'].value/L_box
 
-print "n halos=",f1['/halo_properties/'].attrs['N_halos']
-
-if f1['/halo_properties/'].attrs['N_halos'] > 0:
-	#print f1['/halo_position/x'].value, f1['/halo_position/y'].value, f1['/halo_position/z'].value
-	x,y,z = n.transpose([C6.Transform(aa,bb,cc) for aa,bb,cc in zip(f1['/halo_position/x'].value/L_box, f1['/halo_position/y'].value/L_box, f1['/halo_position/z'].value/L_box)])*L_box
-	#print x,y,z
-	halo_data = f1.create_group('remaped_position_L6')
-	ds = halo_data.create_dataset('x', data = x )
-	ds.attrs['units'] = 'Mpc/h'
-	ds.attrs['long_name'] = 'x' 
-	ds = halo_data.create_dataset('y', data = y )
-	ds.attrs['units'] = 'Mpc/h'
-	ds.attrs['long_name'] = 'y' 
-	ds = halo_data.create_dataset('z', data = z )
-	ds.attrs['units'] = 'Mpc/h'
-	ds.attrs['long_name'] = 'z' 
-
-	x,y,z = n.transpose([C3.Transform(aa,bb,cc) for aa,bb,cc in zip(f1['/halo_position/x'].value/L_box, f1['/halo_position/y'].value/L_box, f1['/halo_position/z'].value/L_box)])*L_box
-	#print x,y,z
-	halo_data = f1.create_group('remaped_position_L3')
-	ds = halo_data.create_dataset('x', data = x )
-	ds.attrs['units'] = 'Mpc/h'
-	ds.attrs['long_name'] = 'x' 
-	ds = halo_data.create_dataset('y', data = y )
-	ds.attrs['units'] = 'Mpc/h'
-	ds.attrs['long_name'] = 'y' 
-	ds = halo_data.create_dataset('z', data = z )
-	ds.attrs['units'] = 'Mpc/h'
-	ds.attrs['long_name'] = 'z' 
-
-	f1.close()
-
-else:
-	f1.close()
+def write_mapped_coordinates(f1, out, L_box, group_name = 'remaped_position_L6'):
+	"""
+	Writes the new coordinates to file
+	:param f1: h5 file
+	:param x1,y1,z1: new coordinates
+	:param group_name: name of the new group containing the new data in the h5 file. Example 'remaped_position_L6'
+	"""
+	print("writes")
+	halo_data = f1.create_group(group_name)
+	halo_data.attrs['L_box'] = L_box
+	ds = halo_data.create_dataset('xyx_Lbox', data = out )
+	ds.attrs['units'] = 'L box'
+	ds.attrs['long_name'] = 'x,y,z' 
 
 if __name__ == '__main__':
-    p = Pool(5)
-    print(p.map(f, [1, 2, 3]))
+	p = Pool(12)
+	# reads the data
+	L_box = 400.
+	env= 'MD04'
+	f1, x0, y0, z0 = read_data(ii, L_box, env)
+	# maps coordinates to L6
+	out3 = p.starmap(f3, n.transpose([x0, y0, z0]))
+	out6 = p.starmap(f6, n.transpose([x0, y0, z0]))
+	# writes the results
+	write_mapped_coordinates(f1, out6, L_box,  group_name = 'remaped_position_L6')
+	write_mapped_coordinates(f1, out3, L_box,  group_name = 'remaped_position_L3')
+	f1.close()
