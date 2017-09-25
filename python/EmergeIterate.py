@@ -164,7 +164,6 @@ class EmergeIterate():
 		self.star_formation_rate   =     n.zeros_like(self.f1['/halo_properties/mvir'].value)
 		self.m_icm =                     n.zeros_like(self.f1['/halo_properties/mvir'].value)
 		self.t_dynamical = t_dyn( self.f1['/halo_properties/rvir'].value, self.f1['/halo_properties/mvir'].value )
-		
 
 	def compute_qtys_new_halos(self):
 		"""
@@ -260,7 +259,6 @@ class EmergeIterate():
 			self.m_icm[self.mask_f1_evolving_11_halos][stripping] += self.f0['/emerge_data/stellar_mass'].value[self.mask_f0_evolving_11_halos][stripping]
 			self.stellar_mass[self.mask_f1_evolving_11_halos][stripping] = n.zeros_like(self.stellar_mass[self.mask_f1_evolving_11_halos][stripping])
 			self.star_formation_rate[self.mask_f1_evolving_11_halos][stripping] = n.zeros_like(self.star_formation_rate[self.mask_f1_evolving_11_halos][stripping])
-		
 
 	def get_position_merger_players(self, merger_id):
 		"""
@@ -399,7 +397,7 @@ class EmergeIterate():
 		print("Results written")
 
 
-
+"""
 if __name__ == '__main__':
 	iterate = EmergeIterate.EmergeIterate(22, 'MD10')
 	iterate.open_snapshots()
@@ -414,3 +412,4 @@ if __name__ == '__main__':
 		iterate.compute_qtys_merging_halos()
 		
 	# iterate.write_results()
+"""
