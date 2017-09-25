@@ -25,7 +25,7 @@ import astropy.constants as constants
 # =================
 
 f_loss = lambda t : 0.05*n.log( 1 + t / (1.4*10**6))
-t_dynamical = lambda rvir, mvir : (rvir**3./(9.797465327217671e-24*mvir))**0.5
+t_dyn = lambda rvir, mvir : (rvir**3./(9.797465327217671e-24*mvir))**0.5
 
 def tau_quenching( m_star, tdyn, tau_0=4.282, tau_s=0.363):
 	out = n.zeros_like(m_star)
@@ -71,23 +71,21 @@ class EmergeIterate():
 
 	def open_snapshots(self):
 		"""
-		Opens the files into the class  
+		Opens the files into the class as f0 and f1  
 		"""
-		h5_dir = os.path.join(os.environ[env], 'h5' )
+		h5_dir = os.path.join(os.environ[self.env], 'h5' )
 		input_list = n.array(glob.glob(os.path.join(h5_dir, "hlist_?.?????_emerge.hdf5")))
 		input_list.sort()
-		file_0 = input_list[ii-1]
-		file_1 = input_list[ii]
+		file_0 = input_list[self.ii-1]
+		file_1 = input_list[self.ii]
 		
 		self.f0 = h5py.File(file_0,  "r")
 		self.f0_scale = os.path.basename(file_0).split('_')[1]
-		self.positions_f0 = n.arange(self.f0['/halo_properties/id'].value)
+		self.positions_f0 = n.arange(len(self.f0['/halo_properties/id'].value))
 		
 		self.f1 = h5py.File(file_1,  "r+")
 		self.f1_scale = os.path.basename(file_1).split('_')[1]
-		self.positions_f1 = n.arange(self.f1['/halo_properties/id'].value)
-		
-	
+		self.positions_f1 = n.arange(len(self.f1['/halo_properties/id'].value))
 
 	def map_halos_between_snapshots(self):
 		"""
@@ -165,7 +163,7 @@ class EmergeIterate():
 		self.stellar_mass   =            n.zeros_like(self.f1['/halo_properties/mvir'].value)
 		self.star_formation_rate   =     n.zeros_like(self.f1['/halo_properties/mvir'].value)
 		self.m_icm =                     n.zeros_like(self.f1['/halo_properties/mvir'].value)
-		self.t_dynamical = t_dynamical( self.f1['/halo_properties/rvir'].value, self.f1['/halo_properties/mvir'].value )
+		self.t_dynamical = t_dyn( self.f1['/halo_properties/rvir'].value, self.f1['/halo_properties/mvir'].value )
 		
 
 	def compute_qtys_new_halos(self):
@@ -208,7 +206,7 @@ class EmergeIterate():
 		 * stripping, case 2 : after reaching its peak mass, if M < 0.122 * Mpeak, then all mass goes to ICM, m=0, mdot=0
 		"""
 		# computing dMdt for the halo
-		self.mvir_dot[self.mask_f1_evolving_11_halos] = (self.f1['/halo_properties/mvir'].value[selection]-self.f0['/halo_properties/mvir'].value[self.mask_f0_evolving_11_halos]) / (self.f1.attrs['age_yr'] - self.f0.attrs['age_yr'])
+		self.mvir_dot[self.mask_f1_evolving_11_halos] = (self.f1['/halo_properties/mvir'].value[self.mask_f1_evolving_11_halos]-self.f0['/halo_properties/mvir'].value[self.mask_f0_evolving_11_halos]) / (self.f1.attrs['age_yr'] - self.f0.attrs['age_yr'])
 		self.rvir_dot[self.mask_f1_evolving_11_halos] = (self.f1['/halo_properties/rvir'].value[self.mask_f1_evolving_11_halos]-self.f0['/halo_properties/rvir'].value[self.mask_f0_evolving_11_halos]) / (self.f1.attrs['age_yr'] - self.f0.attrs['age_yr'])
 		c = self.f1['/halo_properties/rvir'].value[self.mask_f1_evolving_11_halos] / self.f1['/halo_properties/rs'].value[self.mask_f1_evolving_11_halos]
 		rho_nfw = self.f1['/halo_properties/mvir'].value[self.mask_f1_evolving_11_halos] / (self.f1['/halo_properties/rs'].value[self.mask_f1_evolving_11_halos]**3. * 4. * n.pi * c * (1+c)**2. * (n.log(1.+c)-c/(1.+c)))
@@ -231,8 +229,8 @@ class EmergeIterate():
 	
 		# quenching
 		quenching = (self.f1['/halo_properties/mvir'].value[self.mask_f1_evolving_11_halos] < self.f1['/halo_properties/Mpeak'].value[self.mask_f1_evolving_11_halos]) & (self.f1['/halo_properties/Mpeak_scale'].value[self.mask_f1_evolving_11_halos] < float(self.f1_scale))
-		t_quench = tau_quenching( self.f0['/emerge_data/stellar_mass'].value[self.mask_f0_evolving_11_halos], t_dynamical[self.mask_f1_evolving_11_halos] )
-		t_mpeak = cosmoMD.age(1./self.f1['/halo_properties/Mpeak_scale'].value[self.mask_f1_evolving_11_halos]-1.).to(u.yr).value
+		t_quench = tau_quenching( self.f0['/emerge_data/stellar_mass'].value[self.mask_f0_evolving_11_halos], self.t_dynamical[self.mask_f1_evolving_11_halos] )
+		t_mpeak = cosmoMD.age( 1. / self.f1['/halo_properties/Mpeak_scale'].value[self.mask_f1_evolving_11_halos] - 1. ).to(u.yr).value
 		
 		# case 1. mdot = mdot at tpeak
 		quench_1 = (quenching) & (self.f1.attrs['age_yr'] >= t_mpeak ) & ( self.f1.attrs['age_yr'] < t_mpeak + t_quench) 
@@ -275,12 +273,20 @@ class EmergeIterate():
 		 position_f1_host [int], position_f0_host [int], position_f0_merging [list]
 		"""
 		# about the host at t1
+		#print(merger_id)
 		mask_f1_host = (self.f1['/halo_properties/id'].value == merger_id)
+		#print(mask_f1_host)
 		position_f1_host = self.positions_f1[mask_f1_host]
+		#print(position_f1_host)
 		# about the host and merging subhalos at t0
 		mask_f0_all = (self.f0['/halo_properties/desc_id'].value == merger_id)
+		#print(mask_f0_all)
 		id_f0_all = self.f0['/halo_properties/id'].value[mask_f0_all]
+		#print(id_f0_all)
 		# the host at t1 is flagged at t0 as the most massive progenitor
+		#print(n.unique(self.f0['/halo_properties/Future_merger_MMP_ID'].value[mask_f0_all]))
+		#print(n.in1d(id_f0_all, n.unique(self.f0['/halo_properties/Future_merger_MMP_ID'].value[mask_f0_all])))
+		#print(id_f0_all[n.in1d(id_f0_all, n.unique(self.f0['/halo_properties/Future_merger_MMP_ID'].value[mask_f0_all]))])
 		f0_host_id = id_f0_all[n.in1d(id_f0_all, n.unique(self.f0['/halo_properties/Future_merger_MMP_ID'].value[mask_f0_all]))][0] 
 		mask_f0_host = (mask_f0_all) & (self.f0['/halo_properties/id'].value == f0_host_id)
 		mask_f0_merging = (mask_f0_all) & (self.f0['/halo_properties/id'].value != f0_host_id)
@@ -341,8 +347,7 @@ class EmergeIterate():
 		"""
 		computes all quantities for merging halos
 		"""
-		merger_ids = self.f1['/halo_properties/id'].value[self.mask_f1_in_a_merging]
-		self.out3 = p.starmap(self.merging_set_of_system, merger_ids)
+		self.out3 = p.starmap(self.merging_set_of_system, self.f1['/halo_properties/id'].value[ self.mask_f1_in_a_merging ])
 		
 	def write_results(self):
 		"""
@@ -352,37 +357,37 @@ class EmergeIterate():
 
 		#emerge_data.attrs['f_lost'] = f_lost
 
-		ds = emerge_data.create_dataset('mvir_dot', data = mvir_dot )
+		ds = emerge_data.create_dataset('mvir_dot', data = self.mvir_dot )
 		ds.attrs['units'] = r'$h^{-1} M_\odot / yr$'
 		ds.attrs['long_name'] = r'$d M_{vir} / dt$' 
 
-		ds = emerge_data.create_dataset('rvir_dot', data = rvir_dot )
+		ds = emerge_data.create_dataset('rvir_dot', data = self.rvir_dot )
 		ds.attrs['units'] = r'$h^{-1} kpc / yr$'
 		ds.attrs['long_name'] = r'$d r_{vir} / dt$' 
 
-		ds = emerge_data.create_dataset('dMdt', data = dMdt )
+		ds = emerge_data.create_dataset('dMdt', data = self.dMdt )
 		ds.attrs['units'] = r'$h^{-1} M_\odot / yr$'
 		ds.attrs['long_name'] = r'$\langle d M / dt \rangle$ (4)' 
 
-		ds = emerge_data.create_dataset('dmdt_star', data = dmdt_star )
+		ds = emerge_data.create_dataset('dmdt_star', data = self.dmdt_star )
 		ds.attrs['units'] = r'$h^{-1} M_\odot / yr$'
 		ds.attrs['long_name'] = r'$ d m_* / dt $ (1)' 
 
 		ds = emerge_data.create_dataset('dmdt_star_accretion', data = 
-		dmdt_star_accretion )
+		self.dmdt_star_accretion )
 		ds.attrs['units'] = r'$h^{-1} M_\odot / yr$'
 		ds.attrs['long_name'] = r'$ d m_{acc} / dt $ ' 
 
 		ds = emerge_data.create_dataset('star_formation_rate', data = 
-		star_formation_rate )
+		self.star_formation_rate )
 		ds.attrs['units'] = r'$h^{-1} M_\odot / yr$'
 		ds.attrs['long_name'] = r'$ d m / dt $ ' 
 
-		ds = emerge_data.create_dataset('stellar_mass', data = stellar_mass )
+		ds = emerge_data.create_dataset('stellar_mass', data = self.stellar_mass )
 		ds.attrs['units'] = r'$h^{-1} M_\odot $'
 		ds.attrs['long_name'] = r'$ m_* $ (11)' 
 
-		ds = emerge_data.create_dataset('m_icm', data = m_icm )
+		ds = emerge_data.create_dataset('m_icm', data = self.m_icm )
 		ds.attrs['units'] = r'$h^{-1} M_\odot $'
 		ds.attrs['long_name'] = r'$ m_{ICM}$ ' 
 
