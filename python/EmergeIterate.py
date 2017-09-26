@@ -72,6 +72,103 @@ def compute_qtys_new_halos_pk(mvir, rvir, redshift, age_yr):
 	
 	return mvir_dot, rvir / age_yr, dMdt, dmdt_star, star_formation_rate, star_formation_rate * age_yr
 
+def compute_qtys_evolving_halos_pk(mvir_f0, mvir_f1, age_f0, age_f1, rvir_f0, rvir_f1, redshift, t_dynamical, rs_f1, mpeak_f1, mpeak_scale_f1,  f1_scale, m_icm_f0, stellar_mass_f0, star_formation_rate_f0 ): 
+	"""
+	update the quantities for evolving halos, present in f0 and f1.
+	
+	inputs 
+	 mvir_f0 : self.f0['/halo_properties/mvir'].value[self.mask_f0_evolving_11_halos]
+	 mvir_f1 : self.f1['/halo_properties/mvir'].value[self.mask_f1_evolving_11_halos]
+	 age_f0 : self.f0.attrs['age_yr'] * n.ones_like(self.f1['/halo_properties/mvir'].value[self.mask_f1_evolving_11_halos])
+	 age_f1 : self.f1.attrs['age_yr'] * n.ones_like(self.f1['/halo_properties/mvir'].value[self.mask_f1_evolving_11_halos])
+	 mvir_f0 : self.f0['/halo_properties/rvir'].value[self.mask_f0_evolving_11_halos]
+	 mvir_f1 : self.f1['/halo_properties/rvir'].value[self.mask_f1_evolving_11_halos]
+	 
+	 redshift : self.f1.attrs['redshift'] * n.ones_like(self.f1['/halo_properties/mvir'].value[self.mask_f1_evolving_11_halos])
+	 t_dynamical : self.t_dynamical[self.mask_f1_evolving_11_halos]
+	 rs_f1 : self.f1['/halo_properties/rs'].value[self.mask_f1_evolving_11_halos]
+	 mpeak_f1 : self.f1['/halo_properties/Mpeak'].value[self.mask_f1_evolving_11_halos]
+	 mpeak_scale_f1 : self.f1['/halo_properties/Mpeak_scale'].value[self.mask_f1_evolving_11_halos]
+	 f1_scale : float(self.f1_scale)
+	 
+	 m_icm_f0 : self.f0['/emerge_data/m_icm'].value[self.mask_f0_evolving_11_halos]
+	 stellar_mass_f0 : self.f0['/emerge_data/stellar_mass'].value[self.mask_f0_evolving_11_halos]
+	 star_formation_rate_f0 : self.f0['/halo_properties/star_formation_rate'].value[self.mask_f0_evolving_11_halos]
+	
+	
+	masks :
+		* mask_f1_evolving_11_halos 
+		* mask_f0_evolving_11_halos
+		
+	subcases :
+		* quenching : (mvir < Mpeak) & (Mpeak_scale < f1_scale)
+		* case 1. ( age >= t_mpeak ) & ( age_yr < t_mpeak  + t_quench)  
+		* case 2. (age_yr >= t_mpeak  + t_quench) 
+		* stripping, case 1 : (dMdt < 0), then all mass goes to ICM, m=0, mdot=0 
+		* stripping, case 2 : after reaching its peak mass, if M < 0.122 * Mpeak, then all mass goes to ICM, m=0, mdot=0
+	"""
+	# computing dMdt for the halo
+	dt = age_f1 - age_f0
+	mvir_dot = (mvir_f1-mvir_f0) / (dt)
+	rvir_dot = (rvir_f1-rvir_f0) / (dt)
+	c = rvir_f1 / rs_f1
+	rho_nfw = mvir_f1 / (rs_f1**3. * 4. * n.pi * c * (1+c)**2. * (n.log(1.+c)-c/(1.+c)))
+	pseudo_evolution_correction = 4. * n.pi * rvir_f1 * rvir_f1 * rvir_dot * rho_nfw
+	dMdt = mvir_dot - pseudo_evolution_correction
+	
+	# initialize the ICM mass to the previous value
+	m_icm = m_icm_f0
+	
+	# Direct estimates of stellar mass and SFR
+	dmdt_star = model.f_b * dMdt * model.epsilon(mvir_f1, redshift)
+	# evaluate accretion: 0 in this first step
+	# dmdt_star_accretion = n.zeros_like(dmdt_star)
+	# evaluate equation (11)
+	f_lost = f_loss(dt)
+	# evaluate stellar mass 
+	star_formation_rate = dmdt_star * (1. - f_lost)  
+	stellar_mass = star_formation_rate * dt + stellar_mass_f0
+	# Variations due to stripping, merging and quenching
+
+	# quenching
+	quenching = (mvir_f1 < mpeak_f1) & (mpeak_scale_f1 < f1_scale)
+	
+	#t_quench = tau_quenching( stellar_mass_f0, t_dynamical )
+	if stellar_mass_f0 < 1e10 :
+		t_quench = t_dynamical * 4.282
+	else :
+		t_quench = t_dynamical * 4.282 * (stellar_mass_f0 * 10.**(-10.))**(0.363)
+	
+	t_mpeak = cosmoMD.age( 1. / mpeak_scale_f1 - 1. ).to(u.yr).value
+	
+	# case 1. mdot = mdot at tpeak
+	quench_1 = (quenching) & (age_f1 >= t_mpeak ) & ( age_f1 < t_mpeak + t_quench) 
+	if len(quench_1.nonzero()[0])>0:
+		star_formation_rate[quench_1] = n.ones_like(star_formation_rate[quench_1])*star_formation_rate_f0[quench_1]
+		stellar_mass[quench_1] = star_formation_rate[quench_1] * dt + stellar_mass_f0[quench_1]
+
+	# case 2. m dot =0
+	quench_2 = (quenching) &(age_f1 >= t_mpeak + t_quench )
+	if len(quench_2.nonzero()[0])>0:
+		self.star_formation_rate[quench_2] = n.zeros_like(self.star_formation_rate[quench_2])
+		self.stellar_mass[quench_2] = stellar_mass_f0[quench_2]
+	
+	# stripping, case 1
+	# negative growth value self.dMdt => 0
+	stripping_1 = (dMdt < 0) 
+	# stripping, case 2
+	# after reaching its peak mass,
+	# if M < 0.122 * Mpeak, all mass goes to ICM, m=0, mdot=0
+	stripping_2 = (mvir_f1 < 0.122*mpeak_f1) & (mpeak_scale_f1 < f1_scale)
+	# both cases together
+	stripping = (stripping_1) | (stripping_1)
+	if len(stripping.nonzero()[0])>0:
+		m_icm[stripping] += stellar_mass_f0[stripping]
+		stellar_mass[stripping] = n.zeros_like(stellar_mass[stripping])
+		star_formation_rate[stripping] = n.zeros_like(star_formation_rate[stripping])
+	
+	return mvir_dot, rvir_dot, dMdt, dmdt_star, star_formation_rate, stellar_mass, m_icm
+
 
 class EmergeIterate():
 	"""
