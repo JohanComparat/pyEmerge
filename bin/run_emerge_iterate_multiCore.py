@@ -1,6 +1,8 @@
 import time
 import EmergeIterate
 from multiprocessing import Pool
+import numpy as n 
+import sys
 iterate = EmergeIterate.EmergeIterate(22, 'MD10')
 iterate.open_snapshots()
 iterate.map_halos_between_snapshots()
@@ -8,8 +10,19 @@ iterate.init_new_quantities()
 
 # computes the new quantitiess
 pool = Pool(processes=12)
-DATA = n.transpose([iterate.f1['/halo_properties/mvir'].value[iterate.mask_f1_new_halos], rvir=iterate.f1['/halo_properties/rvir'].value[iterate.mask_f1_new_halos], iterate.f1.attrs['redshift']*n.ones_like(iterate.f1['/halo_properties/mvir'].value[iterate.mask_f1_new_halos]), iterate.f1.attrs['age_yr']*n.ones_like(iterate.f1['/halo_properties/mvir'].value[iterate.mask_f1_new_halos]) ])
-out = p.starmap(iterate.compute_qtys_new_halos_pk, DATA)
+
+DATA = n.transpose([
+	iterate.f1['/halo_properties/mvir'].value[iterate.mask_f1_new_halos], 
+	iterate.f1['/halo_properties/rvir'].value[iterate.mask_f1_new_halos], 
+	iterate.f1.attrs['redshift']*n.ones_like(iterate.f1['/halo_properties/mvir'].value[iterate.mask_f1_new_halos]), 
+	iterate.f1.attrs['age_yr']*n.ones_like(iterate.f1['/halo_properties/mvir'].value[iterate.mask_f1_new_halos]) 
+	])
+
+out = pool.starmap(iterate.compute_qtys_new_halos_pk, DATA)
+print(out)
+
+sys.exit()
+
 mvir_dot, rvir_dot, dMdt, dmdt_star, star_formation_rate, stellar_mass = out
 
 #, f_b=model.f_b, epsilon = model.epsilon(mvir, redshift * n.ones_like(mvir)), f_lost = f_loss(iterate.f1.attrs['age_yr']))

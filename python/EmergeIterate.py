@@ -35,6 +35,44 @@ def tau_quenching( m_star, tdyn, tau_0=4.282, tau_s=0.363):
 	out[case_2] = tdyn[case_2] * tau_0 * (m_star[case_2] * 10.**(-10.))**(tau_s)
 	return out
 
+def compute_qtys_new_halos_pk(mvir, rvir, redshift, age_yr):
+	"""
+	Creates a new galaxy along with the new halo.
+	Integrates since the start of the Universe.
+	
+	Updates the initiated quantities with the values of interest.
+	
+	:param mvir: list of mvir
+	:param rvir: list of rvir
+	:param age_yr: list of ages in yr
+	
+	Typically inputs should be :
+		* mvir=self.f1['/halo_properties/mvir'].value[self.mask_f1_new_halos], 
+		* rvir=self.f1['/halo_properties/rvir'].value[self.mask_f1_new_halos], 
+		* age_yr=self.f1.attrs['age_yr']
+	
+	returns 
+	mvir_dot, rvir_dot, dMdt, dmdt_star, star_formation_rate, stellar_mass
+	"""
+	f_b=model.f_b
+	epsilon = model.epsilon(mvir, redshift )
+	f_lost = f_loss(age_yr)
+	# evaluate equation (4)
+	mvir_dot = mvir / age_yr
+	# no pseudo evolution correction
+	dMdt = mvir_dot 
+	# evaluate equation (1)
+	dmdt_star = f_b * dMdt * epsilon
+	# evaluate accretion: 0 in this first step
+	# self.dmdt_star_accretion = n.zeros_like(self.dmdt_star)
+	# evaluate equation (11)
+	# equation (12)
+	# evaluate stellar mass 
+	star_formation_rate = dmdt_star * (1. - f_lost)  
+	
+	return mvir_dot, rvir / age_yr, dMdt, dmdt_star, star_formation_rate, star_formation_rate * age_yr
+
+
 class EmergeIterate():
 	"""
 	Loads iterates one step with the Emerge model.
@@ -166,42 +204,6 @@ class EmergeIterate():
 		self.t_dynamical = t_dyn( self.f1['/halo_properties/rvir'].value, self.f1['/halo_properties/mvir'].value )
 
 
-	def compute_qtys_new_halos_pk(self, mvir, rvir, redshift, age_yr):
-		"""
-		Creates a new galaxy along with the new halo.
-		Integrates since the start of the Universe.
-		
-		Updates the initiated quantities with the values of interest.
-		
-		:param mvir: list of mvir
-		:param rvir: list of rvir
-		:param age_yr: list of ages in yr
-		
-		Typically inputs should be :
-		 * mvir=self.f1['/halo_properties/mvir'].value[self.mask_f1_new_halos], 
-		 * rvir=self.f1['/halo_properties/rvir'].value[self.mask_f1_new_halos], 
-		 * age_yr=self.f1.attrs['age_yr']
-		
-		returns 
-		mvir_dot, rvir_dot, dMdt, dmdt_star, star_formation_rate, stellar_mass
-		"""
-		f_b=model.f_b
-		epsilon = model.epsilon(mvir, redshift )
-		f_lost = f_loss(age_yr)
-		# evaluate equation (4)
-		mvir_dot = mvir / age_yr
-		# no pseudo evolution correction
-		dMdt = mvir_dot 
-		# evaluate equation (1)
-		dmdt_star = f_b * dMdt * epsilon
-		# evaluate accretion: 0 in this first step
-		# self.dmdt_star_accretion = n.zeros_like(self.dmdt_star)
-		# evaluate equation (11)
-		# equation (12)
-		# evaluate stellar mass 
-		star_formation_rate = dmdt_star * (1. - f_lost)  
-		
-		return mvir_dot, rvir / age_yr, dMdt, dmdt_star, star_formation_rate, star_formation_rate * age_yr
 		
 	def compute_qtys_new_halos(self):
 		"""
