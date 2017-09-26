@@ -46,11 +46,11 @@ def read_data(ii, L_box = 400., env= 'MD04'):
 	 - the h5 file: f1
 	 - the coordinates to be mapped: x, y, z
 	"""
-h5_dir = os.path.join(os.environ[env], 'h5' )
-input_list = n.array(glob.glob(os.path.join(h5_dir, "hlist_?.?????_emerge.hdf5")))
-input_list.sort()
-file_1 = input_list[ii]
-f1 = h5py.File(file_1,  "r+")
+	h5_dir = os.path.join(os.environ[env], 'h5' )
+	input_list = n.array(glob.glob(os.path.join(h5_dir, "hlist_?.?????_emerge.hdf5")))
+	input_list.sort()
+	file_1 = input_list[ii]
+	f1 = h5py.File(file_1,  "r+")
 	print( "n halos=",f1['/halo_properties/'].attrs['N_halos'])
 	return f1, f1['/halo_position/x'].value/L_box, f1['/halo_position/y'].value/L_box, f1['/halo_position/z'].value/L_box
 

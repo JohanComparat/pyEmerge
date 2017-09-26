@@ -165,6 +165,44 @@ class EmergeIterate():
 		self.m_icm =                     n.zeros_like(self.f1['/halo_properties/mvir'].value)
 		self.t_dynamical = t_dyn( self.f1['/halo_properties/rvir'].value, self.f1['/halo_properties/mvir'].value )
 
+
+	def compute_qtys_new_halos_pk(self, mvir, rvir, redshift, age_yr):
+		"""
+		Creates a new galaxy along with the new halo.
+		Integrates since the start of the Universe.
+		
+		Updates the initiated quantities with the values of interest.
+		
+		:param mvir: list of mvir
+		:param rvir: list of rvir
+		:param age_yr: list of ages in yr
+		
+		Typically inputs should be :
+		 * mvir=self.f1['/halo_properties/mvir'].value[self.mask_f1_new_halos], 
+		 * rvir=self.f1['/halo_properties/rvir'].value[self.mask_f1_new_halos], 
+		 * age_yr=self.f1.attrs['age_yr']
+		
+		returns 
+		mvir_dot, rvir_dot, dMdt, dmdt_star, star_formation_rate, stellar_mass
+		"""
+		f_b=model.f_b
+		epsilon = model.epsilon(mvir, redshift )
+		f_lost = f_loss(age_yr)
+		# evaluate equation (4)
+		mvir_dot = mvir / age_yr
+		# no pseudo evolution correction
+		dMdt = mvir_dot 
+		# evaluate equation (1)
+		dmdt_star = f_b * dMdt * epsilon
+		# evaluate accretion: 0 in this first step
+		# self.dmdt_star_accretion = n.zeros_like(self.dmdt_star)
+		# evaluate equation (11)
+		# equation (12)
+		# evaluate stellar mass 
+		star_formation_rate = dmdt_star * (1. - f_lost)  
+		
+		return mvir_dot, rvir / age_yr, dMdt, dmdt_star, star_formation_rate, star_formation_rate * age_yr
+		
 	def compute_qtys_new_halos(self):
 		"""
 		Creates a new galaxy along with the new halo.
@@ -399,13 +437,31 @@ class EmergeIterate():
 
 """
 if __name__ == '__main__':
+	import EmergeIterate
 	iterate = EmergeIterate.EmergeIterate(22, 'MD10')
 	iterate.open_snapshots()
 	iterate.map_halos_between_snapshots()
 	iterate.init_new_quantities()
 	
 	if len((iterate.mask_f1_new_halos).nonzero()[0]) > 0 :
-		iterate.compute_qtys_new_halos()
+		# computes the new quantitiess
+		pool = Pool(processes=12)
+		DATA = n.transpose([iterate.f1['/halo_properties/mvir'].value[iterate.mask_f1_new_halos], rvir=iterate.f1['/halo_properties/rvir'].value[iterate.mask_f1_new_halos], iterate.f1.attrs['redshift']*n.ones_like(iterate.f1['/halo_properties/mvir'].value[iterate.mask_f1_new_halos]), iterate.f1.attrs['age_yr']*n.ones_like(iterate.f1['/halo_properties/mvir'].value[iterate.mask_f1_new_halos]) ])
+		out = p.starmap(iterate.compute_qtys_new_halos_pk, DATA)
+		mvir_dot, rvir_dot, dMdt, dmdt_star, star_formation_rate, stellar_mass = out
+		
+		#, f_b=model.f_b, epsilon = model.epsilon(mvir, redshift * n.ones_like(mvir)), f_lost = f_loss(iterate.f1.attrs['age_yr']))
+		# updates the initiated array with the results
+		iterate.mvir_dot[iterate.mask_f1_new_halos]   			=  mvir_dot
+		iterate.rvir_dot[iterate.mask_f1_new_halos]   			=  rvir_dot
+		iterate.dMdt[iterate.mask_f1_new_halos]   				=  dMdt
+		iterate.dmdt_star[iterate.mask_f1_new_halos]  			=  dmdt_star
+		iterate.star_formation_rate[iterate.mask_f1_new_halos]	=  star_formation_rate
+		iterate.stellar_mass[iterate.mask_f1_new_halos]   		=  stellar_mass
+		
+		
+		#iterate.compute_qtys_new_halos()
+		
 	if len((iterate.mask_f0_evolving_11_halos).nonzero()[0]) > 0 :
 		iterate.compute_qtys_evolving_halos() 
 	if len(iterate.mask_f1_in_a_merging.nonzero()[0]) > 0 :
