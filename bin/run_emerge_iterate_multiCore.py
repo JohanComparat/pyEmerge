@@ -2,6 +2,8 @@ import time
 t0 = time.time()
 import sys
 
+initialize=True
+
 sim_dir = sys.argv[1]
 snap_id = int(sys.argv[2])
 # python3 run_emerge_iterate_multiCore.py MD10 22
@@ -18,8 +20,12 @@ pool = Pool(n_proc)
 
 iterate = EmergeIterate.EmergeIterate(snap_id, sim_dir)
 iterate.open_snapshots()
-#iterate.map_halos_between_snapshots()
-iterate.init_new_quantities()
+
+if initialize :
+	iterate.init_new_quantities()
+	iterate.write_results()
+	sys.exit()
+
 #################################################3
 #################################################3
 #################################################3
@@ -205,5 +211,7 @@ if len(merger_ids) > 0 :
 
 print('total time ',time.time()-t0,'seconds, total time/ n proc=',(time.time()-t0)/n_proc)
 
-#iterate.write_results()
+iterate.update_results()
+iterate.f0.close()
+iterate.f1.close()
 

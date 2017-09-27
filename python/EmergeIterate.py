@@ -321,16 +321,63 @@ class EmergeIterate():
 		
 		Along with the iteration, these quantities will be updated accordingly
 		"""
-		self.mvir_dot   =                n.zeros_like(self.f1['/halo_properties/mvir'].value)
-		self.rvir_dot   =                n.zeros_like(self.f1['/halo_properties/mvir'].value)
-		self.dMdt   =                    n.zeros_like(self.f1['/halo_properties/mvir'].value)
-		self.dmdt_star   =               n.zeros_like(self.f1['/halo_properties/mvir'].value)
-		self.dmdt_star_accretion   =     n.zeros_like(self.f1['/halo_properties/mvir'].value)
-		self.stellar_mass   =            n.zeros_like(self.f1['/halo_properties/mvir'].value)
-		self.star_formation_rate   =     n.zeros_like(self.f1['/halo_properties/mvir'].value)
-		self.m_icm =                     n.zeros_like(self.f1['/halo_properties/mvir'].value)
+		self.mvir_dot   =  n.zeros_like(self.f1['/halo_properties/mvir'].value)
+		self.rvir_dot   =  n.zeros_like(self.f1['/halo_properties/mvir'].value)
+		self.dMdt       =  n.zeros_like(self.f1['/halo_properties/mvir'].value)
+		self.dmdt_star  =  n.zeros_like(self.f1['/halo_properties/mvir'].value)
+		self.dmdt_star_accretion=n.zeros_like(self.f1['/halo_properties/mvir'].value)
+		self.stellar_mass = n.zeros_like(self.f1['/halo_properties/mvir'].value)
+		self.star_formation_rate = n.zeros_like(self.f1['/halo_properties/mvir'].value)
+		self.m_icm = n.zeros_like(self.f1['/halo_properties/mvir'].value)
 		self.t_dynamical = t_dyn( self.f1['/halo_properties/rvir'].value, self.f1['/halo_properties/mvir'].value )
-		
+
+	def write_results(self):
+		"""
+		After computing all quantities, you need to write the results in the h5 file.
+		"""
+		emerge_data = self.f1.create_group('emerge_data')
+
+		#emerge_data.attrs['f_lost'] = f_lost
+
+		ds = emerge_data.create_dataset('mvir_dot', data = self.mvir_dot )
+		ds.attrs['units'] = r'$h^{-1} M_\odot / yr$'
+		ds.attrs['long_name'] = r'$d M_{vir} / dt$' 
+
+		ds = emerge_data.create_dataset('rvir_dot', data = self.rvir_dot )
+		ds.attrs['units'] = r'$h^{-1} kpc / yr$'
+		ds.attrs['long_name'] = r'$d r_{vir} / dt$' 
+
+		ds = emerge_data.create_dataset('dMdt', data = self.dMdt )
+		ds.attrs['units'] = r'$h^{-1} M_\odot / yr$'
+		ds.attrs['long_name'] = r'$\langle d M / dt \rangle$ (4)' 
+
+		ds = emerge_data.create_dataset('dmdt_star', data = self.dmdt_star )
+		ds.attrs['units'] = r'$h^{-1} M_\odot / yr$'
+		ds.attrs['long_name'] = r'$ d m_* / dt $ (1)' 
+
+		ds = emerge_data.create_dataset('dmdt_star_accretion', data = 
+		self.dmdt_star_accretion )
+		ds.attrs['units'] = r'$h^{-1} M_\odot / yr$'
+		ds.attrs['long_name'] = r'$ d m_{acc} / dt $ ' 
+
+		ds = emerge_data.create_dataset('star_formation_rate', data = 
+		self.star_formation_rate )
+		ds.attrs['units'] = r'$h^{-1} M_\odot / yr$'
+		ds.attrs['long_name'] = r'$ d m / dt $ ' 
+
+		ds = emerge_data.create_dataset('stellar_mass', data = self.stellar_mass )
+		ds.attrs['units'] = r'$h^{-1} M_\odot $'
+		ds.attrs['long_name'] = r'$ m_* $ (11)' 
+
+		ds = emerge_data.create_dataset('m_icm', data = self.m_icm )
+		ds.attrs['units'] = r'$h^{-1} M_\odot $'
+		ds.attrs['long_name'] = r'$ m_{ICM}$ ' 
+
+		self.f0.close()
+		self.f1.close()
+
+		print("Results written")
+
 	def compute_qtys_new_halos(self):
 		"""
 		Creates a new galaxy along with the new halo.
@@ -515,52 +562,26 @@ class EmergeIterate():
 		self.out3 = pool.map(self.merging_set_of_system, self.f1['/halo_properties/id'].value[ self.mask_f1_in_a_merging ])
 		#self.out3 = p.starmap(self.merging_set_of_system, self.f1['/halo_properties/id'].value[ self.mask_f1_in_a_merging ])
 		
-	def write_results(self):
+
+	def update_results(self):
 		"""
-		After computing all quantities, you need to write the results in the h5 file.
+		After computing new quantities, you need to update the results in the h5 file.
 		"""
 		emerge_data = self.f1.create_group('emerge_data')
 
 		#emerge_data.attrs['f_lost'] = f_lost
 
-		ds = emerge_data.create_dataset('mvir_dot', data = self.mvir_dot )
-		ds.attrs['units'] = r'$h^{-1} M_\odot / yr$'
-		ds.attrs['long_name'] = r'$d M_{vir} / dt$' 
-
-		ds = emerge_data.create_dataset('rvir_dot', data = self.rvir_dot )
-		ds.attrs['units'] = r'$h^{-1} kpc / yr$'
-		ds.attrs['long_name'] = r'$d r_{vir} / dt$' 
-
-		ds = emerge_data.create_dataset('dMdt', data = self.dMdt )
-		ds.attrs['units'] = r'$h^{-1} M_\odot / yr$'
-		ds.attrs['long_name'] = r'$\langle d M / dt \rangle$ (4)' 
-
-		ds = emerge_data.create_dataset('dmdt_star', data = self.dmdt_star )
-		ds.attrs['units'] = r'$h^{-1} M_\odot / yr$'
-		ds.attrs['long_name'] = r'$ d m_* / dt $ (1)' 
-
-		ds = emerge_data.create_dataset('dmdt_star_accretion', data = 
-		self.dmdt_star_accretion )
-		ds.attrs['units'] = r'$h^{-1} M_\odot / yr$'
-		ds.attrs['long_name'] = r'$ d m_{acc} / dt $ ' 
-
-		ds = emerge_data.create_dataset('star_formation_rate', data = 
-		self.star_formation_rate )
-		ds.attrs['units'] = r'$h^{-1} M_\odot / yr$'
-		ds.attrs['long_name'] = r'$ d m / dt $ ' 
-
-		ds = emerge_data.create_dataset('stellar_mass', data = self.stellar_mass )
-		ds.attrs['units'] = r'$h^{-1} M_\odot $'
-		ds.attrs['long_name'] = r'$ m_* $ (11)' 
-
-		ds = emerge_data.create_dataset('m_icm', data = self.m_icm )
-		ds.attrs['units'] = r'$h^{-1} M_\odot $'
-		ds.attrs['long_name'] = r'$ m_{ICM}$ ' 
-
+		self.f1['/emerge_data/mvir_dot'] = self.mvir_dot 
+		self.f1['/emerge_data/rvir_dot'] = self.rvir_dot 
+		self.f1['/emerge_data/dMdt'] = self.dMdt 
+		self.f1['/emerge_data/dmdt_star'] = self.dmdt_star 
+		self.f1['/emerge_data/dmdt_star_accretion'] = self.dmdt_star_accretion 
+		self.f1['/emerge_data/star_formation_rate'] = self.star_formation_rate 
+		self.f1['/emerge_data/stellar_mass'] = self.stellar_mass 
+		self.f1['/emerge_data/m_icm'] = self.m_icm 
+		print("Results updated")
 		self.f0.close()
 		self.f1.close()
-
-		print("Results written")
 
 
 """
