@@ -169,48 +169,6 @@ def compute_qtys_evolving_halos_pk(mvir_f0, mvir_f1, age_f0, age_f1, rvir_f0, rv
 	
 	return mvir_dot, rvir_dot, dMdt, dmdt_star, star_formation_rate, stellar_mass, m_icm
 
-def get_position_merger_players_pk(merger_id, ids_f1, ids_f0, desc_id_f0, positions_f1, positions_f0):
-	"""
-	inputs 
-	 merger_id : single id
-	 whole lists : 
-	 
-	 mergerid : single value
-	 ids_f1 : self.f1['/halo_properties/id'].value[self.mask_f1_in_a_merging]
-	 positions_f1 : self.positions_f1[self.mask_f1_in_a_merging]
-	 
-	 positions_f0 : self.positions_f0[self.mask_f0_in_a_merging]
-	 ids_f0 : self.f0['/halo_properties/desc_id'].value[self.mask_f0_in_a_merging]
-	 desc_id_f0 : self.f0['/halo_properties/id'].value[self.mask_f0_in_a_merging]
-	 Future_merger_MMP_ID_f0 : self.f0['/halo_properties/Future_merger_MMP_ID'].value[self.mask_f0_in_a_merging]
-	
-	Given the identifier of the merger
-	:param merger_id: id of the parent halo of the merger at the later time. One integer.
-	
-	Outputs the position on the f0 and f1 arrays of the hosts and of the merging systems
-	
-	returns :
-		position_f1_host [int], position_f0_host [int], position_f0_merging [list]
-	"""
-	# about the host at t1
-	#print(merger_id)
-	mask_f1_host = (ids_f1 == merger_id)
-	#print(mask_f1_host)
-	position_f1_host = positions_f1[mask_f1_host]
-	#print(position_f1_host)
-	# about the host and merging subhalos at t0
-	mask_f0_all = (desc_id_f0 == merger_id)
-	#print(mask_f0_all)
-	id_f0_all = ids_f0[mask_f0_all]
-	#print(id_f0_all)
-	# the host at t1 is flagged at t0 as the most massive progenitor
-	f0_host_id = id_f0_all[n.in1d(id_f0_all, n.unique(Future_merger_MMP_ID_f0[mask_f0_all]))][0] 
-	mask_f0_host = (mask_f0_all) & (ids_f0 == f0_host_id)
-	mask_f0_merging = (mask_f0_all) & (ids_f0 != f0_host_id)
-	position_f0_host    = positions_f0[mask_f0_host]
-	position_f0_merging = positions_f0[mask_f0_merging]
-	return position_f1_host, position_f0_host, position_f0_merging
-
 def merge_system(mvir_f0, mvir_f1, age_f0, age_f1, rvir_f0, rvir_f1, redshift, t_dynamical, rs_f1, mpeak_f1, mpeak_scale_f1,  f1_scale, m_icm_f0, stellar_mass_f0, star_formation_rate_f0, sum_stellar_mass_guests):
 	"""
 	given f1_host, f0_host and f0 guests, 
@@ -241,71 +199,7 @@ def merge_system(mvir_f0, mvir_f1, age_f0, age_f1, rvir_f0, rvir_f1, redshift, t
 	# merging the sub systems, i.e. adding stellar mass
 	stellar_mass += (1.-0.388)*sum_stellar_mass_guests
 	m_icm += 0.388*sum_stellar_mass_guests
-	return mvir_dot, rvir_dot, dMdt, dmdt_star, dmdt_star_accretion, stellar_mass, star_formation_rate, m_icm
-
-def merging_single_system(merger_id, ids_f1, ids_f0, desc_id_f0, positions_f1, positions_f0):
-	"""
-	inputs :
-	
-	self.mask_f1_in_a_merging = n.in1d( self.f1['/halo_properties/id'].value,  self.f1_id_with_multiple_progenitors )
-	self.mask_f0_in_a_merging = n.in1d( self.f0['/halo_properties/desc_id'].value,  self.f1_id_with_multiple_progenitors )
-
-	 In f1 single values, in f0, array of values
-	
-	 mergerid : single value
-	 ids_f1 : self.f1['/halo_properties/id'].value[self.mask_f1_in_a_merging]
-	 positions_f1 : self.positions_f1[self.mask_f1_in_a_merging]
-	 
-	 positions_f0 : self.positions_f0[self.mask_f0_in_a_merging]
-	 ids_f0 : self.f0['/halo_properties/desc_id'].value[self.mask_f0_in_a_merging]
-	 desc_id_f0 : self.f0['/halo_properties/id'].value[self.mask_f0_in_a_merging]
-	 Future_merger_MMP_ID_f0 : self.f0['/halo_properties/Future_merger_MMP_ID'].value[self.mask_f0_in_a_merging]
-	
-	:param merger_id: id of the parent halo of the merger at the later time. One integer.		
-	
-	Merging goes as follows. Assume escape fraction: f_esc = 0.388, then 
-		* m_star_satellite x f_esc     goes to m_host_ICM
-		* m_star_satellite x (1-f_esc) goes to m_star_host
-	
-	returns :
-		parameters of the emerge model of the galaxies undergoing merger at this point.
-		[ mvir_dot, rvir_dot, dMdt, dmdt_star, dmdt_star_accretion, stellar_mass, star_formation_rate, m_icm ]
-	
-	"""
-	position_f1_host, position_f0_host, position_f0_merging = get_position_merger_players(merger_id, ids_f1, ids_f0, desc_id_f0, positions_f1, positions_f0)
-	
-	mvir_dot = (self.f1['/halo_properties/mvir'].value[position_f1_host]-self.f0['/halo_properties/mvir'].value[position_f0_host]) / (self.f1.attrs['age_yr'] - self.f0.attrs['age_yr'])
-	rvir_dot = (self.f1['/halo_properties/rvir'].value[position_f1_host]-self.f0['/halo_properties/rvir'].value[position_f0_host]) / (self.f1.attrs['age_yr'] - self.f0.attrs['age_yr'])
-	c = self.f1['/halo_properties/rvir'].value[position_f1_host] / self.f1['/halo_properties/rs'].value[position_f1_host]
-	rho_nfw = self.f1['/halo_properties/mvir'].value[position_f1_host] / (self.f1['/halo_properties/rs'].value[position_f1_host]**3. * 4. * n.pi * c * (1+c)**2. * (n.log(1.+c)-c/(1.+c)))
-	pseudo_evolution_correction = 4.*n.pi*self.f1['/halo_properties/rvir'].value[position_f1_host] *self.f1['/halo_properties/rvir'].value[position_f1_host] * rvir_dot * rho_nfw
-	dMdt = mvir_dot - pseudo_evolution_correction
-	
-	# initialize the ICM mass to the previous value
-	m_icm = self.f0['/emerge_data/m_icm'].value[position_f0_host]
-	# Direct estimates of stellar mass and SFR
-	dmdt_star = model.f_b * dMdt * model.epsilon(self.f1['/halo_properties/mvir'].value[position_f1_host], self.f1.attrs['redshift'] * n.ones_like(self.f1['/halo_properties/mvir'].value[position_f1_host]))
-	# evaluate accretion: 0 in this first step
-	dmdt_star_accretion = n.zeros_like(dmdt_star)
-	# evaluate equation (11)
-	f_lost = f_loss(self.f1.attrs['age_yr']-self.f0.attrs['age_yr'])
-	# evaluate stellar mass 
-	star_formation_rate = dmdt_star * (1. - f_lost) + dmdt_star_accretion 
-	stellar_mass = star_formation_rate * (self.f1.attrs['age_yr']-self.f0.attrs['age_yr']) + self.f0['/emerge_data/stellar_mass'].value[position_f0_host]
-	# merging
-	# m_star_sat x f_esc => m_host_ICM
-	# m_star_sat x (1-f_esc) => m_star_host
-	# f_esc = 0.388
-	#Time_to_future_merger: Time (in Gyr) until the given halo merges into a larger halo.  (-1 if no future merger happens)
-	#Future_merger_MMP_ID: most-massive progenitor of the halo into which the given halo merges. (-1 if the main progenitor of the future merger halo does not exist at the given scale factor.)
-
-	stellar_mass += (1.-0.388)*n.sum(self.f0['/emerge_data/stellar_mass'].value[position_f0_merging])
-	m_icm += 0.388*n.sum(self.f0['/emerge_data/stellar_mass'].value[position_f0_merging])
-
-	return mvir_dot, rvir_dot, dMdt, dmdt_star, dmdt_star_accretion, stellar_mass, star_formation_rate, m_icm
-
-
-
+	return mvir_dot, rvir_dot, dMdt, dmdt_star, stellar_mass, star_formation_rate, m_icm
 
 class EmergeIterate():
 	"""

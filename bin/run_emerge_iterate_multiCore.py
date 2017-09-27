@@ -2,6 +2,7 @@ import time
 t0 = time.time()
 import numpy as n 
 import sys
+import pandas as pd
 
 import EmergeIterate
 
@@ -56,10 +57,10 @@ print('elapsed time', t2-t1)
 #################################################3
 #################################################3
 
-f1_evolved_halos = (new_halos==False)
+f1_evolved_halos = (f1_new_halos==False)
 
 f0_propagated_halos = n.in1d(iterate.f0['/halo_properties/desc_id'].value, iterate.f1['/halo_properties/id'].value)
-f0_lost_halos = (propagated_halos==False)
+f0_lost_halos = (f0_propagated_halos==False)
 
 print('f0 lost halos', len(iterate.f0['/halo_properties/desc_id'].value[f0_lost_halos]))
 print('f0 propagated halos', len(iterate.f0['/halo_properties/desc_id'].value[f0_propagated_halos]))
@@ -92,8 +93,9 @@ print("not merging halos in f0 and f1",len(f0_not_merging.nonzero()[0]), len(f1_
 
 t3=time.time()
 print('elapsed time', t3-t2)
+print('---------------------------------')
 
-if len((iterate.f0_not_merging).nonzero()[0]) > 0 :
+if len((f0_not_merging).nonzero()[0]) > 0 :
 	uns = n.ones_like(iterate.f1['/halo_properties/mvir'].value[f1_evolved_halos_no_merger])
 	DATA = n.transpose([
 	iterate.f0['/halo_properties/mvir'].value[f0_not_merging]
@@ -137,7 +139,7 @@ if len((iterate.f0_not_merging).nonzero()[0]) > 0 :
 # 34 => 17
 merger_ids = iterate.f1['/halo_properties/id'].value[f1_evolved_halos_with_merger]
 
-if len(iterate.merger_ids) > 0 :
+if len(merger_ids) > 0 :
 	positions_f0 = n.arange(len(iterate.f0['/halo_properties/desc_id'].value[f0_in_a_merging]))
 	sum_stellar_mass_guests=[] #n.zeros_like(merger_ids)
 	positions_hosts=[]
@@ -189,7 +191,9 @@ if len(iterate.merger_ids) > 0 :
 
 t5=time.time()
 print('elapsed time merger', t5-t4)
+print('---------------------------------')
 
 print('total time ',time.time()-t0,'seconds, total time/ n proc=',(time.time()-t0)/n_proc)
 
+#iterate.write_results()
 
