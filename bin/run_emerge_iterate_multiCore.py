@@ -16,8 +16,10 @@ t0=time.time()
 n_proc=12
 pool = Pool(n_proc)
 
+# start the emerge method
 iterate = EmergeIterate.EmergeIterate(snap_id, sim_dir)
 iterate.open_snapshots()
+iterate.init_new_quantities()
 
 # options
 run_new_halos = True
