@@ -8,7 +8,7 @@ import EmergeIterate
 
 from multiprocessing import Pool
 t0=time.time()
-n_proc=2
+n_proc=12
 pool = Pool(n_proc)
 
 iterate = EmergeIterate.EmergeIterate(22, 'MD10')
@@ -28,7 +28,8 @@ f1_new_halos = (n.in1d(iterate.f1['/halo_properties/id'].value, iterate.f0['/hal
 # new halos [f1_new_halos] to be fed to EmergeIterate.compute_qtys_new_halos_pk
 print('f1 new halos', len(iterate.f1['/halo_properties/desc_id'].value[f1_new_halos]))
 t1=time.time()
-print('elapsed time', t1-t0)
+print('elapsed time', t1-t0, 'seconds')
+print('---------------------------------')
 print('computing galaxies in new halos')
 if len((f1_new_halos).nonzero()[0]) > 0 :
 	DATA = n.transpose([
@@ -48,7 +49,8 @@ if len((f1_new_halos).nonzero()[0]) > 0 :
 	iterate.stellar_mass[f1_new_halos]   		=  stellar_mass
 
 t2=time.time()
-print('elapsed time', t2-t1)
+print('elapsed time', t2-t1, 'seconds')
+print('---------------------------------')
 #################################################3
 #################################################3
 #################################################3
@@ -56,17 +58,11 @@ print('elapsed time', t2-t1)
 #################################################3
 #################################################3
 #################################################3
-
+print('evolving halos 1:1')
 f1_evolved_halos = (f1_new_halos==False)
 
 f0_propagated_halos = n.in1d(iterate.f0['/halo_properties/desc_id'].value, iterate.f1['/halo_properties/id'].value)
 f0_lost_halos = (f0_propagated_halos==False)
-
-print('f0 lost halos', len(iterate.f0['/halo_properties/desc_id'].value[f0_lost_halos]))
-print('f0 propagated halos', len(iterate.f0['/halo_properties/desc_id'].value[f0_propagated_halos]))
-
-print('f1 evolved halos', len(iterate.f1['/halo_properties/id'].value[f1_evolved_halos]))
-
 
 # parmi f0_propagated_halos
 # cherchez les desc_id qui apparaissent plusieurs fois
@@ -76,8 +72,13 @@ f0_with_desc_id_duplicates = n.in1d( iterate.f0['/halo_properties/desc_id'].valu
 f0_in_a_merging = f0_with_desc_id_duplicates & f0_propagated_halos
 f0_not_merging = (f0_with_desc_id_duplicates == False) & f0_propagated_halos
 
-print('merging halos', len(iterate.f0['/halo_properties/id'].value[f0_in_a_merging]))
-print('not merging halos', len(iterate.f0['/halo_properties/id'].value[f0_not_merging]))
+print('f0 lost halos', len(iterate.f0['/halo_properties/desc_id'].value[f0_lost_halos]))
+print('f0 propagated halos', len(iterate.f0['/halo_properties/desc_id'].value[f0_propagated_halos]))
+print('f0 merging halos', len(iterate.f0['/halo_properties/id'].value[f0_in_a_merging]))
+print('f0 not merging halos', len(iterate.f0['/halo_properties/id'].value[f0_not_merging]))
+
+print('f1 halos with progenitor', len(iterate.f1['/halo_properties/id'].value[f1_evolved_halos]))
+
 
 # mapper les 12964 sur les 12981 avec selection tel que
 # iterate.f1['/halo_properties/id'].value[f1_evolved_halos & selection] = iterate.f0['/halo_properties/desc_id'].value[f0_not_merging]
@@ -89,10 +90,10 @@ f1_evolved_halos_with_merger = (f1_evolved_halos) & (mask_f1_in_a_merging)
 
 # evolving halos to be fed to EmergeIterate.compute_qtys_evolving_halos_pk
 # 1:1 with f0_not_merging <=> f1_evolved_halos_no_merger
-print("not merging halos in f0 and f1",len(f0_not_merging.nonzero()[0]), len(f1_evolved_halos_no_merger.nonzero()[0]))
+print("f0 and f1 connected halos without merger",len(f0_not_merging.nonzero()[0]), len(f1_evolved_halos_no_merger.nonzero()[0]))
 
 t3=time.time()
-print('elapsed time', t3-t2)
+print('elapsed time', t3-t2,'seconds')
 print('---------------------------------')
 
 if len((f0_not_merging).nonzero()[0]) > 0 :
@@ -124,7 +125,10 @@ if len((f0_not_merging).nonzero()[0]) > 0 :
 	iterate.star_formation_rate[f1_evolved_halos_no_merger]  = star_formation_rate
 	iterate.stellar_mass[f1_evolved_halos_no_merger]         = stellar_mass
 	iterate.m_icm[f1_evolved_halos_no_merger]                = m_icm
-	
+
+t4=time.time()
+print('elapsed time', t4-t3,'seconds to evolve 1:1 halos')
+print('---------------------------------')
 
 #################################################3
 #################################################3
@@ -155,8 +159,9 @@ if len(merger_ids) > 0 :
 	sum_stellar_mass_guests = n.array(sum_stellar_mass_guests)
 
 
-	t4=time.time()
-	print('elapsed time getting merging masses', t4-t3)
+	t5=time.time()
+	print('elapsed time', t5-t4, 'seconds getting merging masses')
+	print('---------------------------------')
 
 	uns = n.ones_like(iterate.f1['/halo_properties/mvir'].value[f1_evolved_halos_with_merger])
 	DATA = n.transpose([
@@ -189,9 +194,9 @@ if len(merger_ids) > 0 :
 	iterate.m_icm[f1_evolved_halos_with_merger]                = m_icm
 
 
-t5=time.time()
-print('elapsed time merger', t5-t4)
-print('---------------------------------')
+	t6=time.time()
+	print('elapsed time merger', t6-t5, 'seconds to do the mergers')
+	print('---------------------------------')
 
 print('total time ',time.time()-t0,'seconds, total time/ n proc=',(time.time()-t0)/n_proc)
 
