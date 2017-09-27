@@ -561,23 +561,6 @@ class EmergeIterate():
 		pool = Pool(processes=12)
 		self.out3 = pool.map(self.merging_set_of_system, self.f1['/halo_properties/id'].value[ self.mask_f1_in_a_merging ])
 		#self.out3 = p.starmap(self.merging_set_of_system, self.f1['/halo_properties/id'].value[ self.mask_f1_in_a_merging ])
-		
-
-	def update_results(self):
-		"""
-		After computing new quantities, you need to update the results in the h5 file.
-		"""
-		self.f1['/emerge_data/mvir_dot'] = self.mvir_dot 
-		self.f1['/emerge_data/rvir_dot'] = self.rvir_dot 
-		self.f1['/emerge_data/dMdt'] = self.dMdt 
-		self.f1['/emerge_data/dmdt_star'] = self.dmdt_star 
-		self.f1['/emerge_data/dmdt_star_accretion'] = self.dmdt_star_accretion 
-		self.f1['/emerge_data/star_formation_rate'] = self.star_formation_rate 
-		self.f1['/emerge_data/stellar_mass'] = self.stellar_mass 
-		self.f1['/emerge_data/m_icm'] = self.m_icm 
-		print("Results updated")
-		#self.f0.close()
-		#self.f1.close()
 
 
 """
