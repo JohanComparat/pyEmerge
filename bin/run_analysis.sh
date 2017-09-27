@@ -52,9 +52,23 @@ convert-2-h5.py
 # it writes files here :
 ls -lh /ptmp/joco/MD/MD_1.0Gpc/h5/hlist_?.?????_emerge.hdf5
 
+# initialize the emerge columns in the files 
+sh h5_init_emerge_data_with_0s_run_md04.sh  
+sh h5_init_emerge_data_with_0s_run_md10.sh
+# using the script
+h5_init_emerge_data_with_0s.py  
+
+
 # add the emerge information: star formation rate, stellar mass and icm mass.
-python emerge_init.py # first snapshot
-# all following snapshots
+python emerge_init.py # first snapshot for each simulation
+# all following snapshots on ds52 this way :
+sh run_emerge_iterate_multiCore_run_md04.sh  
+sh run_emerge_iterate_multiCore_run_md10.sh
+# using this script
+run_emerge_iterate_multiCore.py
+
+# alternate implementation that does note really work fine
+# all following snapshots on hydra this way :
 python generate_and_submit_emerge_iterate.py
 cd /u/joco/batch_emerge
 llsubmit emerge_iterate_batch.sh
