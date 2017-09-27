@@ -147,14 +147,14 @@ if run_evolving_halos:
 		#iterate.stellar_mass[f1_evolved_halos_no_merger]         = stellar_mass
 		#iterate.m_icm[f1_evolved_halos_no_merger]                = m_icm
 		
-		iterate.f1['/emerge_data/mvir_dot'][f1_new_halos] = mvir_dot 
-		iterate.f1['/emerge_data/rvir_dot'][f1_new_halos] = rvir_dot 
-		iterate.f1['/emerge_data/dMdt'][f1_new_halos] = dMdt 
-		iterate.f1['/emerge_data/dmdt_star'][f1_new_halos] = dmdt_star 
-		#iterate.f1['/emerge_data/dmdt_star_accretion'][f1_new_halos] = dmdt_star_accretion 
-		iterate.f1['/emerge_data/star_formation_rate'][f1_new_halos] = star_formation_rate 
-		iterate.f1['/emerge_data/stellar_mass'][f1_new_halos] = stellar_mass 
-		iterate.f1['/emerge_data/m_icm'][f1_new_halos] = m_icm 
+		iterate.f1['/emerge_data/mvir_dot'][f1_evolved_halos_no_merger] = mvir_dot 
+		iterate.f1['/emerge_data/rvir_dot'][f1_evolved_halos_no_merger] = rvir_dot 
+		iterate.f1['/emerge_data/dMdt'][f1_evolved_halos_no_merger] = dMdt 
+		iterate.f1['/emerge_data/dmdt_star'][f1_evolved_halos_no_merger] = dmdt_star 
+		#iterate.f1['/emerge_data/dmdt_star_accretion'][f1_evolved_halos_no_merger] = dmdt_star_accretion 
+		iterate.f1['/emerge_data/star_formation_rate'][f1_evolved_halos_no_merger] = star_formation_rate 
+		iterate.f1['/emerge_data/stellar_mass'][f1_evolved_halos_no_merger] = stellar_mass 
+		iterate.f1['/emerge_data/m_icm'][f1_evolved_halos_no_merger] = m_icm 
 		print("Results updated")
 
 
@@ -222,14 +222,14 @@ if run_merging_halos:
 		iterate.stellar_mass[f1_evolved_halos_with_merger]         = stellar_mass
 		iterate.m_icm[f1_evolved_halos_with_merger]                = m_icm
 		
-		iterate.f1['/emerge_data/mvir_dot'][f1_new_halos] = mvir_dot 
-		iterate.f1['/emerge_data/rvir_dot'][f1_new_halos] = rvir_dot 
-		iterate.f1['/emerge_data/dMdt'][f1_new_halos] = dMdt 
-		iterate.f1['/emerge_data/dmdt_star'][f1_new_halos] = dmdt_star 
-		#iterate.f1['/emerge_data/dmdt_star_accretion'][f1_new_halos] = dmdt_star_accretion 
-		iterate.f1['/emerge_data/star_formation_rate'][f1_new_halos] = star_formation_rate 
-		iterate.f1['/emerge_data/stellar_mass'][f1_new_halos] = stellar_mass 
-		iterate.f1['/emerge_data/m_icm'][f1_new_halos] = m_icm 
+		iterate.f1['/emerge_data/mvir_dot'][f1_evolved_halos_with_merger] = mvir_dot 
+		iterate.f1['/emerge_data/rvir_dot'][f1_evolved_halos_with_merger] = rvir_dot 
+		iterate.f1['/emerge_data/dMdt'][f1_evolved_halos_with_merger] = dMdt 
+		iterate.f1['/emerge_data/dmdt_star'][f1_evolved_halos_with_merger] = dmdt_star 
+		#iterate.f1['/emerge_data/dmdt_star_accretion'][f1_evolved_halos_with_merger] = dmdt_star_accretion 
+		iterate.f1['/emerge_data/star_formation_rate'][f1_evolved_halos_with_merger] = star_formation_rate 
+		iterate.f1['/emerge_data/stellar_mass'][f1_evolved_halos_with_merger] = stellar_mass 
+		iterate.f1['/emerge_data/m_icm'][f1_evolved_halos_with_merger] = m_icm 
 		print("Results updated")
 
 
