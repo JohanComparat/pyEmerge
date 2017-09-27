@@ -567,10 +567,6 @@ class EmergeIterate():
 		"""
 		After computing new quantities, you need to update the results in the h5 file.
 		"""
-		emerge_data = self.f1.create_group('emerge_data')
-
-		#emerge_data.attrs['f_lost'] = f_lost
-
 		self.f1['/emerge_data/mvir_dot'] = self.mvir_dot 
 		self.f1['/emerge_data/rvir_dot'] = self.rvir_dot 
 		self.f1['/emerge_data/dMdt'] = self.dMdt 
@@ -580,8 +576,8 @@ class EmergeIterate():
 		self.f1['/emerge_data/stellar_mass'] = self.stellar_mass 
 		self.f1['/emerge_data/m_icm'] = self.m_icm 
 		print("Results updated")
-		self.f0.close()
-		self.f1.close()
+		#self.f0.close()
+		#self.f1.close()
 
 
 """
