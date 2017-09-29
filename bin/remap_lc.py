@@ -23,7 +23,9 @@ import time
 print("start", time.time())
 import sys
 ii = int(sys.argv[1])
-print("snapshot", ii)
+env = sys.argv[2]
+L_box = float(sys.argv[3])
+print("snapshot", ii, env)
 import h5py    # HDF5 support
 import os
 import glob
@@ -50,6 +52,7 @@ def read_data(ii, L_box = 400., env= 'MD04'):
 	input_list = n.array(glob.glob(os.path.join(h5_dir, "hlist_?.?????_emerge.hdf5")))
 	input_list.sort()
 	file_1 = input_list[ii]
+	print("opens ",file_1)
 	f1 = h5py.File(file_1,  "r+")
 	print( "n halos=",f1['/halo_properties/'].attrs['N_halos'])
 	return f1, f1['/halo_position/x'].value/L_box, f1['/halo_position/y'].value/L_box, f1['/halo_position/z'].value/L_box
@@ -61,7 +64,7 @@ def write_mapped_coordinates(f1, out, L_box, group_name = 'remaped_position_L6')
 	:param x1,y1,z1: new coordinates
 	:param group_name: name of the new group containing the new data in the h5 file. Example 'remaped_position_L6'
 	"""
-	print("writes")
+	print("writes "+group_name)
 	halo_data = f1.create_group(group_name)
 	halo_data.attrs['L_box'] = L_box
 	ds = halo_data.create_dataset('xyx_Lbox', data = out )
@@ -71,8 +74,8 @@ def write_mapped_coordinates(f1, out, L_box, group_name = 'remaped_position_L6')
 if __name__ == '__main__':
 	p = Pool(12)
 	# reads the data
-	L_box = 400.
-	env= 'MD04'
+	#L_box = 400.
+	#env= 'MD04'
 	f1, x0, y0, z0 = read_data(ii, L_box, env)
 	# maps coordinates to L6
 	out3 = p.starmap(f3, n.transpose([x0, y0, z0]))

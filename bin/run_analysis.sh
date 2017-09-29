@@ -75,20 +75,30 @@ llsubmit emerge_iterate_batch.sh
 # it uses the command :
 python emerge_iterate.py $ID
 
-# HERE 
 # remap the coordinates to have a cuboid
-cd $MD04/h5
-sh run_remap.sh
-
-cd $MD10/h5
-sh run_remap.sh
-
+sh run_remap_MD04.s
+sh run_remap_MD10.s
 # executes the remapping for the MD04 box
-# adapt the following script to actually do the job 
-# 12 cores seems the mas on ds52
-python3 test_remap.py
+# 12 cores is the maximum on ds52
+python3 test_remap.py ARGS
+
+#########################################
+# DATA MODEL
+#########################################
+
+python3 print_data_structure.py 22 MD10
+python3 print_data_structure.py 22 MD04
 
 
+# Add clusters, agns, galaxies, from 4MOST.
+
+
+
+
+#########################################
+#########################################
+#########################################
+#########################################
 
 read_h5_test.sh  
 submit_test.sh

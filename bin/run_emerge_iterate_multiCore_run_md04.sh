@@ -1,5 +1,5 @@
 #!/bin/bash
-python3 run_emerge_iterate_multiCore.py MD04 0
+#python3 run_emerge_iterate_multiCore.py MD04 0
 python3 run_emerge_iterate_multiCore.py MD04 1
 python3 run_emerge_iterate_multiCore.py MD04 2
 python3 run_emerge_iterate_multiCore.py MD04 3
