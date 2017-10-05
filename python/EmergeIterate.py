@@ -150,8 +150,8 @@ def compute_qtys_evolving_halos_pk(mvir_f0, mvir_f1, age_f0, age_f1, rvir_f0, rv
 	# case 2. m dot =0
 	quench_2 = (quenching) &(age_f1 >= t_mpeak + t_quench )
 	if quench_2:
-		self.star_formation_rate = n.zeros_like(self.star_formation_rate)
-		self.stellar_mass = stellar_mass_f0
+		star_formation_rate = n.zeros_like(star_formation_rate)
+		stellar_mass = stellar_mass_f0
 	
 	# stripping, case 1
 	# negative growth value self.dMdt => 0
