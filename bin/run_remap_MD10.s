@@ -61,10 +61,8 @@ python3 remap_lc.py 59  MD10 1000.
 python3 remap_lc.py 60  MD10 1000.
 python3 remap_lc.py 61  MD10 1000.
 python3 remap_lc.py 62  MD10 1000.
----------- remains only a few : AND the 59 ?
 python3 remap_lc.py 63  MD10 1000.
 python3 remap_lc.py 64  MD10 1000.
---------------------------------
 python3 remap_lc.py 65  MD10 1000.
 python3 remap_lc.py 66  MD10 1000.
 python3 remap_lc.py 67  MD10 1000.
