@@ -27,7 +27,7 @@ def get_sfrd(h5_file):
 sfrds,zs=[],[]
 for h5_file in h5_files:
   try:
-    z,sfrd=plot_SMF(h5_file)
+    z,sfrd=get_sfrd(h5_file)
     sfrds.append(sfrd)
     zs.append(z)
   except( ValueError, KeyError ):

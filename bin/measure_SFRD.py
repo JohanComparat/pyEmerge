@@ -11,11 +11,12 @@ h5_files.sort()
 bins = n.arange(6,13,0.1)
 xb = (bins[1:] + bins[:-1]) / 2.
 
-def measureSMF(h5_file, volume=1000.**3., update=False):
+def measureSMF(h5_file, volume=1000.**3., update=True):
   f1 = h5py.File(h5_file,  "r+")
   sfr = f1['/emerge_data/star_formation_rate'].value
   print( h5_file, len(sfr) )
-  if len(mass)>0:
+  if len(sfr)>0:
+	ok = (sfr>0)&(sfr<1000)
     sfrd = n.sum(sfr)/volume
   
     if update:
@@ -35,5 +36,5 @@ def measureSMF(h5_file, volume=1000.**3., update=False):
 for h5_file in h5_files:
   try:
     measureSMF(h5_file)
-  except( ValueError ):
+  except( ValueError, KeyError ):
     pass
