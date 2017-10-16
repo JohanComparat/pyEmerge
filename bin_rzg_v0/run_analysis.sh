@@ -60,11 +60,20 @@ h5_init_emerge_data_with_0s.py
 
 
 # add the emerge information: star formation rate, stellar mass and icm mass.
+python emerge_init.py # first snapshot for each simulation
 # all following snapshots on ds52 this way :
 sh run_emerge_iterate_multiCore_run_md04.sh  
 sh run_emerge_iterate_multiCore_run_md10.sh
 # using this script
 run_emerge_iterate_multiCore.py
+
+# alternate implementation that does note really work fine
+# all following snapshots on hydra this way :
+python generate_and_submit_emerge_iterate.py
+cd /u/joco/batch_emerge
+llsubmit emerge_iterate_batch.sh
+# it uses the command :
+python emerge_iterate.py $ID
 
 # remap the coordinates to have a cuboid
 sh run_remap_MD04.s
@@ -72,13 +81,6 @@ sh run_remap_MD10.s
 # executes the remapping for the MD04 box
 # 12 cores is the maximum on ds52
 python3 test_remap.py ARGS
-
-# stellar mass function
-python measure_SMF.py
-python plot_SMF.py
-# star formation rate density
-python measure_SFRD.py
-python plot_SFRD.py
 
 #########################################
 # DATA MODEL
@@ -92,3 +94,17 @@ python3 print_data_structure.py 22 MD04
 
 
 
+
+#########################################
+#########################################
+#########################################
+#########################################
+
+read_h5_test.sh  
+submit_test.sh
+
+
+# machines for dev :
+connect to rzgi (interactive) from mpe
+module load anaconda
+ipython

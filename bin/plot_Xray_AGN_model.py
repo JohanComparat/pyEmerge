@@ -1,15 +1,29 @@
 import numpy as n
 import glob
-import h5py
+#import h5py
 import os
 import time
 import sys
-
+import astropy.io.fits as fits
+import astropy.cosmology as co
+cosmo = co.Planck15
 import XrayLuminosity
 xr = XrayLuminosity.XrayLuminosity()
 
-out_dir = os.path.join(os.path.join("/afs/mpe/www/people/comparat/", "eRoMok", "h5", "xray_agn_model" ))
+#out_dir = os.path.join("/afs/mpe/www/people/comparat/", "eRoMok", "h5", "xray_agn_model" )
+out_dir = os.path.join(os.environ['DATA_DIR'],"spiders","agn" )
 
+import astropy.io.fits as fits
+
+data = fits.open('/home/comparat/data/spiders/VAC_2RXS_DR14_ALLW_SDSS_GAIA_FIRST_final_rest-frame_with_MS.FITS')[1].data
+agn = ((data['VI_CLASS']=='NLAGN') | (data['VI_CLASS']=='GAL'))&(data['Chabrier_ELODIE_stellar_mass']>0)&(data['VI_Z']>0)&(data['VI_Z']<0.2)
+
+data['sky_fraction']
+
+import matplotlib.pyplot as p
+spiders_out = p.hist(n.log10(data['Chabrier_ELODIE_stellar_mass'][agn]), bins = n.arange(7,12.5,0.5), weights = 1./(data['sky_fraction'][agn]*data['V_z_lt_02'][agn]))
+
+spiders_out = p.hist(n.log10(data['Chabrier_ELODIE_stellar_mass'][agn]), bins = n.arange(7,12.5,0.5), weights = 1./(data['sky_fraction'][agn]*data['V_z_lt_02'][agn]))
 
 bins = n.arange(6,13,0.1)
 xb = (bins[1:] + bins[:-1]) / 2.
@@ -90,13 +104,14 @@ p.grid()
 p.savefig(os.path.join(out_dir, "B016_fmstar.png"))
 p.clf()
 
-few_z = n.array([0.55, 1.15, 2.])
+few_z = n.array([0.1, 0.55, 1.15, 2.])
 few_MS = n.arange(9,12.1,0.5)
 log_lambda_SAR = n.arange(32,36.1,0.1)
 
 for zz in few_z:
   p.figure(1, (6,6))
   p.axes([0.17, 0.17, 0.78, 0.78])
+  p.errorbar(spiders_out[1][:-1]+0.25, spiders_out[0], xerr=0.25, label='spiders nlagn or gal')
   p.plot(many_MS, n.array([xr.Phi_stellar_mass(MS, zz) for MS in many_MS]), label='all')
   p.plot(many_MS, n.array([xr.Phi_stellar_mass_mmin(MS, zz, 42-MS) for MS in many_MS]), label='>42')
   p.plot(many_MS, n.array([xr.Phi_stellar_mass_mmin(MS, zz, 43-MS) for MS in many_MS]), label='>43')
