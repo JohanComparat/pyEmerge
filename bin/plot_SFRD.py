@@ -33,15 +33,17 @@ for h5_file in h5_files:
   except( ValueError, KeyError ):
     pass
 
-sfrds = n.array([sfrds])
-zs = n.array([zs])
+sfrds = n.array(sfrds)
+zs = n.array(zs)
 
 psi = lambda z : 0.015*(1+z)**2.7/(1+((1+z)/2.9)**5.6)
 
 p.figure(1, (6,6))
-p.plot(zs, n.log10(sfrds), label='MD10')
+p.plot(zs, n.log10(sfrds)-2*n.log10(0.6777), label='MD10')
 
-p.plot(zs, n.log10(psi(zs)), label='Madau 14')
+p.plot(zs, n.log10(psi(zs)), c='k', label='Madau 14')
+p.plot(zs, n.log10(psi(zs))-0.2, c='k', ls='dashed')#, label='Madau 14')
+p.plot(zs, n.log10(psi(zs))+0.2, c='k', ls='dashed')#, label='Madau 14')
 
 p.xlabel('redshift')
 p.ylabel('SFRD')
