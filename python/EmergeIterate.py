@@ -42,9 +42,10 @@ def compute_qtys_new_halos_pk(mvir, rvir, redshift, age_yr):
 	
 	Updates the initiated quantities with the values of interest.
 	
-	:param mvir: list of mvir
-	:param rvir: list of rvir
-	:param age_yr: list of ages in yr
+	:param mvir: list of mvir [Msun], length = n.
+	:param rvir: list of rvir [kpc] , length = n.
+	:param redshift: redshift of the snapshot replicated n times. 
+	:param age_yr: age of the Universe for the snapshot replicated n times. 
 	
 	Typically inputs should be :
 		* mvir=self.f1['/halo_properties/mvir'].value[self.mask_f1_new_halos], 
@@ -77,23 +78,22 @@ def compute_qtys_evolving_halos_pk(mvir_f0, mvir_f1, age_f0, age_f1, rvir_f0, rv
 	update the quantities for evolving halos, present in f0 and f1.
 	
 	inputs 
-	 mvir_f0 : self.f0['/halo_properties/mvir'].value[self.mask_f0_evolving_11_halos]
-	 mvir_f1 : self.f1['/halo_properties/mvir'].value[self.mask_f1_evolving_11_halos]
-	 age_f0 : self.f0.attrs['age_yr'] * n.ones_like(self.f1['/halo_properties/mvir'].value[self.mask_f1_evolving_11_halos])
-	 age_f1 : self.f1.attrs['age_yr'] * n.ones_like(self.f1['/halo_properties/mvir'].value[self.mask_f1_evolving_11_halos])
-	 mvir_f0 : self.f0['/halo_properties/rvir'].value[self.mask_f0_evolving_11_halos]
-	 mvir_f1 : self.f1['/halo_properties/rvir'].value[self.mask_f1_evolving_11_halos]
-	 
+	 mvir_f0 [Msun] : self.f0['/halo_properties/mvir'].value[self.mask_f0_evolving_11_halos]
+	 mvir_f1 [Msun] : self.f1['/halo_properties/mvir'].value[self.mask_f1_evolving_11_halos]
+	 age_f0 [yr] : self.f0.attrs['age_yr'] * n.ones_like(self.f1['/halo_properties/mvir'].value[self.mask_f1_evolving_11_halos])
+	 age_f1 [yr] : self.f1.attrs['age_yr'] * n.ones_like(self.f1['/halo_properties/mvir'].value[self.mask_f1_evolving_11_halos])
+	 mvir_f0 [Msun] : self.f0['/halo_properties/rvir'].value[self.mask_f0_evolving_11_halos]
+	 mvir_f1 [Msun] : self.f1['/halo_properties/rvir'].value[self.mask_f1_evolving_11_halos]
 	 redshift : self.f1.attrs['redshift'] * n.ones_like(self.f1['/halo_properties/mvir'].value[self.mask_f1_evolving_11_halos])
 	 t_dynamical : self.t_dynamical[self.mask_f1_evolving_11_halos]
-	 rs_f1 : self.f1['/halo_properties/rs'].value[self.mask_f1_evolving_11_halos]
-	 mpeak_f1 : self.f1['/halo_properties/Mpeak'].value[self.mask_f1_evolving_11_halos]
+	 rs_f1 [kpc] : self.f1['/halo_properties/rs'].value[self.mask_f1_evolving_11_halos]
+	 mpeak_f1 [Msun] : self.f1['/halo_properties/Mpeak'].value[self.mask_f1_evolving_11_halos]
 	 mpeak_scale_f1 : self.f1['/halo_properties/Mpeak_scale'].value[self.mask_f1_evolving_11_halos]
 	 f1_scale : float(self.f1_scale)
 	 
-	 m_icm_f0 : self.f0['/emerge_data/m_icm'].value[self.mask_f0_evolving_11_halos]
-	 stellar_mass_f0 : self.f0['/emerge_data/stellar_mass'].value[self.mask_f0_evolving_11_halos]
-	 star_formation_rate_f0 : self.f0['/halo_properties/star_formation_rate'].value[self.mask_f0_evolving_11_halos]
+	 m_icm_f0 [Msun] : self.f0['/emerge_data/m_icm'].value[self.mask_f0_evolving_11_halos]
+	 stellar_mass_f0 [Msun] : self.f0['/emerge_data/stellar_mass'].value[self.mask_f0_evolving_11_halos]
+	 star_formation_rate_f0 [Msun/yr] : self.f0['/halo_properties/star_formation_rate'].value[self.mask_f0_evolving_11_halos]
 	
 	
 	masks :
