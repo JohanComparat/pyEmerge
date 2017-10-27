@@ -33,7 +33,7 @@ def measureSMF(h5_file, volume=1000.**3., update=True):
 
 	f1.close()
 
-for h5_file in h5_files[::-1]:
+for h5_file in h5_files:
   try:
     measureSMF(h5_file, update=True)
   except( ValueError, KeyError, UnboundLocalError, RuntimeError ):

@@ -14,9 +14,11 @@ xb = (bins[1:] + bins[:-1]) / 2.
 def measureSMF(h5_file, volume=1000.**3., update=True):
   f1 = h5py.File(h5_file,  "r+")
   mass = f1['/emerge_data/stellar_mass'].value
-  print( h5_file, len(mass) )
-  if len(mass)>0:
-    counts, bb = n.histogram(n.log10(mass[mass>0]), bins=bins)
+  sel = (mass>0) & (mass!=n.inf) & (n.isnan(mass)==False)
+  print( h5_file, len(mass), len(mass[sel]), len(mass[sel])>0 )
+
+  if len(mass[sel])>0:
+    counts, bb = n.histogram(n.log10(mass[sel]), bins=bins)
     dN_dVdlogM = counts*0.6777**3./(bins[1:]-bins[:-1])/volume/n.log(10)
   
     if update:
@@ -50,7 +52,7 @@ def measureSMF(h5_file, volume=1000.**3., update=True):
   f1.close()
 
 for h5_file in h5_files:
-  try:
-    measureSMF(h5_file)
-  except( ValueError ):
-    pass
+  #try:
+  measureSMF(h5_file, update=True)
+  #except( ValueError ):
+  #pass

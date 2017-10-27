@@ -36,6 +36,7 @@ run_merging_halos = True
 t1=time.time()
 print('elapsed time', t1-t0, 'seconds')
 print('---------------------------------')
+print(iterate.f1.attrs['aexp'])
 if run_new_halos:
 	print('N f1 halos', len(iterate.f1['/halo_properties/id'].value))
 	print('N f0 halos', len(iterate.f0['/halo_properties/id'].value))

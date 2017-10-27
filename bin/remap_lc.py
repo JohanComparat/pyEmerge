@@ -57,19 +57,24 @@ def read_data(ii, L_box = 400., env= 'MD04'):
 	print( "n halos=",f1['/halo_properties/'].attrs['N_halos'])
 	return f1, f1['/halo_position/x'].value/L_box, f1['/halo_position/y'].value/L_box, f1['/halo_position/z'].value/L_box
 
-def write_mapped_coordinates(f1, out, L_box, group_name = 'remaped_position_L6'):
+def write_mapped_coordinates(f1, out, L_box, group_name = 'remaped_position_L6',status='update'):
 	"""
 	Writes the new coordinates to file
 	:param f1: h5 file
 	:param x1,y1,z1: new coordinates
 	:param group_name: name of the new group containing the new data in the h5 file. Example 'remaped_position_L6'
 	"""
-	print("writes "+group_name)
-	halo_data = f1.create_group(group_name)
-	halo_data.attrs['L_box'] = L_box
-	ds = halo_data.create_dataset('xyx_Lbox', data = out )
-	ds.attrs['units'] = 'L box'
-	ds.attrs['long_name'] = 'x,y,z' 
+	if status=='create':
+		print("writes new group "+group_name)
+		halo_data = f1.create_group(group_name)
+		halo_data.attrs['L_box'] = L_box
+		ds = halo_data.create_dataset('xyx_Lbox', data = out )
+		ds.attrs['units'] = 'L box'
+		ds.attrs['long_name'] = 'x,y,z' 
+	if status=='update':
+		print('writes update '+group_name)
+		f1['/'+group_name+'/xyz_Lbox'][:] = out
+
 
 if __name__ == '__main__':
 	p = Pool(12)
