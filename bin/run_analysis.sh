@@ -74,7 +74,9 @@ sh run_remap_MD10.s
 # 12 cores is the maximum on ds52
 
 # stellar mass function
+# model for the host galaxy mass function for AGN
 python measure_SMF.py
+python tabulate_HGMF_per_snapshot.py
 python plot_SMF.py
 # star formation rate density
 python measure_SFRD.py

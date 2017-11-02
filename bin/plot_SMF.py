@@ -72,9 +72,12 @@ def plot_SMF(h5_file):
   logMs_up     = f1['stellar_mass_function/stellar_mass_up'].value
   counts       = f1['stellar_mass_function/counts'].value
   dN_dVdlogM_g = f1['stellar_mass_function/dN_dVdlogM'].value 
+  AGN_HGMF = f1['/stellar_mass_function/AGN_HGMF'].value
+  
   ok = (dN_dVdlogM_g>0)
   print( "SMF", n.min(logMs_low[ok]), n.max(logMs_up[ok]) )
   p.plot((logMs_low[ok] + logMs_up[ok])/2.-n.log10(0.6777), n.log10(dN_dVdlogM_g[ok]), label='SIM GAL')#, lw=2)
+  p.plot((logMs_low[ok] + logMs_up[ok])/2.-n.log10(0.6777), n.log10(AGN_HGMF[ok]), label='model HGMF')#, lw=2)
   #print(f1['/agn_model/stellar_mass'].value)
   #p.plot(f1['/agn_model/stellar_mass'].value-n.log10(0.6777), n.log10(f1['/agn_model/HGMF'].value), label='MODEL AGN')
   p.xlabel('stellar mass')

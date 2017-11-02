@@ -8,15 +8,7 @@ L1 L2 L3   u11 u12 u13   u21 u22 u23   u31 u32 u33   (periodicity)
 python3 lc_add_sky_coordinates.py 1.3
 
 """
-f_z = lambda z : n.piecewise(z, [z <= 1.1, z > 1.1], [ lambda z : (1.+z)**(5.82), lambda z : (1. + 1.1)**(5.82) * ((1.+z)/(1.+1.1))**(2.36)])
 
-f_Mstar =lambda logM, z : (10**(logM - 10.99) )**(0.24) * n.e**( - 10**(logM - 10.99) )
-	
-def f_lambda_sar( logM, z, log_lambda_SAR ):
-	log_lambda_SAR_var = 10**( log_lambda_SAR - 33.8 + 0.48 * (logM - 11.) )		
-	g1z = 1.01 - 0.58 * (z - 1.1)
-	return 1. / ( log_lambda_SAR_var**(g1z) + log_lambda_SAR_var**(3.72) )
-		
 
 import sys
 env = 'MD10'# sys.argv[1] # 'MD10'
@@ -33,8 +25,19 @@ import os
 import glob
 import numpy as n
 
-import XrayLuminosity
-xr = XrayLuminosity.XrayLuminosity()
+f_z = lambda z : n.piecewise(z, [z <= 1.1, z > 1.1], [ lambda z : (1.+z)**(5.82), lambda z : (1. + 1.1)**(5.82) * ((1.+z)/(1.+1.1))**(2.36)])
+
+f_Mstar =lambda logM, z : (10**(logM - 10.99) )**(0.24) * n.e**( - 10**(logM - 10.99) )
+	
+def f_lambda_sar( logM, z, log_lambda_SAR ):
+	log_lambda_SAR_var = 10**( log_lambda_SAR - 33.8 + 0.48 * (logM - 11.) )		
+	g1z = 1.01 - 0.58 * (z - 1.1)
+	return 1. / ( log_lambda_SAR_var**(g1z) + log_lambda_SAR_var**(3.72) )
+		
+
+
+#import XrayLuminosity
+#xr = XrayLuminosity.XrayLuminosity()
 
 from scipy.interpolate import interp1d
 from scipy.misc import derivative
@@ -63,17 +66,7 @@ area_fraction = (n.max(f['/sky_position/RA'].value[ok])-n.min(f['/sky_position/R
 # derivative of the comoving volume
 dvdz = lambda z : derivative(cosmoMD.comoving_volume, z) * area_fraction 
 
-def get_lambda_sar(stellar_mass, redshift, random_number, dl=0.01):
-	log_lambda_SAR_values = n.arange(32-dl,36+2*dl,dl)
-	probas_un = psi_log(log_lambda_SAR_values, n.log10(stellar_mass), redshift) * dvdz( redshift).value * dl 
-	probas = probas_un / n.sum(probas_un)
-	prb_rev = probas[::-1]
-	itp_prb = interp1d( n.hstack((n.array([ n.sum(prb_rev[:jj]) for jj in range(len(prb_rev)) ]), 1.)), n.hstack((log_lambda_SAR_values[::-1], log_lambda_SAR_values[0]-dl )) )
-	agn_log_lambda_SAR[ok][ii] = itp_prb(n.array([agn_random_number[ok][ii]]))[0]
-	print( (time.time()-t0)/(ii+1) )
-
-
-dl=1.
+dl=0.01
 log_lambda_SAR_values = n.arange(32-dl,36+2*dl,dl)
 zs = f['/sky_position/redshift_R'].value[ok]
 fz = f_z( zs )
@@ -84,7 +77,9 @@ fMstar = f_Mstar( logM, zs )
 
 psi_log = n.array([10**(- 6.86) * fMstar * fz  * f_lambda_sar( logM, zs, log_lambda_SAR_val ) for log_lambda_SAR_val in log_lambda_SAR_values])
 
-
+norm = n.sum(psi_log, axis=1)
+probas = psi_log	 / norm
+	
 import time
 t0 = time.time()
 # computes the probability function per object on the grid of lambda_sar
