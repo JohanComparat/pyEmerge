@@ -10,11 +10,11 @@ h5_files.sort()
 
 bins = n.arange(6,13,0.1)
 xb = (bins[1:] + bins[:-1]) / 2.
-hh= 0.6777
+hh = 0.6777
 
 def measureSMF(h5_file, volume=1000.**3./hh**3., update=True):
   f1 = h5py.File(h5_file,  "r+")
-  mass = f1['/emerge_data/stellar_mass'].value
+  mass = f1['/emerge_data/stellar_mass'].value - n.log10(hh)
   sel = (mass>0) & (mass!=n.inf) & (n.isnan(mass)==False)
   print( h5_file, len(mass), len(mass[sel]), len(mass[sel])>0 )
 
