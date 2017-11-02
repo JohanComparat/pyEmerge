@@ -73,7 +73,7 @@ def write_mapped_coordinates(f1, out, L_box, group_name = 'remaped_position_L6',
 		ds.attrs['long_name'] = 'x,y,z' 
 	if status=='update':
 		print('writes update '+group_name)
-		f1['/'+group_name+'/xyz_Lbox'][:] = out
+		f1['/'+group_name+'/xyx_Lbox'][:] = out
 
 
 if __name__ == '__main__':
@@ -86,6 +86,7 @@ if __name__ == '__main__':
 	out3 = p.starmap(f3, n.transpose([x0, y0, z0]))
 	out6 = p.starmap(f6, n.transpose([x0, y0, z0]))
 	# writes the results
-	write_mapped_coordinates(f1, out6, L_box,  group_name = 'remaped_position_L6')
-	write_mapped_coordinates(f1, out3, L_box,  group_name = 'remaped_position_L3')
+	write_mapped_coordinates(f1, out6, L_box,  group_name = 'remaped_position_L6', status='update')
+	write_mapped_coordinates(f1, out3, L_box,  group_name = 'remaped_position_L3', status='update')
 	f1.close()
+
