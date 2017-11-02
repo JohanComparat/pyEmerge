@@ -2,9 +2,12 @@ import time
 t0 = time.time()
 import sys
 
+# environment variable to the simulation directory
 sim_dir = sys.argv[1]
+# snapshot id (within a sorted list of ids)
 snap_id = int(sys.argv[2])
 # python3 run_emerge_iterate_multiCore.py MD10 22
+hh = 0.6777
 
 import numpy as n 
 import pandas as pd
@@ -46,8 +49,8 @@ if run_new_halos:
 	print('computing galaxies in new halos')
 	if len((f1_new_halos).nonzero()[0]) > 0 :
 		DATA = n.transpose([
-			iterate.f1['/halo_properties/mvir'].value[f1_new_halos], 
-			iterate.f1['/halo_properties/rvir'].value[f1_new_halos], 
+			iterate.f1['/halo_properties/mvir'].value[f1_new_halos]*hh**(-1), 
+			iterate.f1['/halo_properties/rvir'].value[f1_new_halos]*hh**(-1), 
 			iterate.f1.attrs['redshift']*n.ones_like(iterate.f1['/halo_properties/mvir'].value[f1_new_halos]), 
 			iterate.f1.attrs['age_yr']*n.ones_like(iterate.f1['/halo_properties/mvir'].value[f1_new_halos]) 
 			])
@@ -121,19 +124,19 @@ if run_evolving_halos:
 	if len((f0_not_merging).nonzero()[0]) > 0 :
 		uns = n.ones_like(iterate.f1['/halo_properties/mvir'].value[f1_evolved_halos_no_merger])
 		DATA = n.transpose([
-		iterate.f0['/halo_properties/mvir'].value[f0_not_merging]
-		, iterate.f1['/halo_properties/mvir'].value[f1_evolved_halos_no_merger]
+		iterate.f0['/halo_properties/mvir'].value[f0_not_merging]*hh**(-1)
+		, iterate.f1['/halo_properties/mvir'].value[f1_evolved_halos_no_merger]*hh**(-1)
 		, iterate.f0.attrs['age_yr'] * uns
 		, iterate.f1.attrs['age_yr'] * uns
-		, iterate.f0['/halo_properties/rvir'].value[f0_not_merging]
-		, iterate.f1['/halo_properties/rvir'].value[f1_evolved_halos_no_merger]
+		, iterate.f0['/halo_properties/rvir'].value[f0_not_merging]*hh**(-1)
+		, iterate.f1['/halo_properties/rvir'].value[f1_evolved_halos_no_merger]*hh**(-1)
 		, iterate.f1.attrs['redshift'] * uns
 		, iterate.t_dynamical[f1_evolved_halos_no_merger]
-		, iterate.f1['/halo_properties/rs'].value[f1_evolved_halos_no_merger]
-		, iterate.f1['/halo_properties/Mpeak'].value[f1_evolved_halos_no_merger]
+		, iterate.f1['/halo_properties/rs'].value[f1_evolved_halos_no_merger]*hh**(-1)
+		, iterate.f1['/halo_properties/Mpeak'].value[f1_evolved_halos_no_merger]*hh**(-1)
 		, iterate.f1['/halo_properties/Mpeak_scale'].value[f1_evolved_halos_no_merger]
 		, float(iterate.f1_scale) * uns
-		, iterate.f0['/emerge_data/m_icm'].value[f0_not_merging]
+		, iterate.f0['/emerge_data/m_icm'].value[f0_not_merging]*hh**(-1)
 		, iterate.f0['/emerge_data/stellar_mass'].value[f0_not_merging]
 		, iterate.f0['/emerge_data/star_formation_rate'].value[f0_not_merging]
 		])
@@ -195,19 +198,19 @@ if run_merging_halos:
 
 		uns = n.ones_like(iterate.f1['/halo_properties/mvir'].value[f1_evolved_halos_with_merger])
 		DATA = n.transpose([
-		iterate.f0['/halo_properties/mvir'].value[f0_in_a_merging][hosts_f0]
-		, iterate.f1['/halo_properties/mvir'].value[f1_evolved_halos_with_merger]
+		iterate.f0['/halo_properties/mvir'].value[f0_in_a_merging][hosts_f0]*hh**(-1)
+		, iterate.f1['/halo_properties/mvir'].value[f1_evolved_halos_with_merger]*hh**(-1)
 		, iterate.f0.attrs['age_yr'] * uns
 		, iterate.f1.attrs['age_yr'] * uns
-		, iterate.f0['/halo_properties/rvir'].value[f0_in_a_merging][hosts_f0]
-		, iterate.f1['/halo_properties/rvir'].value[f1_evolved_halos_with_merger]
+		, iterate.f0['/halo_properties/rvir'].value[f0_in_a_merging][hosts_f0]*hh**(-1)
+		, iterate.f1['/halo_properties/rvir'].value[f1_evolved_halos_with_merger]*hh**(-1)
 		, iterate.f1.attrs['redshift'] * uns
 		, iterate.t_dynamical[f1_evolved_halos_with_merger]
-		, iterate.f1['/halo_properties/rs'].value[f1_evolved_halos_with_merger]
-		, iterate.f1['/halo_properties/Mpeak'].value[f1_evolved_halos_with_merger]
+		, iterate.f1['/halo_properties/rs'].value[f1_evolved_halos_with_merger]*hh**(-1)
+		, iterate.f1['/halo_properties/Mpeak'].value[f1_evolved_halos_with_merger]*hh**(-1)
 		, iterate.f1['/halo_properties/Mpeak_scale'].value[f1_evolved_halos_with_merger]
 		, float(iterate.f1_scale) * uns
-		, iterate.f0['/emerge_data/m_icm'].value[f0_in_a_merging][hosts_f0]
+		, iterate.f0['/emerge_data/m_icm'].value[f0_in_a_merging][hosts_f0]*hh**(-1)
 		, iterate.f0['/emerge_data/stellar_mass'].value[f0_in_a_merging][hosts_f0]
 		, iterate.f0['/emerge_data/star_formation_rate'].value[f0_in_a_merging][hosts_f0]
 		, sum_stellar_mass_guests
@@ -233,6 +236,13 @@ if run_merging_halos:
 		iterate.f1['/emerge_data/m_icm'][f1_evolved_halos_with_merger] = m_icm 
 		print("Results updated")
 
+
+# setting to 0 the negative SFRs and negative masses
+sfr_neg = (iterate.f1['/emerge_data/star_formation_rate'].value < 0)
+mass_neg = (iterate.f1['/emerge_data/stellar_mass'].value < 0)
+print("neg sfr", len(sfr_neg.nonzero()[0]), 'neg masses', len(mass_neg.nonzero()[0]) )
+iterate.f1['/emerge_data/star_formation_rate'][sfr_neg] = n.zeros_like(iterate.f1['/emerge_data/star_formation_rate'][sfr_neg]) 
+iterate.f1['/emerge_data/stellar_mass'][mass_neg] = n.zeros_like(iterate.f1['/emerge_data/stellar_mass'][mass_neg]) 
 
 t4=time.time()
 print('elapsed time', t4-t3,'seconds to evolve 1:1 halos')
