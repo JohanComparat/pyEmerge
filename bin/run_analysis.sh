@@ -80,6 +80,10 @@ python plot_SMF.py
 python measure_SFRD.py
 python plot_SFRD.py
 
+# creates a light cone with ra, dec, z with corresponding slices of the snapshots
+python write_lc_positions.py
+
+
 #########################################
 # DATA MODEL
 #########################################
