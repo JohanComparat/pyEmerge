@@ -10,7 +10,7 @@ h5_files.sort()
 
 bins = n.arange(6,13,0.1)
 xb = (bins[1:] + bins[:-1]) / 2.
-hh=0.6777
+hh= 0.6777
 
 def measureSMF(h5_file, volume=1000.**3./hh**3., update=True):
   f1 = h5py.File(h5_file,  "r+")
@@ -20,7 +20,7 @@ def measureSMF(h5_file, volume=1000.**3./hh**3., update=True):
 
   if len(mass[sel])>0:
     counts, bb = n.histogram(n.log10(mass[sel]), bins=bins)
-    dN_dVdlogM = counts*0.6777**3./(bins[1:]-bins[:-1])/volume/n.log(10)
+    dN_dVdlogM = counts/(bins[1:]-bins[:-1])/volume/n.log(10)
   
     if update:
       print('updates')
