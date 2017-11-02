@@ -10,9 +10,9 @@ python3 create_light_cone_shells.py 10 MD10 1000
 """
 
 import sys
-ii = int(sys.argv[0])
-env = sys.argv[1] # 'MD10'
-L_box = float(sys.argv[2]) / 0.6777
+ii = int(sys.argv[1])
+env = sys.argv[2] # 'MD10'
+L_box = float(sys.argv[3]) / 0.6777
 
 
 positions_group_name = 'remaped_position_L3'
@@ -30,7 +30,7 @@ cosmoMD = FlatLambdaCDM(H0=67.77*u.km/u.s/u.Mpc, Om0=0.307115, Ob0=0.048206)
 
 h5_lc_dir = os.path.join(os.environ[env], 'h5_lc', 'shells_'+positions_group_name )
 if os.path.isdir(h5_lc_dir)==False:
-	os.path.mkdir(h5_lc_dir)
+	os.mkdir(h5_lc_dir)
 
 h5_dir = os.path.join(os.environ[env], 'h5' )
 
@@ -38,7 +38,6 @@ input_list = n.array(glob.glob(os.path.join(h5_dir, "hlist_?.?????_emerge.hdf5")
 input_list.sort()
 
 # creates the redshift list 
-print("opens ",file_1)
 redshifts = []
 for file_1 in input_list : 
 	f1 = h5py.File(file_1,  "r")
@@ -143,7 +142,7 @@ def copylc_data_data(ii):
 	f1.close()
 
 
-
+copylc_data_data(ii)
 #ii=-10
 #array_h5_names= n.array([
 	#'/halo_position/vx', 

@@ -57,7 +57,7 @@ def read_data(ii, L_box = 400., env= 'MD04'):
 	print( "n halos=",f1['/halo_properties/'].attrs['N_halos'])
 	return f1, f1['/halo_position/x'].value/L_box, f1['/halo_position/y'].value/L_box, f1['/halo_position/z'].value/L_box
 
-def write_mapped_coordinates(f1, out, L_box, group_name = 'remaped_position_L6',status='update'):
+def write_mapped_coordinates(f1, out, L_box, group_name = 'remaped_position_L6',status='create'):
 	"""
 	Writes the new coordinates to file
 	:param f1: h5 file
