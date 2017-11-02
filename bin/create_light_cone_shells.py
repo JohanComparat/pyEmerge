@@ -126,7 +126,7 @@ def copylc_data(ii, option=False):
 		ds.attrs['units'] = r'$h^{-1} M_\odot$'
 		ds.attrs['long_name'] = r'$M_{vir}$' 
 
-		ds = halo_data.create_dataset('rvir' data = f1['/halo_properties/rvir'].value[selection] )
+		ds = halo_data.create_dataset('rvir', data = f1['/halo_properties/rvir'].value[selection] )
 		ds.attrs['units'] = r'$h^{-1} kpc$'
 		ds.attrs['long_name'] = r'$r_{vir}$' 
 

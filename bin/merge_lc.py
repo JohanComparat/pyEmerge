@@ -41,6 +41,7 @@ input_list.sort()
 
 file_out = os.path.join(os.environ[env], 'h5_lc', 'lc_'+positions_group_name+'_obs_0-0_0-7_0-5.hdf5')
 
+print("creates redshift list")
 # creates the redshift list 
 aexp = []
 for file_1 in input_list : 
@@ -56,10 +57,11 @@ def get_data(ii):
 	f.close()
 	return DATA
 
-DATA = get_data(input_list[0])
+DATA = get_data(0)
 
 for ii in range(1,len(input_list),1):
-	DATA = n.hstack((DATA, get_data(input_list[ii])))
+	print(input_list[ii])
+	DATA = n.hstack((DATA, get_data(ii)))
 
 
 f = h5py.File(file_out, "a")
