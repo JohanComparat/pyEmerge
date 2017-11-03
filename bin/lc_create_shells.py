@@ -23,11 +23,14 @@ import sys
 ii = int(sys.argv[1])
 env = sys.argv[2] # 'MD10'
 L_box = float(sys.argv[3]) / 0.6777
+positions_group_name = sys.argv[4] # 'remaped_position_L3'
 
+if positions_group_name == 'remaped_position_L3' :
+	x_obs, y_obs, z_obs = 0., 0.7071/2.*L_box, 0.5774/2.*L_box
 
-positions_group_name = 'remaped_position_L3'
+if positions_group_name == 'remaped_position_L6' :
+	x_obs, y_obs, z_obs = 0., 0.4140/2.*L_box, 0.4082/2.*L_box
 
-x_obs, y_obs, z_obs = 0., 0.7071/2.*L_box, 0.5774/2.*L_box
 
 import h5py    # HDF5 support
 import os
@@ -75,10 +78,7 @@ def copylc_data(ii, option=False):
 	print(file_1, "==>>", file_out)
 	f1 = h5py.File(file_1,  "r")
 	print( "n halos=",f1['/halo_properties/'].attrs['N_halos'])
-	if option:
-		XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx
-	else:
-		x,y,z=f1[positions_group_name + '/xyx_Lbox'].value.T*L_box
+	x,y,z=f1[positions_group_name + '/xyx_Lbox'].value.T*L_box
 
 	distance = ((x-x_obs)**2.+(y-y_obs)**2.+(z-z_obs)**2.)**0.5
 	selection = (distance>=Dmin[ii])&(distance<Dmax[ii])
@@ -142,19 +142,31 @@ def copylc_data(ii, option=False):
 		ds.attrs['units'] = r'$h^{-1} M_\odot$'
 		ds.attrs['long_name'] = r'$M_{peak}$' 
 
-		emerge_data = f.create_group('emerge_data')
+		moster_2013_data = f.create_group('moster_2013_data')
 		
-		ds = emerge_data.create_dataset('stellar_mass', data = f1['/emerge_data/stellar_mass'].value[selection])
+		ds = moster_2013_data.create_dataset('stellar_mass', data = f1['/moster_2013_data/stellar_mass'].value[selection])
 		ds.attrs['units'] = r'$ M_\odot$'
 		ds.attrs['long_name'] = 'stellar mass' 
 
-		ds = emerge_data.create_dataset('m_icm', data = f1['/emerge_data/m_icm'].value[selection] )
-		ds.attrs['units'] = r'$ M_\odot$'
-		ds.attrs['long_name'] = 'ICM mass' 
+		agn_properties = f.create_group('agn_properties')
+		
+		ds = agn_properties.create_dataset('log_lambda_sar', data = f1['/agn_properties/log_lambda_sar'].value[selection])
+		ds.attrs['units'] = r'log lambda SAR'
+		ds.attrs['long_name'] = 'log lambda SAR' 
+		
+		emerge_data = f.create_group('emerge_data')
+		
+		ds = emerge_data.create_dataset('dMdt', data = f1['/emerge_data/dMdt'].value[selection])
+		ds.attrs['units'] = r'$ M_\odot/yr$'
+		ds.attrs['long_name'] = 'halo growth rate' 
 
-		ds = emerge_data.create_dataset('star_formation_rate', data = f1['/emerge_data/star_formation_rate'].value[selection]                     )
-		ds.attrs['units'] = r'$ M_\odot /yr $'
-		ds.attrs['long_name'] = 'star formation rate' 
+		ds = emerge_data.create_dataset('mvir_dot', data = f1['/emerge_data/mvir_dot'].value[selection] )
+		ds.attrs['units'] = r'$ M_\odot/yr$'
+		ds.attrs['long_name'] = 'mvir variation with respect to last snapshot' 
+
+		ds = emerge_data.create_dataset('rvir_dot', data = f1['/emerge_data/rvir_dot'].value[selection]                     )
+		ds.attrs['units'] = r'$ kpc /yr $'
+		ds.attrs['long_name'] = 'rvir variation with respect to last snapshot' 
 
 		f.close()
 	f1.close()

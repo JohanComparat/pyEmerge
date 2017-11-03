@@ -68,18 +68,18 @@ def plot_SMF(h5_file):
   for fun, name in zip(smf_ilbert_fun, smf_ilbert_name):
     p.plot(mbins, n.log10(fun(10**mbins)), label=name, ls='dashed', lw=0.5)
 
-  logMs_low    = f1['stellar_mass_function/stellar_mass_low'].value
-  logMs_up     = f1['stellar_mass_function/stellar_mass_up'].value
-  counts       = f1['stellar_mass_function/counts'].value
-  dN_dVdlogM_g = f1['stellar_mass_function/dN_dVdlogM'].value 
-  AGN_HGMF = f1['/stellar_mass_function/AGN_HGMF'].value
+  
+  logMs_low    = f1['stellar_mass_function_moster_2013/stellar_mass_low'].value
+  logMs_up     = f1['stellar_mass_function_moster_2013/stellar_mass_up'].value
+  counts       = f1['stellar_mass_function_moster_2013/counts'].value
+  dN_dVdlogM_g = f1['stellar_mass_function_moster_2013/dN_dVdlogM'].value 
   
   ok = (dN_dVdlogM_g>0)
-  print( "SMF", n.min(logMs_low[ok]), n.max(logMs_up[ok]) )
-  p.plot((logMs_low[ok] + logMs_up[ok])/2., n.log10(dN_dVdlogM_g[ok]), label='SIM GAL')#, lw=2)
-  p.plot((logMs_low[ok] + logMs_up[ok])/2., n.log10(AGN_HGMF[ok]), label='model HGMF')#, lw=2)
-  #print(f1['/agn_model/stellar_mass'].value)
-  #p.plot(f1['/agn_model/stellar_mass'].value-n.log10(0.6777), n.log10(f1['/agn_model/HGMF'].value), label='MODEL AGN')
+  #print( "SMF", n.min(logMs_low[ok]), n.max(logMs_up[ok]) )
+  p.plot((logMs_low[ok] + logMs_up[ok])/2., n.log10(dN_dVdlogM_g[ok]), label='Gal Mo13')#, lw=2)
+  AGN_HGMF = f1['/stellar_mass_function_moster_2013/AGN_HGMF'].value
+  p.plot((logMs_low + logMs_up)/2., n.log10(AGN_HGMF), label='AGN Bo16')#, lw=2)
+  
   p.xlabel('stellar mass')
   p.ylabel('log Phi stellar mass')
   p.xlim((9., 12.2))
@@ -87,12 +87,15 @@ def plot_SMF(h5_file):
   p.title('z='+str(n.round(redshift,3)))
   p.grid()
   p.legend(loc=0, frameon=False)
-  p.savefig(os.path.join(out_dir, "MD10_"+f1.attrs['file_name'].split('_')[1]+"_SMF.png"))
+  print(f1.attrs['file_name'])
+  p.savefig(os.path.join(out_dir, "MD10_"+str(f1.attrs['aexp'])+"_SMF.png"))
   p.clf()
   f1.close()
 
-for h5_file in h5_files:
-  try:
-    plot_SMF(h5_file)
-  except( ValueError, KeyError ):
-    pass
+#plot_SMF(h5_files[50])
+#plot_SMF(h5_files[65])
+for h5_file in h5_files[::-1]:
+  ##try:
+  plot_SMF(h5_file)
+  ##except( ValueError, KeyError ):
+  ##  pass

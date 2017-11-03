@@ -44,15 +44,15 @@ def measure_HGMF(h5_file, update=True):
 	f1 = h5py.File(h5_file,  "r+")
 	redshift = f1.attrs['redshift']
 
-	logMs_low  = f1['/stellar_mass_function/stellar_mass_low'].value
-	logMs_up   = f1['/stellar_mass_function/stellar_mass_up'].value 
-	counts     = f1['/stellar_mass_function/counts'].value
-	dN_dVdlogM = f1['/stellar_mass_function/dN_dVdlogM'].value 
+	logMs_low  = f1['/stellar_mass_function_moster_2013/stellar_mass_low'].value
+	logMs_up   = f1['/stellar_mass_function_moster_2013/stellar_mass_up'].value 
+	counts     = f1['/stellar_mass_function_moster_2013/counts'].value
+	dN_dVdlogM = f1['/stellar_mass_function_moster_2013/dN_dVdlogM'].value 
 
 
 	# interpolates the duty cycle in the interesting region
 	maxMS = n.max(logMs_up[(counts>1)])
-	minMS = n.min(logMs_low[(counts>100)])
+	minMS = n.min(logMs_low[(counts>1)])
 	x_SMF = (logMs_low+ logMs_up)/2.
 
 	sel=(x_SMF>minMS)&(x_SMF<maxMS)
@@ -67,23 +67,23 @@ def measure_HGMF(h5_file, update=True):
 	
 	if update:
 		print('updates')
-		f1['/stellar_mass_function/AGN_HGMF'][:] = AGN_HGMF  
-		f1['/stellar_mass_function/duty_cycle'][:] = duty_cycle  
+		f1['/stellar_mass_function_moster_2013/AGN_HGMF'][:] = AGN_HGMF  
+		f1['/stellar_mass_function_moster_2013/duty_cycle'][:] = duty_cycle  
 
 	else:
 		print('creates')
 
-		ds = f1['/stellar_mass_function'].create_dataset('AGN_HGMF', data = AGN_HGMF )
+		ds = f1['/stellar_mass_function_moster_2013'].create_dataset('AGN_HGMF', data = AGN_HGMF )
 		ds.attrs['units'] = r'$ Mpc^{-3} dex^{-1}$'
 		ds.attrs['long_name'] = r'$dN / (dV/, dlogM) $' 
-		ds = f1['/stellar_mass_function'].create_dataset('duty_cycle', data = duty_cycle )
+		ds = f1['/stellar_mass_function_moster_2013'].create_dataset('duty_cycle', data = duty_cycle )
 		ds.attrs['units'] = r'fraction'
 		ds.attrs['long_name'] = r'Duty cycle, fraction of active galaxies at a given stellar mass' 
 
 	f1.close()
 
-for h5_file in h5_files[::-1][:3]:
+for h5_file in h5_files[::-1]:
 	#try:
-	measure_HGMF(h5_file, update=True)
+	measure_HGMF(h5_file, update=False)
 	#except( ValueError ):
 	#pass

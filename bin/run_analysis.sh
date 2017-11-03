@@ -73,37 +73,67 @@ sh run_remap_MD10.s
 # executes the remapping for the MD04 box
 # 12 cores is the maximum on ds52
 
-# stellar mass function
-# model for the host galaxy mass function for AGN
-python measure_SMF.py
-python tabulate_HGMF_per_snapshot.py
-python plot_SMF.py
-# star formation rate density
-python measure_SFRD.py
-python plot_SFRD.py
+# Revised implementaion of the Moster et al. 2013 + revised parameters to match Planck cosmology.
+sh run_MSMo13_md10.sh
+# uses snapshots_add_Ms_Mo13.py
+
 # DATA MODEL FOR SNAPSHOTS
 python3 print_data_structure.py 22 MD10
 python3 print_data_structure.py 22 MD04
+
+# stellar mass function
+python3 measure_SMF.py
+python3 measure_SMF_Mo13.py
+# model for the host galaxy mass function for AGN
+#tabulates the duty cycles and AGN host galaxy function for the Mo13 implementation
+python3 tabulate_HGMF_per_snapshot.py
+python3 plot_SMF.py
+
+sh run_LSAR_md10.sh
+# uses snapshots_add_LSAR_Bo16.py
+#ONGOING
+#ONGOING
+#ONGOING
+# Some value error for snapshot 37, ... occuring 
+
+970000 2956779 332.835337638855
+Traceback (most recent call last):
+  File "snapshots_add_LSAR_Bo16.py", line 69, in <module>
+    log_lSAR[ii0:ii1] = log_lambda_SAR_values[n.array([n.min(n.where(cmat.T[jj]==True)) for jj in n.arange(len(cmat.T)) ])]
+  File "snapshots_add_LSAR_Bo16.py", line 69, in <listcomp>
+    log_lSAR[ii0:ii1] = log_lambda_SAR_values[n.array([n.min(n.where(cmat.T[jj]==True)) for jj in n.arange(len(cmat.T)) ])]
+  File "/home/comparat/.local/lib/python3.4/site-packages/numpy/core/fromnumeric.py", line 2372, in amin
+    out=out, **kwargs)
+  File "/home/comparat/.local/lib/python3.4/site-packages/numpy/core/_methods.py", line 29, in _amin
+    return umr_minimum(a, axis, None, out, keepdims)
+ValueError: zero-size array to reduction operation minimum which has no identity
+
+
+# star formation rate density
+#python measure_SFRD.py
+#python plot_SFRD.py
 
 #########################################
 # LIGHT CONES
 #########################################
 # create the shells of the light cone
-"""
-import numpy as n
-import os
-for ii in n.arange(50,115,1)[::-1]:
-	comm="python3 lc_create_shells.py "+str(ii)+" MD10 1000"	
-	print(comm)
-	os.system(comm)
 
-"""
+#TO RUN NEXT
+#TO RUN NEXT
+#TO RUN NEXT
+#TO RUN NEXT
+sh lc_create_shells_run.sh
+sh lc_create_shells_run_L6.sh
+# based on  lc_create_shells.py
+
 # merges the shells into a single light cone file
 python3 lc_merge_shells.py
 # Adds ra, dec, z 
 python3 lc_add_sky_coordinates.py  
 
-# Adds AGN related columns
+# TO WRITE NEXT : CODE IS A PLACE HOLDER
+# Adds AGN related columns: ADD DUTY CYCLE and ACTIVE FRACTION.
+# CHECK LOGNLOGS IS CORRECT
 python3 lc_add_agns.py  
 # Adds cluster related columns 
 python3 lc_add_clusters.py  
