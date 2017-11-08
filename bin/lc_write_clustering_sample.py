@@ -109,7 +109,7 @@ def write_samp(zmax,lxmin, out_name='lc_remaped_position_L3_z_lt_03_lx_gt_438.as
 
 
 	N_data = len(f['/sky_position/RA'].value[sel]) 
-	N_rds = 200*N_data # len(raR) 
+	N_rds = 20*N_data # len(raR) 
 	print("D,R=",N_data, N_rds)
 	dz=0.05
 	zs=n.arange(zmin, zmax + dz, dz)
