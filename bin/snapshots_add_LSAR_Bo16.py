@@ -67,6 +67,7 @@ for ii0 in n.arange(0, len(logM), ii_step):
   probas = probas_un / norm
   cmat = n.array([ agn_random_number[ii0:ii1] > n.sum(probas.T[:,jj:], axis=1) for jj in n.arange(len(log_lambda_SAR_values)) ])
   print(cmat.shape, cmat[0])
+  print(cmat.T[1])
   values = log_lambda_SAR_values[n.array([n.min(n.where(cmat.T[jj]==True)) for jj in n.arange(len(cmat.T)) ])]
   print(values.shape, values[:10])
   log_lSAR[ii0:ii1] = values

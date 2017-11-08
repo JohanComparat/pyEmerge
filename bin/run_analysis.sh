@@ -100,7 +100,7 @@ sh run_LSAR_md10.sh
 Traceback (most recent call last):
   File "snapshots_add_LSAR_Bo16.py", line 69, in <module>
     log_lSAR[ii0:ii1] = log_lambda_SAR_values[n.array([n.min(n.where(cmat.T[jj]==True)) for jj in n.arange(len(cmat.T)) ])]
-  File "snapshots_add_LSAR_Bo16.py", line 69, in <listcomp>
+  File "snCapshots_add_LSAR_Bo16.py", line 69, in <listcomp>
     log_lSAR[ii0:ii1] = log_lambda_SAR_values[n.array([n.min(n.where(cmat.T[jj]==True)) for jj in n.arange(len(cmat.T)) ])]
   File "/home/comparat/.local/lib/python3.4/site-packages/numpy/core/fromnumeric.py", line 2372, in amin
     out=out, **kwargs)
@@ -108,6 +108,8 @@ Traceback (most recent call last):
     return umr_minimum(a, axis, None, out, keepdims)
 ValueError: zero-size array to reduction operation minimum which has no identity
 
+sh run_AGN_activity_md10.sh
+# uses snapshots_add_AGN_activity_Bo16.py
 
 # star formation rate density
 #python measure_SFRD.py
@@ -118,18 +120,23 @@ ValueError: zero-size array to reduction operation minimum which has no identity
 #########################################
 # create the shells of the light cone
 
-#TO RUN NEXT
-#TO RUN NEXT
-#TO RUN NEXT
-#TO RUN NEXT
 sh lc_create_shells_run.sh
 sh lc_create_shells_run_L6.sh
+# remains a problem for L6, some logSAR are not written
 # based on  lc_create_shells.py
 
 # merges the shells into a single light cone file
-python3 lc_merge_shells.py
+python3 lc_merge_shells.py L3
+python3 lc_merge_shells.py L6
+
 # Adds ra, dec, z 
-python3 lc_add_sky_coordinates.py  
+python3 lc_add_sky_coordinates.py remaped_position_L6
+python3 lc_add_sky_coordinates.py remaped_position_L3
+ 
+L3 characteristics :
+z< 1.0889947373832305 |ra [deg]|< 6.7529257176359 |dec [deg]|< 8.269819492449505
+N points: 8037075 
+
 
 # TO WRITE NEXT : CODE IS A PLACE HOLDER
 # Adds AGN related columns: ADD DUTY CYCLE and ACTIVE FRACTION.

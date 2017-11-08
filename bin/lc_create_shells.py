@@ -51,7 +51,8 @@ input_list_i = n.array(glob.glob(os.path.join(h5_dir, "hlist_?.?????_emerge.hdf5
 input_list_i.sort()
 
 # removing snapshots that cannote be remapped ...
-input_list = n.delete(input_list_i, n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.71730_emerge.hdf5")))
+input_list = n.delete(input_list_i,n.array([n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.71730_emerge.hdf5")),  n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.91520_emerge.hdf5")) ]) )
+
 
 # creates the redshift list 
 redshifts = []
@@ -154,6 +155,8 @@ def copylc_data(ii, option=False):
 		ds.attrs['units'] = r'log lambda SAR'
 		ds.attrs['long_name'] = 'log lambda SAR' 
 		
+		ds = agn_properties.create_dataset('agn_activity', data = f1['/agn_properties/agn_activity'].value[selection])
+
 		emerge_data = f.create_group('emerge_data')
 		
 		ds = emerge_data.create_dataset('dMdt', data = f1['/emerge_data/dMdt'].value[selection])

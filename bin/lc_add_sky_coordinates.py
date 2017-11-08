@@ -12,12 +12,24 @@ python3 lc_add_sky_coordinates.py 1.3
 import sys
 env = 'MD10'# sys.argv[1] # 'MD10'
 L_box = 1000./0.6777 # float(sys.argv[2]) / 0.6777
-z_max = 1.3 # float(sys.argv[3])
-positions_group_name = 'remaped_position_L3'
-x_obs, y_obs, z_obs = 0., 0.7071/2.*L_box, 0.5774/2.*L_box
-strech_factor_los = 2.4495
-strech_factor_y = 0.7071
-strech_factor_z = 0.5774
+
+positions_group_name = sys.argv[1] # 'remaped_position_L3'
+
+if positions_group_name=='remaped_position_L3':
+  z_max = 1.3
+  x_obs, y_obs, z_obs = 0., 0.7071/2.*L_box, 0.5774/2.*L_box
+  strech_factor_los = 2.4495
+  strech_factor_y = 0.7071
+  strech_factor_z = 0.5774
+
+
+if positions_group_name=='remaped_position_L6':
+  z_max = 6.3
+  x_obs, y_obs, z_obs = 0., 0.4140/2.*L_box, 0.4082/2.*L_box
+  strech_factor_los = 5.9161
+  strech_factor_y = 0.4140
+  strech_factor_z = 0.4082
+
 
 import h5py    # HDF5 support
 import os
@@ -30,7 +42,7 @@ import astropy.units as u
 cosmoMD = FlatLambdaCDM(H0=67.77*u.km/u.s/u.Mpc, Om0=0.307115, Ob0=0.048206)
 
 print("reads the light cone")
-file_lc = os.path.join(os.environ[env], 'h5_lc', 'lc_'+positions_group_name+'_obs_0-0_0-7_0-5.hdf5')
+file_lc = os.path.join(os.environ[env], 'h5_lc', 'lc_'+positions_group_name+'_.hdf5')
 f = h5py.File(file_lc,  "r+")
 
 a = 1. / ( 1. + f['/halo_position/z_snap'].value ) # scale factor
