@@ -140,16 +140,18 @@ lx_absorbed_05_20 = n.log10(10**lx * percent_observed)
 
 d_L = cosmoMD.comoving_distance(z)
 dl_cm = (d_L.to(u.cm)).value
+adjusting_factor = 0.6
+fx_05_20 = 10**(lx_absorbed_05_20-adjusting_factor) / (4 * n.pi * dl_cm**2.)
 
-fx_05_20 = 10**lx_absorbed_05_20 / (4 * n.pi * dl_cm**2.)
+f['/agn_properties/rxay_flux_05_20'][:] = fx_05_20 
+f['/agn_properties/logNH'][:] = logNH 
 
+#ds = f['/agn_properties'].create_dataset('rxay_flux_05_20', data = fx_05_20 )
+#ds.attrs['units'] = 'erg/cm2/s'
+#ds.attrs['long_name'] = 'X ray flux in the 0.5-2 keV band' 
 
-ds = f['/agn_properties'].create_dataset('rxay_flux_05_20', data = fx_05_20 )
-ds.attrs['units'] = 'erg/cm2/s'
-ds.attrs['long_name'] = 'X ray flux in the 0.5-2 keV band' 
-
-ds = f['/agn_properties'].create_dataset('logNH', data = logNH )
-ds.attrs['units'] = 'logNH'
-ds.attrs['long_name'] = 'logNH' 
+#ds = f['/agn_properties'].create_dataset('logNH', data = logNH )
+#ds.attrs['units'] = 'logNH'
+#ds.attrs['long_name'] = 'logNH' 
 
 f.close()
