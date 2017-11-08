@@ -68,7 +68,6 @@ import glob
 import numpy as n
 from scipy.interpolate import interp1d
 
-
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as p
@@ -97,12 +96,36 @@ lx = logm + lsar
 log_f_05_20 = n.log10(f['/agn_properties/rxay_flux_05_20'].value) 
 
 area = 6.7529257176359*2. * 2* 8.269819492449505
-topdir = '/data17s/darksim/MD/MD_1.0Gpc/h5_lc/clustering_catalogs_remaped_position_L3'
+topdir = '/data17s/darksim/MD/MD_1.0Gpc/h5_lc/clustering_catalogs_remaped_position_L3/'
+
+raR, decR = n.loadtxt(topdir + 'random-ra-dec.txt', unpack=True)
 
 def write_samp(zmax,lxmin, out_name='lc_remaped_position_L3_z_lt_03_lx_gt_438.ascii'):
-	sel = (is_agn)&(f['/sky_position/redshift_S'].value>0.08)&(f['/sky_position/redshift_S'].value<zmax)&(n.log10(f['/moster_2013_data/stellar_mass'].value)+f['/agn_properties/log_lambda_sar'].value>lxmin)
+	zmin=0.08
+	sel = (is_agn)&(f['/sky_position/redshift_S'].value>zmin)&(f['/sky_position/redshift_S'].value<zmax)&(n.log10(f['/moster_2013_data/stellar_mass'].value)+f['/agn_properties/log_lambda_sar'].value>lxmin)
+	
 	n.savetxt(out_name, n.transpose([f['/sky_position/RA'].value[sel], f['/sky_position/DEC'].value[sel], f['/sky_position/redshift_S'].value[sel], n.ones_like(f['/sky_position/redshift_S'].value[sel])]) )
 	print(zmax, lxmin, len(f['/sky_position/RA'].value[sel]))
+
+
+	N_data = len(f['/sky_position/RA'].value[sel]) 
+	N_rds = len(raR) 
+	print("D,R=",N_data, N_rds)
+	dz=0.05
+	zs=np.arange(zmin, zmax + dz, dz)
+	nn,bb = np.histogram(f['/sky_position/redshift_S'].value[sel], bins=zs)#, weights=1./w_col.array)
+	nz=interp1d((zs[1:]+zs[:-1])/2.,nn)
+	rdsz=[]
+	for i in range(1,len(zs)-1,1):
+		inter=np.random.uniform(low=zs[i]-dz/2., high=zs[i]+dz/2., size=int( 1000* nz( zs[i] )))
+		rdsz.append(inter)
+
+	rds=np.hstack((rdsz))
+	np.random.shuffle(rds)
+	RR=rds[:N_rds]#-dz/2.
+	print("RR=",len(rds), len(RR))
+
+	n.savetxt(out_name[:-4]+'random', n.transpose([raR, decR, RR, np.ones_like(RR) ]))
 
 	p.figure(1, (6,6))
 	p.plot(f['/sky_position/redshift_S'].value[sel], n.log10(f['/halo_properties/mvir'].value[sel]), 'k,', rasterized = True )
@@ -142,12 +165,14 @@ sel = write_samp(0.3, 41.5, out_name=topdir+'lc_L3_z_lt_03_lx_gt_415.ascii')
 
 sel = write_samp(0.4, 44., out_name=topdir+'lc_L3_z_lt_04_lx_gt_440.ascii')
 sel = write_samp(0.4, 43., out_name=topdir+'lc_L3_z_lt_04_lx_gt_430.ascii')
-sel = write_samp(0.4, 42.5, out_name=topdir+'lc_L3_z_lt_4__lx_gt_425.ascii')
+sel = write_samp(0.4, 42.5, out_name=topdir+'lc_L3_z_lt_04_lx_gt_425.ascii')
 sel = write_samp(0.4, 42., out_name=topdir+'lc_L3_z_lt_04_lx_gt_420.ascii')
-sel = write_samp(0.4, 41.5, out_name=topdir+'lc_L3_z_lt_4__lx_gt_415.ascii')
+sel = write_samp(0.4, 41.5, out_name=topdir+'lc_L3_z_lt_04_lx_gt_415.ascii')
 
 # create a mangle mask and make randoms in it	
 #  6.7529257176359*2. * 2* 8.269819492449505
+import pymangle
+'/data17s/darksim/MD/MD_1.0Gpc/h5_lc/clustering_catalogs_remaped_position_L3/mask.ply'
 
 p.figure(1, (6,6))
 p.plot(z, lx, 'k,', rasterized = True )
