@@ -140,7 +140,7 @@ lx_absorbed_05_20 = n.log10(10**lx * percent_observed)
 
 d_L = cosmoMD.comoving_distance(z)
 dl_cm = (d_L.to(u.cm)).value
-adjusting_factor = 0.6
+adjusting_factor = 0.
 fx_05_20 = 10**(lx_absorbed_05_20-adjusting_factor) / (4 * n.pi * dl_cm**2.)
 
 f['/agn_properties/rxay_flux_05_20'][:] = fx_05_20 
