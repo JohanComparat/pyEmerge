@@ -112,20 +112,20 @@ def write_samp(zmax,lxmin, out_name='lc_remaped_position_L3_z_lt_03_lx_gt_438.as
 	N_rds = len(raR) 
 	print("D,R=",N_data, N_rds)
 	dz=0.05
-	zs=np.arange(zmin, zmax + dz, dz)
-	nn,bb = np.histogram(f['/sky_position/redshift_S'].value[sel], bins=zs)#, weights=1./w_col.array)
+	zs=n.arange(zmin, zmax + dz, dz)
+	nn,bb = n.histogram(f['/sky_position/redshift_S'].value[sel], bins=zs)#, weights=1./w_col.array)
 	nz=interp1d((zs[1:]+zs[:-1])/2.,nn)
 	rdsz=[]
 	for i in range(1,len(zs)-1,1):
-		inter=np.random.uniform(low=zs[i]-dz/2., high=zs[i]+dz/2., size=int( 1000* nz( zs[i] )))
+		inter=n.random.uniform(low=zs[i]-dz/2., high=zs[i]+dz/2., size=int( 1000* nz( zs[i] )))
 		rdsz.append(inter)
 
-	rds=np.hstack((rdsz))
-	np.random.shuffle(rds)
+	rds=n.hstack((rdsz))
+	n.random.shuffle(rds)
 	RR=rds[:N_rds]#-dz/2.
 	print("RR=",len(rds), len(RR))
 
-	n.savetxt(out_name[:-5]+'random', n.transpose([raR, decR, RR, np.ones_like(RR) ]))
+	n.savetxt(out_name[:-5]+'random', n.transpose([raR, decR, RR, n.ones_like(RR) ]))
 
 	p.figure(1, (6,6))
 	p.plot(f['/sky_position/redshift_S'].value[sel], n.log10(f['/halo_properties/mvir'].value[sel]), 'k,', rasterized = True )
