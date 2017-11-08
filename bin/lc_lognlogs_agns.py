@@ -67,6 +67,14 @@ import glob
 import numpy as n
 from scipy.interpolate import interp1d
 
+
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as p
+
+plotDir = os.path.join(os.environ['HOME'], 'wwwDir', "eRoMok", "logNlogS")
+
+
 from astropy.cosmology import FlatLambdaCDM
 import astropy.units as u
 cosmoMD = FlatLambdaCDM(H0=67.77*u.km/u.s/u.Mpc, Om0=0.307115, Ob0=0.048206)
@@ -83,73 +91,47 @@ n_agn = len(f['/sky_position/redshift_S'].value[is_agn])
 z = f['/sky_position/redshift_S'].value[is_agn]
 logm = n.log10(f['/moster_2013_data/stellar_mass'].value[is_agn])
 lsar = f['/agn_properties/log_lambda_sar'].value[is_agn]
-lx = logm + lsar 
+lx = logm + lsar - 0.4
+
+log_f_05_20 = f['/agn_properties/rxay_flux_05_20'].value
 
 area = 6.7529257176359*2. * 2* 8.269819492449505
 
-
-# randomX = n.random.rand(n_gal)
-# lambda SAR addition
-
-# randomObscuration = n.random.rand(n_gal)		
-# obscured = (xr.obscured_fraction_optical_Merloni2015(lsar + stellar_mass) < randomObscuration )
-
-# obscuration Buchner et al. 2015 + 2017
-# add the log NH of the logNH_host
-# 35 % have a thick obscuration 24 - 26
-# 65 % have a thin obscuration that depends on stellar mass and Xray luminosity
-logNH = n.random.uniform(20, 22, n_agn)
-obs_type = n.zeros(n_agn)
-# 35% of thick, 24-26
-randomNH = n.random.rand(n_agn)
-thick_obscuration = (randomNH < 0.35)
-thin_obscuration = (randomNH >= 0.35)
-logNH[thick_obscuration] = n.random.uniform(24, 26, len(logNH[thick_obscuration]))
-obs_type[thick_obscuration] = n.ones_like(logNH[thick_obscuration])*2
-# the thin : about 40 % are thin whatever happens: 22-24
-logNH_host_mean = 21.7 + (logm - 9.5)*0.38
-logNH_host = n.random.normal(logNH_host_mean, 0.5)
-logNH[(thin_obscuration)&(logNH_host>=22)] = n.random.uniform(22, 24, len(logNH[(thin_obscuration)&(logNH_host>=22)]))
-obs_type[(thin_obscuration)&(logNH_host>=22)] =  n.ones_like(logNH[(thin_obscuration)&(logNH_host>=22)])
-# a few more are thin depending on their Xray luminosity: 22-24
-#rest = (thin_obscuration)&(logNH_host<22)
-#randomNH2 = n.random.rand(n_agn)
-#rest_obscured = (rest)&(randomNH2 < obscured_fraction_interpolated(lsar + logm))
-#logNH[(rest_obscured)] = random.uniform(22, 24, len(logNH[(rest_obscured)]))
-#obs_type[(rest_obscured)] =  n.ones_like(logNH[(rest_obscured)])
-
-
-obscuration_z_grid, obscuration_nh_grid, obscuration_fraction_obs_erosita = n.loadtxt( os.path.join( os.environ['GIT_NBODY_NPT'], "data", "AGN", "fraction_observed_by_erosita_due_2_obscuration.txt"), unpack=True)
-nh_vals = 10**n.arange(-2,4,0.05)
-z_vals = 10**n.arange(-3,0.68,0.025)
-
-obscuration_interpolation_grid = n.array([ 
-  interp1d(
-    n.hstack((obscuration_nh_grid[ (obscuration_z_grid==zz) ], 26.)), 
-    n.hstack((obscuration_fraction_obs_erosita[( obscuration_z_grid==zz) ], obscuration_fraction_obs_erosita[( obscuration_z_grid==zz) ][-1]))
-		) 
-  for zz in z_vals])
-
-index = n.searchsorted(z_vals, z)
-
-percent_observed = n.array([ obscuration_interpolation_grid[ind]( nh) for ind, nh in zip(index, logNH)])
-
-# lx is 2-10 keV
-# converts in the erosita band 0.5-2 keV
-lx_absorbed_05_20 = n.log10(10**lx * percent_observed)
-
-d_L = cosmoMD.comoving_distance(z)
-dl_cm = (d_L.to(u.cm)).value
-
-fx_05_20 = 10**lx_absorbed_05_20 / (4 * n.pi * dl_cm**2.)
-
-
-ds = f['/agn_properties'].create_dataset('rxay_flux_05_20', data = fx_05_20 )
-ds.attrs['units'] = 'erg/cm2/s'
-ds.attrs['long_name'] = 'X ray flux in the 0.5-2 keV band' 
-
-ds = f['/agn_properties'].create_dataset('logNH', data = logNH )
-ds.attrs['units'] = 'logNH'
-ds.attrs['long_name'] = 'logNH' 
-
 f.close()
+
+out = n.histogram(n.log10(log_f_05_20), bins = n.arange(-18, -8., 0.2))
+# cumulative number density per square degrees
+x_out = 0.5*(out[1][1:] + out[1][:-1])
+c_out = n.array([n.sum(out[0][ii:]) for ii in range(len(out[0])) ]) / area
+
+
+p.figure(1, (6,6))
+p.plot(x_out, n.log10(c_out), 'k', lw=2, rasterized = True, label = 'L3 lc' )
+p.plot(x_out-0.4, n.log10(c_out), 'k', lw=2, rasterized = True, label = 'L3 lc-0.1' )
+#p.plot(x_out, n.log10(c_out*(1-frac_err_13deg2)), 'k--', lw=1, rasterized = True, label = 'v0.6, 13.3deg2 scatter' )
+#p.plot(x_out, n.log10(c_out*(1+frac_err_13deg2)), 'k--', lw=1, rasterized = True)
+#p.plot(x_out, n.log10(c_out*(1-frac_err_3deg2)), 'r--', lw=1, rasterized = True, label = 'v0.6, 3.5deg2 scatter' )
+#p.plot(x_out, n.log10(c_out*(1+frac_err_3deg2)), 'r--', lw=1, rasterized = True)
+#p.plot(x_out_0, n.log10(c_out_0), 'm--', rasterized = True, label = 'Planck mock v0.0' )
+
+path_2_logNlogS_data = os.path.join(os.environ["DARKSIM_DIR"], 'observations', 'logNlogS', 'logNlogS_Georgakakis_08_AGN.data')
+x_data, y_data, yerr = n.loadtxt(path_2_logNlogS_data, unpack=True)
+p.fill_between(x_data, y1 = n.log10(y_data-yerr), y2=n.log10(y_data+yerr), color='b' , rasterized = True, alpha=0.5)
+p.plot(x_data, n.log10(y_data), color='b', label = 'Georgakakis 08' )
+path_2_logNlogS_data = os.path.join(os.environ["DARKSIM_DIR"], 'observations', 'logNlogS', 'logNlogS_Merloni_12_AGN.data')
+x_data, y_data  = n.loadtxt(path_2_logNlogS_data, unpack=True)
+p.plot(x_data, n.log10(y_data), color='g',  label = 'Merloni 12' )
+
+p.axhline(7, ls='dashed')
+p.xlabel('log(F[0.5-2 keV])')
+p.ylabel('log(>F) [/deg2]')
+p.legend(frameon=False, loc=0)
+#p.yscale('log')
+p.xlim((-17, -11))
+p.ylim((-3, 4.1))
+p.title('full sky cluster mock')
+p.grid()
+p.savefig(os.path.join(plotDir, "logN_logS_AGN.jpg"))
+p.clf()
+
+
