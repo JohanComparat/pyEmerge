@@ -125,7 +125,7 @@ def write_samp(zmax,lxmin, out_name='lc_remaped_position_L3_z_lt_03_lx_gt_438.as
 	RR=rds[:N_rds]#-dz/2.
 	print("RR=",len(rds), len(RR))
 
-	n.savetxt(out_name[:-4]+'random', n.transpose([raR, decR, RR, np.ones_like(RR) ]))
+	n.savetxt(out_name[:-5]+'random', n.transpose([raR, decR, RR, np.ones_like(RR) ]))
 
 	p.figure(1, (6,6))
 	p.plot(f['/sky_position/redshift_S'].value[sel], n.log10(f['/halo_properties/mvir'].value[sel]), 'k,', rasterized = True )
@@ -140,6 +140,7 @@ def write_samp(zmax,lxmin, out_name='lc_remaped_position_L3_z_lt_03_lx_gt_438.as
 	p.grid()
 	p.savefig(os.path.join(plotDir, "HOD_z_"+str(zmax)+"_lx_"+str(lxmin)+".jpg"))
 	p.clf()
+	
 	return sel
 
 #p.figure(1, (6,6))

@@ -6,7 +6,7 @@ topdir = '/data17s/darksim/MD/MD_1.0Gpc/h5_lc/clustering_catalogs_remaped_positi
 size = 30000000
 NN = 3 # or any positive integer
 x = n.random.normal(size=(size, NN)) 
-x /= n.linalg.norm(x, axis=1)[:, numpy.newaxis]
+x /= n.linalg.norm(x, axis=1)[:, n.newaxis]
 
 theta = n.arctan(x.T[1]/x.T[2])*180/n.pi
 phi = n.arctan((x.T[0]**2+x.T[1]**2)**0.5/x.T[2])*180/n.pi
