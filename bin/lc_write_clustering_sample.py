@@ -109,7 +109,7 @@ def write_samp(zmax,lxmin, out_name='lc_remaped_position_L3_z_lt_03_lx_gt_438.as
 
 
 	N_data = len(f['/sky_position/RA'].value[sel]) 
-	N_rds = len(raR) 
+	N_rds = 200*N_data # len(raR) 
 	print("D,R=",N_data, N_rds)
 	dz=0.05
 	zs=n.arange(zmin, zmax + dz, dz)
@@ -124,8 +124,10 @@ def write_samp(zmax,lxmin, out_name='lc_remaped_position_L3_z_lt_03_lx_gt_438.as
 	n.random.shuffle(rds)
 	RR=rds[:N_rds]#-dz/2.
 	print("RR=",len(rds), len(RR))
-
-	n.savetxt(out_name[:-5]+'random', n.transpose([raR, decR, RR, n.ones_like(RR) ]))
+	n.random.shuffle(raR)
+	n.random.shuffle(decR)
+	
+	n.savetxt(out_name[:-5]+'random', n.transpose([raR[:N_rds], decR[:N_rds], RR, n.ones_like(RR) ]))
 
 	p.figure(1, (6,6))
 	p.plot(f['/sky_position/redshift_S'].value[sel], n.log10(f['/halo_properties/mvir'].value[sel]), 'k,', rasterized = True )
