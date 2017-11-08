@@ -80,7 +80,7 @@ from astropy.cosmology import FlatLambdaCDM
 import astropy.units as u
 cosmoMD = FlatLambdaCDM(H0=67.77*u.km/u.s/u.Mpc, Om0=0.307115, Ob0=0.048206)
 
-f = h5py.File('/data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_remaped_position_L3_.hdf5', 'r+')
+f = h5py.File('/data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_remaped_position_L3_.hdf5', 'r')
 
 is_gal = (f['/sky_position/selection'].value)
 is_agn = (f['/sky_position/selection'].value)&(f['/agn_properties/agn_activity'].value==1)
@@ -103,7 +103,35 @@ def write_samp(zmax,lxmin, out_name='lc_remaped_position_L3_z_lt_03_lx_gt_438.as
 	sel = (is_agn)&(f['/sky_position/redshift_S'].value>0.08)&(f['/sky_position/redshift_S'].value<zmax)&(n.log10(f['/moster_2013_data/stellar_mass'].value)+f['/agn_properties/log_lambda_sar'].value>lxmin)
 	n.savetxt(out_name, n.transpose([f['/sky_position/RA'].value[sel], f['/sky_position/DEC'].value[sel], f['/sky_position/redshift_S'].value[sel], n.ones_like(f['/sky_position/redshift_S'].value[sel])]) )
 	print(zmax, lxmin, len(f['/sky_position/RA'].value[sel]))
+
+	p.figure(1, (6,6))
+	p.plot(f['/sky_position/redshift_S'].value[sel], n.log10(f['/halo_properties/mvir'].value[sel]), 'k,', rasterized = True )
+	p.axvline(0.08, ls='dashed')
+	p.ylabel('mvir')
+	p.xlabel('redshift')
+	p.legend(frameon=False, loc=0)
+	#p.yscale('log')
+	p.xlim((0,1.2))
+	#p.ylim((40, 46))
+	p.title('200deg2 mock')
+	p.grid()
+	p.savefig(os.path.join(plotDir, "HOD_z_"+str(zmax)+"_lx_"+str(lxmin)+".jpg"))
+	p.clf()
 	return sel
+
+#p.figure(1, (6,6))
+#p.plot(f['/sky_position/redshift_S'].value[sel], n.log10(f['/halo_properties/mvir'].value[sel]), 'k,', rasterized = True )
+#p.axvline(0.08, ls='dashed')
+#p.ylabel('mvir')
+#p.xlabel('redshift')
+#p.legend(frameon=False, loc=0)
+##p.yscale('log')
+#p.xlim((0,1.2))
+#p.ylim((40, 46))
+#p.title('200deg2 mock')
+#p.grid()
+#p.savefig(os.path.join(plotDir, "HOD_z_"+str(zmax)+"_lx_"+str(lxmin)+".jpg"))
+#p.clf()
 
 sel = write_samp(0.3, 44.0, out_name=topdir+'lc_L3_z_lt_03_lx_gt_440.ascii')
 sel = write_samp(0.3, 43.5, out_name=topdir+'lc_L3_z_lt_03_lx_gt_435.ascii')
