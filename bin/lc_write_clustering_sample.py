@@ -1,4 +1,5 @@
 """
+PYTHON 2
 
 + + + + + + + HEADER + + + + + + + + +
 file_name lc_remaped_position_L3_.hdf5
@@ -96,15 +97,34 @@ lx = logm + lsar
 log_f_05_20 = n.log10(f['/agn_properties/rxay_flux_05_20'].value) 
 
 area = 6.7529257176359*2. * 2* 8.269819492449505
+topdir = '/data17s/darksim/MD/MD_1.0Gpc/h5_lc/clustering_catalogs_remaped_position_L3'
 
-f.close()
+def write_samp(zmax,lxmin, out_name='lc_remaped_position_L3_z_lt_03_lx_gt_438.ascii'):
+	sel = (is_agn)&(f['/sky_position/redshift_S'].value>0.08)&(f['/sky_position/redshift_S'].value<zmax)&(n.log10(f['/moster_2013_data/stellar_mass'].value)+f['/agn_properties/log_lambda_sar'].value>lxmin)
+	n.savetxt(out_name, n.transpose([f['/sky_position/RA'].value[sel], f['/sky_position/DEC'].value[sel], f['/sky_position/redshift_S'].value[sel], n.ones_like(f['/sky_position/redshift_S'].value[sel])]) )
+	print(zmax, lxmin, len(f['/sky_position/RA'].value[sel]))
+	return sel
 
-selection = (z<0.3)&(lx>44.)
+sel = write_samp(0.3, 44.0, out_name=topdir+'lc_L3_z_lt_03_lx_gt_440.ascii')
+sel = write_samp(0.3, 43.5, out_name=topdir+'lc_L3_z_lt_03_lx_gt_435.ascii')
+sel = write_samp(0.3, 43., out_name=topdir+'lc_L3_z_lt_03_lx_gt_430.ascii')
+sel = write_samp(0.3, 42.5, out_name=topdir+'lc_L3_z_lt_03_lx_gt_425.ascii')
+sel = write_samp(0.3, 42., out_name=topdir+'lc_L3_z_lt_03_lx_gt_420.ascii')
+sel = write_samp(0.3, 41.5, out_name=topdir+'lc_L3_z_lt_03_lx_gt_415.ascii')
+
+sel = write_samp(0.4, 44., out_name=topdir+'lc_L3_z_lt_04_lx_gt_440.ascii')
+sel = write_samp(0.4, 43., out_name=topdir+'lc_L3_z_lt_04_lx_gt_430.ascii')
+sel = write_samp(0.4, 42.5, out_name=topdir+'lc_L3_z_lt_4__lx_gt_425.ascii')
+sel = write_samp(0.4, 42., out_name=topdir+'lc_L3_z_lt_04_lx_gt_420.ascii')
+sel = write_samp(0.4, 41.5, out_name=topdir+'lc_L3_z_lt_4__lx_gt_415.ascii')
+
+# create a mangle mask and make randoms in it	
+#  6.7529257176359*2. * 2* 8.269819492449505
 
 p.figure(1, (6,6))
 p.plot(z, lx, 'k,', rasterized = True )
 p.plot(z[log_f_05_20>-12.7], lx[log_f_05_20>-12.7], 'r+', rasterized = True )
-#p.axhline(7, ls='dashed')
+p.axvline(0.08, ls='dashed')
 p.ylabel('log(LX)')
 p.xlabel('redshift')
 p.legend(frameon=False, loc=0)
