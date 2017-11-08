@@ -91,15 +91,15 @@ n_agn = len(f['/sky_position/redshift_S'].value[is_agn])
 z = f['/sky_position/redshift_S'].value[is_agn]
 logm = n.log10(f['/moster_2013_data/stellar_mass'].value[is_agn])
 lsar = f['/agn_properties/log_lambda_sar'].value[is_agn]
-lx = logm + lsar - 0.4
+lx = logm + lsar
 
-log_f_05_20 = f['/agn_properties/rxay_flux_05_20'].value
+log_f_05_20 = n.log10(f['/agn_properties/rxay_flux_05_20'].value) - 0.5
 
 area = 6.7529257176359*2. * 2* 8.269819492449505
 
 f.close()
 
-out = n.histogram(n.log10(log_f_05_20), bins = n.arange(-18, -8., 0.2))
+out = n.histogram(log_f_05_20, bins = n.arange(-18, -8., 0.2))
 # cumulative number density per square degrees
 x_out = 0.5*(out[1][1:] + out[1][:-1])
 c_out = n.array([n.sum(out[0][ii:]) for ii in range(len(out[0])) ]) / area
@@ -107,7 +107,7 @@ c_out = n.array([n.sum(out[0][ii:]) for ii in range(len(out[0])) ]) / area
 
 p.figure(1, (6,6))
 p.plot(x_out, n.log10(c_out), 'k', lw=2, rasterized = True, label = 'L3 lc' )
-p.plot(x_out-0.4, n.log10(c_out), 'k', lw=2, rasterized = True, label = 'L3 lc-0.1' )
+p.plot(x_out-0.1, n.log10(c_out), 'k', lw=2, rasterized = True, label = 'L3 lc-0.1' )
 #p.plot(x_out, n.log10(c_out*(1-frac_err_13deg2)), 'k--', lw=1, rasterized = True, label = 'v0.6, 13.3deg2 scatter' )
 #p.plot(x_out, n.log10(c_out*(1+frac_err_13deg2)), 'k--', lw=1, rasterized = True)
 #p.plot(x_out, n.log10(c_out*(1-frac_err_3deg2)), 'r--', lw=1, rasterized = True, label = 'v0.6, 3.5deg2 scatter' )
