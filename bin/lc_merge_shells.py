@@ -23,13 +23,18 @@ import sys
 env = 'MD10'# sys.argv[1] # 'MD10'
 L_box = 1000./0.6777 # float(sys.argv[2]) / 0.6777
 remap = sys.argv[1]
+
 if remap=="L3":
 	positions_group_name = 'remaped_position_L3'
-	x_obs, y_obs, z_obs = 0., 0.7071/2.*L_box, 0.5774/2.*L_box
+	#x_obs, y_obs, z_obs = 0., 0.7071/2.*L_box, 0.5774/2.*L_box
+
+if remap=="L3_z1":
+	positions_group_name = 'remaped_position_L3_z1'
+	#x_obs, y_obs, z_obs = -2.4495*L_box, 0.7071/2.*L_box, 0.5774/2.*L_box
 
 if remap=="L6":
         positions_group_name = 'remaped_position_L6'
-        x_obs, y_obs, z_obs = 0., 0.4140/2.*L_box, 0.4082/2.*L_box
+        #x_obs, y_obs, z_obs = 0., 0.4140/2.*L_box, 0.4082/2.*L_box
 
 
 import h5py    # HDF5 support
@@ -45,7 +50,7 @@ h5_lc_dir = os.path.join(os.environ[env], 'h5_lc', 'shells_'+positions_group_nam
 input_list = n.array(glob.glob(os.path.join(h5_lc_dir, "shell_hlist_?.?????_emerge.hdf5")))
 input_list.sort()
 
-file_out = os.path.join(os.environ[env], 'h5_lc', 'lc_'+positions_group_name+'_.hdf5')
+file_out = os.path.join(os.environ[env], 'h5_lc', 'lc_'+positions_group_name+'.hdf5')
 
 print("creates redshift list")
 # creates the redshift list 

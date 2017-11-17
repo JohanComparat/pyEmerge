@@ -79,7 +79,7 @@ from astropy.cosmology import FlatLambdaCDM
 import astropy.units as u
 cosmoMD = FlatLambdaCDM(H0=67.77*u.km/u.s/u.Mpc, Om0=0.307115, Ob0=0.048206)
 
-f = h5py.File('/data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_remaped_position_L3_.hdf5', 'r')
+f = h5py.File('/data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_remaped_position_L3.hdf5', 'r')
 
 is_gal = (f['/sky_position/selection'].value)
 is_agn = (f['/sky_position/selection'].value)&(f['/agn_properties/agn_activity'].value==1)
@@ -101,7 +101,7 @@ topdir = '/data17s/darksim/MD/MD_1.0Gpc/h5_lc/clustering_catalogs_remaped_positi
 raR, decR = n.loadtxt(topdir + 'random-ra-dec.txt', unpack=True)
 
 def write_samp(zmax,lxmin, out_name='lc_remaped_position_L3_z_lt_03_lx_gt_438.ascii'):
-	zmin=0.08
+	zmin=0.001
 	sel = (is_agn)&(f['/sky_position/redshift_S'].value>zmin)&(f['/sky_position/redshift_S'].value<zmax)&(n.log10(f['/moster_2013_data/stellar_mass'].value)+f['/agn_properties/log_lambda_sar'].value>lxmin)
 	
 	n.savetxt(out_name, n.transpose([f['/sky_position/RA'].value[sel], f['/sky_position/DEC'].value[sel], f['/sky_position/redshift_S'].value[sel], n.ones_like(f['/sky_position/redshift_S'].value[sel])]) )
@@ -174,7 +174,7 @@ sel = write_samp(0.4, 41.5, out_name=topdir+'lc_L3_z_lt_04_lx_gt_415.ascii')
 
 # create a mangle mask and make randoms in it	
 #  6.7529257176359*2. * 2* 8.269819492449505
-import pymangle
+#import pymangle
 '/data17s/darksim/MD/MD_1.0Gpc/h5_lc/clustering_catalogs_remaped_position_L3/mask.ply'
 
 p.figure(1, (6,6))

@@ -71,7 +71,7 @@ from astropy.cosmology import FlatLambdaCDM
 import astropy.units as u
 cosmoMD = FlatLambdaCDM(H0=67.77*u.km/u.s/u.Mpc, Om0=0.307115, Ob0=0.048206)
 
-f = h5py.File('/data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_remaped_position_L3_.hdf5', 'r+')
+f = h5py.File('/data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_remaped_position_L3.hdf5', 'r+')
 
 is_gal = (f['/sky_position/selection'].value)
 is_agn = (f['/sky_position/selection'].value)&(f['/agn_properties/agn_activity'].value==1)
@@ -143,8 +143,8 @@ dl_cm = (d_L.to(u.cm)).value
 adjusting_factor = 0.
 fx_05_20 = 10**(lx_absorbed_05_20-adjusting_factor) / (4 * n.pi * dl_cm**2.)
 
-f['/agn_properties/rxay_flux_05_20'][:] = fx_05_20 
-f['/agn_properties/logNH'][:] = logNH 
+f['/agn_properties'].create_dataset('rxay_flux_05_20', data = fx_05_20 )
+f['/agn_properties'].create_dataset('logNH', data = logNH )
 
 #ds = f['/agn_properties'].create_dataset('rxay_flux_05_20', data = fx_05_20 )
 #ds.attrs['units'] = 'erg/cm2/s'

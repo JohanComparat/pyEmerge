@@ -26,9 +26,15 @@ L_box = float(sys.argv[3]) / 0.6777
 positions_group_name = sys.argv[4] # 'remaped_position_L3'
 
 if positions_group_name == 'remaped_position_L3' :
+	positions_group = 'remaped_position_L3'
 	x_obs, y_obs, z_obs = 0., 0.7071/2.*L_box, 0.5774/2.*L_box
 
+if positions_group_name == 'remaped_position_L3_z1' :
+	positions_group = 'remaped_position_L3'
+	x_obs, y_obs, z_obs = -2.4495*L_box, 0.7071/2.*L_box, 0.5774/2.*L_box
+
 if positions_group_name == 'remaped_position_L6' :
+	positions_group = 'remaped_position_L6'
 	x_obs, y_obs, z_obs = 0., 0.4140/2.*L_box, 0.4082/2.*L_box
 
 
@@ -51,7 +57,15 @@ input_list_i = n.array(glob.glob(os.path.join(h5_dir, "hlist_?.?????_emerge.hdf5
 input_list_i.sort()
 
 # removing snapshots that cannote be remapped ...
-input_list = n.delete(input_list_i,n.array([n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.71730_emerge.hdf5")),  n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.91520_emerge.hdf5")) ]) )
+input_list = n.delete(input_list_i,n.array([
+  n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.21210_emerge.hdf5")), # LSAR  issue
+  n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.24230_emerge.hdf5")), # LSAR  issue
+  n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.28920_emerge.hdf5")), # LSAR  issue
+  n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.27060_emerge.hdf5")), # remap issue
+  n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.43090_emerge.hdf5")), # remap issue 
+  n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.71730_emerge.hdf5")), # remap issue
+  n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.93570_emerge.hdf5"))  # remap issue
+  ]) )
 
 
 # creates the redshift list 
@@ -79,7 +93,7 @@ def copylc_data(ii, option=False):
 	print(file_1, "==>>", file_out)
 	f1 = h5py.File(file_1,  "r")
 	print( "n halos=",f1['/halo_properties/'].attrs['N_halos'])
-	x,y,z=f1[positions_group_name + '/xyx_Lbox'].value.T*L_box
+	x,y,z=f1[positions_group + '/xyx_Lbox'].value.T*L_box
 
 	distance = ((x-x_obs)**2.+(y-y_obs)**2.+(z-z_obs)**2.)**0.5
 	selection = (distance>=Dmin[ii])&(distance<Dmax[ii])

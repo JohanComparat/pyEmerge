@@ -73,12 +73,18 @@ def plot_SMF(h5_file):
   logMs_up     = f1['stellar_mass_function_moster_2013/stellar_mass_up'].value
   counts       = f1['stellar_mass_function_moster_2013/counts'].value
   dN_dVdlogM_g = f1['stellar_mass_function_moster_2013/dN_dVdlogM'].value 
+  counts_AGN       = f1['stellar_mass_function_moster_2013/counts_AGN'].value
+  dN_dVdlogM_g_AGN = f1['stellar_mass_function_moster_2013/dN_dVdlogM_AGN'].value 
   
+  AGN_HGMF = f1['/stellar_mass_function_moster_2013/AGN_HGMF'].value
+  p.plot((logMs_low + logMs_up)/2., n.log10(AGN_HGMF), label='Model Bo16', lw=2, ls='dashed')
+
   ok = (dN_dVdlogM_g>0)
   #print( "SMF", n.min(logMs_low[ok]), n.max(logMs_up[ok]) )
-  p.plot((logMs_low[ok] + logMs_up[ok])/2., n.log10(dN_dVdlogM_g[ok]), label='Gal Mo13')#, lw=2)
-  AGN_HGMF = f1['/stellar_mass_function_moster_2013/AGN_HGMF'].value
-  p.plot((logMs_low + logMs_up)/2., n.log10(AGN_HGMF), label='AGN Bo16')#, lw=2)
+  p.plot((logMs_low[ok] + logMs_up[ok])/2., n.log10(dN_dVdlogM_g[ok]), label='Galaxies simulated')#, lw=2)
+  
+  ok = (dN_dVdlogM_g_AGN>0)
+  p.plot((logMs_low[ok] + logMs_up[ok])/2., n.log10(dN_dVdlogM_g_AGN[ok]), label='AGN simulated')#, lw=2)
   
   p.xlabel('stellar mass')
   p.ylabel('log Phi stellar mass')

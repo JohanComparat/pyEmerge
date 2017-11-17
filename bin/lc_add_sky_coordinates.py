@@ -42,7 +42,7 @@ import astropy.units as u
 cosmoMD = FlatLambdaCDM(H0=67.77*u.km/u.s/u.Mpc, Om0=0.307115, Ob0=0.048206)
 
 print("reads the light cone")
-file_lc = os.path.join(os.environ[env], 'h5_lc', 'lc_'+positions_group_name+'_.hdf5')
+file_lc = os.path.join(os.environ[env], 'h5_lc', 'lc_'+positions_group_name+'.hdf5')
 f = h5py.File(file_lc,  "r+")
 
 a = 1. / ( 1. + f['/halo_position/z_snap'].value ) # scale factor

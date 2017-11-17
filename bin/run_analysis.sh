@@ -72,8 +72,15 @@ sh run_remap_MD04.s
 sh run_remap_MD10.s
 # executes the remapping for the MD04 box
 # 12 cores is the maximum on ds52
+# snapshots 72, 76, 98, 99, 111 fail at this step
+# BLACKLIST REMAP FAILs :
+# hlist_0.27060_emerge.hdf5
+# hlist_0.43090_emerge.hdf5
+# hlist_0.71730_emerge.hdf5
+# hlist_0.93570_emerge.hdf5
 
 # Revised implementaion of the Moster et al. 2013 + revised parameters to match Planck cosmology.
+# mass + agn functions are ok until redshift 3, then it is wrong.
 sh run_MSMo13_md10.sh
 # uses snapshots_add_Ms_Mo13.py
 
@@ -87,14 +94,11 @@ python3 measure_SMF_Mo13.py
 # model for the host galaxy mass function for AGN
 #tabulates the duty cycles and AGN host galaxy function for the Mo13 implementation
 python3 tabulate_HGMF_per_snapshot.py
-python3 plot_SMF.py
 
 sh run_LSAR_md10.sh
 # uses snapshots_add_LSAR_Bo16.py
-#ONGOING
-#ONGOING
-#ONGOING
-# Some value error for snapshot 37, ... occuring 
+# BLACKLIST LSAR FAILS
+# hlist_0.28920_emerge.hdf5    
 
 970000 2956779 332.835337638855
 Traceback (most recent call last):
@@ -111,9 +115,12 @@ ValueError: zero-size array to reduction operation minimum which has no identity
 sh run_AGN_activity_md10.sh
 # uses snapshots_add_AGN_activity_Bo16.py
 
-# star formation rate density
+# star formation rate density. WAS FOR EMERGE. NOT USED ANYMORE.
 #python measure_SFRD.py
 #python plot_SFRD.py
+
+python3 plot_SMF.py
+# plots are here: http://www.mpe.mpg.de/~comparat/eRoMok/h5/stellar_mass_function/
 
 #########################################
 # LIGHT CONES
@@ -121,27 +128,41 @@ sh run_AGN_activity_md10.sh
 # create the shells of the light cone
 
 sh lc_create_shells_run.sh
+sh lc_create_shells_run_z1.sh
 sh lc_create_shells_run_L6.sh
 # remains a problem for L6, some logSAR are not written
 # based on  lc_create_shells.py
 
 # merges the shells into a single light cone file
 python3 lc_merge_shells.py L3
+python3 lc_merge_shells.py L3_z1
 python3 lc_merge_shells.py L6
 
 # Adds ra, dec, z 
 python3 lc_add_sky_coordinates.py remaped_position_L6
 python3 lc_add_sky_coordinates.py remaped_position_L3
+python3 lc_add_sky_coordinates.py remaped_position_L3_z1
  
 L3 characteristics :
 z< 1.0889947373832305 |ra [deg]|< 6.7529257176359 |dec [deg]|< 8.269819492449505
 N points: 8037075 
 
 
-# TO WRITE NEXT : CODE IS A PLACE HOLDER
-# Adds AGN related columns: ADD DUTY CYCLE and ACTIVE FRACTION.
-# CHECK LOGNLOGS IS CORRECT
+# converts the Bongiorno luminosity into the eRosita band assuming a NH distribution and following Buchner et al. 2017.
+# 
 python3 lc_add_agns.py  
+python3 lc_lognlogs_agns.py
+# results are shown here : 
+# http://www.mpe.mpg.de/~comparat/eRoMok/logNlogS/
+# logs logn is still too bright by 0.6 dex. Probably an issue when applying the NH attenuation.
+
+# now creates clustering catalogs equivalent to SPIDERS
+python3 create_random_ra_dec.py
+python3 lc_write_clustering_sample.py
+# and compute the clustering 
+cd /data17s/darksim/MD/MD_1.0Gpc/h5_lc/clustering_catalogs_remaped_position_L3/
+sh  run_clustering.sh
+
 # Adds cluster related columns 
 python3 lc_add_clusters.py  
 # Adds galaxy related columns 
