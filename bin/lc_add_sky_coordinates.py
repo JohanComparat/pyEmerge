@@ -15,18 +15,33 @@ L_box = 1000./0.6777 # float(sys.argv[2]) / 0.6777
 
 positions_group_name = sys.argv[1] # 'remaped_position_L3'
 
+status = 'create'
+# status = 'update'
+
 if positions_group_name=='remaped_position_L3':
   z_max = 1.3
   x_obs, y_obs, z_obs = 0., 0.7071/2.*L_box, 0.5774/2.*L_box
   strech_factor_los = 2.4495
+  d_min = strech_factor_los * L_box * 0.
+  d_max = strech_factor_los * L_box * 1.
   strech_factor_y = 0.7071
   strech_factor_z = 0.5774
 
-
+if positions_group_name=='remaped_position_L3_z1':
+  z_max = 8.
+  strech_factor_los = 2.4495 
+  d_min = strech_factor_los * L_box
+  d_max = strech_factor_los * L_box * 2.
+  strech_factor_y = 0.7071
+  strech_factor_z = 0.5774
+  x_obs, y_obs, z_obs = -2.4495*L_box, 0.7071/2.*L_box, 0.5774/2.*L_box
+  
 if positions_group_name=='remaped_position_L6':
-  z_max = 6.3
+  z_max = 10.
   x_obs, y_obs, z_obs = 0., 0.4140/2.*L_box, 0.4082/2.*L_box
   strech_factor_los = 5.9161
+  d_min = strech_factor_los * L_box * 0.
+  d_max = strech_factor_los * L_box * 1.
   strech_factor_y = 0.4140
   strech_factor_z = 0.4082
 
@@ -64,7 +79,8 @@ z_array = n.arange(0, z_max, 0.00001)
 dc_to_z = interp1d(cosmoMD.comoving_distance(z_array), z_array)
 
 print("dimensions of the light cone")
-z_reach = dc_to_z(strech_factor_los * L_box)
+z_start = dc_to_z(d_min)
+z_reach = dc_to_z(d_max)
 dec_max = (strech_factor_y*L_box*u.Mpc/cosmoMD.kpc_comoving_per_arcmin(z_reach).to(u.Mpc/u.degree)/2.).value
 ra_max = (strech_factor_z*L_box*u.Mpc/cosmoMD.kpc_comoving_per_arcmin(z_reach).to(u.Mpc/u.degree)/2.).value
 print("z<",z_reach,"|ra [deg]|<",ra_max, "|dec [deg]|<", dec_max)
@@ -75,21 +91,29 @@ vPara = (vx * x + vy * y + vz * z )/rr
 rr_s = rr + vPara / (a * 67.77)
 redshift_S = dc_to_z(rr_s)
 
-selection = (redshift_R < z_reach) & (abs(ra)<ra_max) & (abs(dec)<dec_max)
+selection = (redshift_R > z_start) & (redshift_R < z_reach) & (abs(ra)<ra_max) & (abs(dec)<dec_max)
 
 print("select data in the LC",  len(redshift_R[selection]), " out of ",  len(redshift_R) )
 
-halo_data = f.create_group('sky_position')
+if status == 'create' :
+  halo_data = f.create_group('sky_position')
 
-ds = halo_data.create_dataset('redshift_R', data = redshift_R )
-ds = halo_data.create_dataset('redshift_S', data = redshift_S )
-ds = halo_data.create_dataset('RA', data = ra )
-ds.attrs['units'] = 'deg'
-ds.attrs['long_name'] = 'right ascension' 
-ds = halo_data.create_dataset('DEC', data = dec )
-ds.attrs['units'] = 'deg'
-ds.attrs['long_name'] = 'declination' 
-ds = halo_data.create_dataset('selection', data = selection )
-ds.attrs['long_name'] = 'True: inside the light cone, False: border effect' 
+  ds = halo_data.create_dataset('redshift_R', data = redshift_R )
+  ds = halo_data.create_dataset('redshift_S', data = redshift_S )
+  ds = halo_data.create_dataset('RA', data = ra )
+  ds.attrs['units'] = 'deg'
+  ds.attrs['long_name'] = 'right ascension' 
+  ds = halo_data.create_dataset('DEC', data = dec )
+  ds.attrs['units'] = 'deg'
+  ds.attrs['long_name'] = 'declination' 
+  ds = halo_data.create_dataset('selection', data = selection )
+  ds.attrs['long_name'] = 'True: inside the light cone, False: border effect' 
+
+if status=='update' :
+  f['/sky_position/redshift_R'][:]  = redshift_R 
+  f['/sky_position/redshift_S'][:]  = redshift_S 
+  f['/sky_position/RA'][:]  = ra 
+  f['/sky_position/DEC'][:]  = dec 
+  f['/sky_position/selection'][:]  = selection 
 
 f.close()

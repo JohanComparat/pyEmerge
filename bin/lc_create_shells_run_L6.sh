@@ -1,15 +1,15 @@
 #!/bin/bash
 
-python3 lc_create_shells.py 114 MD10 1000 remaped_position_L6
-python3 lc_create_shells.py 113 MD10 1000 remaped_position_L6
-python3 lc_create_shells.py 112 MD10 1000 remaped_position_L6
-python3 lc_create_shells.py 111 MD10 1000 remaped_position_L6
-python3 lc_create_shells.py 110 MD10 1000 remaped_position_L6
-python3 lc_create_shells.py 109 MD10 1000 remaped_position_L6
-python3 lc_create_shells.py 108 MD10 1000 remaped_position_L6
-python3 lc_create_shells.py 107 MD10 1000 remaped_position_L6
-python3 lc_create_shells.py 106 MD10 1000 remaped_position_L6
-python3 lc_create_shells.py 105 MD10 1000 remaped_position_L6
+# python3 lc_create_shells.py 114 MD10 1000 remaped_position_L6
+# python3 lc_create_shells.py 113 MD10 1000 remaped_position_L6
+# python3 lc_create_shells.py 112 MD10 1000 remaped_position_L6
+# python3 lc_create_shells.py 111 MD10 1000 remaped_position_L6
+# python3 lc_create_shells.py 110 MD10 1000 remaped_position_L6
+# python3 lc_create_shells.py 109 MD10 1000 remaped_position_L6
+# python3 lc_create_shells.py 108 MD10 1000 remaped_position_L6
+# python3 lc_create_shells.py 107 MD10 1000 remaped_position_L6
+# python3 lc_create_shells.py 106 MD10 1000 remaped_position_L6
+# python3 lc_create_shells.py 105 MD10 1000 remaped_position_L6
 python3 lc_create_shells.py 104 MD10 1000 remaped_position_L6
 python3 lc_create_shells.py 103 MD10 1000 remaped_position_L6
 python3 lc_create_shells.py 102 MD10 1000 remaped_position_L6
@@ -95,4 +95,15 @@ python3 lc_create_shells.py 23 MD10 1000 remaped_position_L6
 python3 lc_create_shells.py 22 MD10 1000 remaped_position_L6
 python3 lc_create_shells.py 21 MD10 1000 remaped_position_L6
 python3 lc_create_shells.py 20 MD10 1000 remaped_position_L6
+python3 lc_create_shells.py 19 MD10 1000 remaped_position_L6
+python3 lc_create_shells.py 18 MD10 1000 remaped_position_L6
+python3 lc_create_shells.py 17 MD10 1000 remaped_position_L6
+python3 lc_create_shells.py 16 MD10 1000 remaped_position_L6
+python3 lc_create_shells.py 15 MD10 1000 remaped_position_L6
+python3 lc_create_shells.py 14 MD10 1000 remaped_position_L6
+python3 lc_create_shells.py 13 MD10 1000 remaped_position_L6
+python3 lc_create_shells.py 12 MD10 1000 remaped_position_L6
+python3 lc_create_shells.py 11 MD10 1000 remaped_position_L6
+python3 lc_create_shells.py 10 MD10 1000 remaped_position_L6
+python3 lc_create_shells.py 9 MD10 1000 remaped_position_L6
 

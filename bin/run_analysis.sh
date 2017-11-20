@@ -143,14 +143,24 @@ python3 lc_add_sky_coordinates.py remaped_position_L6
 python3 lc_add_sky_coordinates.py remaped_position_L3
 python3 lc_add_sky_coordinates.py remaped_position_L3_z1
  
-L3 characteristics :
-z< 1.0889947373832305 |ra [deg]|< 6.7529257176359 |dec [deg]|< 8.269819492449505
-N points: 8037075 
-
+# L3 characteristics :
+# z< 1.0889947373832305 |ra [deg]|< 6.7529257176359 |dec [deg]|< 8.269819492449505
+# N points: 8037075 
+# 
+# L3_z1 characteristics
+# z< 3.8309961826584344 |ra [deg]|< 3.3764628588325674 |dec [deg]|< 4.134909746242654
+# N points: 8511571
+# 
+# L6 characteristics
+# z< 6.697087333514605 |ra [deg]|< 1.9766516114702513 |dec [deg]|< 2.0047373031569915
+# N points: 3287299
 
 # converts the Bongiorno luminosity into the eRosita band assuming a NH distribution and following Buchner et al. 2017.
 # 
-python3 lc_add_agns.py  
+python3 lc_add_agns.py /data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_remaped_position_L6.hdf5
+python3 lc_add_agns.py /data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_remaped_position_L3.hdf5
+python3 lc_add_agns.py /data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_remaped_position_L3_z1.hdf5
+
 python3 lc_lognlogs_agns.py
 # results are shown here : 
 # http://www.mpe.mpg.de/~comparat/eRoMok/logNlogS/

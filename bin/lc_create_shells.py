@@ -58,6 +58,10 @@ input_list_i.sort()
 
 # removing snapshots that cannote be remapped ...
 input_list = n.delete(input_list_i,n.array([
+  n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.16620_emerge.hdf5")), # LSAR  issue
+  n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.17770_emerge.hdf5")), # LSAR  issue
+  n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.18990_emerge.hdf5")), # LSAR  issue
+  n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.19410_emerge.hdf5")), # LSAR  issue
   n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.21210_emerge.hdf5")), # LSAR  issue
   n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.24230_emerge.hdf5")), # LSAR  issue
   n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.28920_emerge.hdf5")), # LSAR  issue

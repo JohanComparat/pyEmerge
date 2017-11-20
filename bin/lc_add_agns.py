@@ -50,6 +50,16 @@ RA <HDF5 dataset "RA": shape (23191107,), type "<f8">
 redshift_R <HDF5 dataset "redshift_R": shape (23191107,), type "<f8">
 redshift_S <HDF5 dataset "redshift_S": shape (23191107,), type "<f8">
 selection <HDF5 dataset "selection": shape (23191107,), type "|b1">
+
+TO DELETE PREVIOUS DATA : 
+
+path_to_lc = '/data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_remaped_position_L3.hdf5'
+
+f = h5py.File(path_to_lc, 'a')
+del f['/agn_properties/rxay_flux_05_20']
+del f['/agn_properties/logNH']
+f.close()
+
 """
 """
 Convert to observed fluxes
@@ -66,15 +76,21 @@ import os
 import glob
 import numpy as n
 from scipy.interpolate import interp1d
-
+import sys
 from astropy.cosmology import FlatLambdaCDM
 import astropy.units as u
 cosmoMD = FlatLambdaCDM(H0=67.77*u.km/u.s/u.Mpc, Om0=0.307115, Ob0=0.048206)
 
-f = h5py.File('/data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_remaped_position_L3.hdf5', 'r+')
+status = 'create'
+#status = 'update'
 
-is_gal = (f['/sky_position/selection'].value)
-is_agn = (f['/sky_position/selection'].value)&(f['/agn_properties/agn_activity'].value==1)
+path_to_lc = sys.argv[1]
+#path_to_lc = '/data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_remaped_position_L3.hdf5'
+
+f = h5py.File(path_to_lc, 'r+')
+
+is_gal = (f['/sky_position/selection'].value)&(f['/sky_position/redshift_R'].value<3.)
+is_agn = (is_gal)&(f['/agn_properties/agn_activity'].value==1)
 
 n_gal = len(f['/sky_position/redshift_S'].value[is_gal])
 
@@ -84,9 +100,6 @@ z = f['/sky_position/redshift_S'].value[is_agn]
 logm = n.log10(f['/moster_2013_data/stellar_mass'].value[is_agn])
 lsar = f['/agn_properties/log_lambda_sar'].value[is_agn]
 lx = logm + lsar 
-
-area = 6.7529257176359*2. * 2* 8.269819492449505
-
 
 # randomX = n.random.rand(n_gal)
 # lambda SAR addition
@@ -100,17 +113,22 @@ area = 6.7529257176359*2. * 2* 8.269819492449505
 # 65 % have a thin obscuration that depends on stellar mass and Xray luminosity
 logNH = n.random.uniform(20, 22, n_agn)
 obs_type = n.zeros(n_agn)
+
 # 35% of thick, 24-26
 randomNH = n.random.rand(n_agn)
 thick_obscuration = (randomNH < 0.35)
 thin_obscuration = (randomNH >= 0.35)
+#med_obscuration = (randomNH >= 0.6)
+
 logNH[thick_obscuration] = n.random.uniform(24, 26, len(logNH[thick_obscuration]))
 obs_type[thick_obscuration] = n.ones_like(logNH[thick_obscuration])*2
+
 # the thin : about 40 % are thin whatever happens: 22-24
-logNH_host_mean = 21.7 + (logm - 9.5)*0.38
+logNH_host_mean = 21.7 + (logm- 9.5)*0.38
 logNH_host = n.random.normal(logNH_host_mean, 0.5)
-logNH[(thin_obscuration)&(logNH_host>=22)] = n.random.uniform(22, 24, len(logNH[(thin_obscuration)&(logNH_host>=22)]))
-obs_type[(thin_obscuration)&(logNH_host>=22)] =  n.ones_like(logNH[(thin_obscuration)&(logNH_host>=22)])
+L_transition  = 21.62
+logNH[(thin_obscuration)&(logNH_host>= L_transition)] = n.random.uniform(22, 24, len(logNH[(thin_obscuration)&(logNH_host>=L_transition)]))
+obs_type[(thin_obscuration)&(logNH_host>= L_transition)] =  n.ones_like(logNH[(thin_obscuration)&(logNH_host>=L_transition)])
 # a few more are thin depending on their Xray luminosity: 22-24
 #rest = (thin_obscuration)&(logNH_host<22)
 #randomNH2 = n.random.rand(n_agn)
@@ -118,6 +136,9 @@ obs_type[(thin_obscuration)&(logNH_host>=22)] =  n.ones_like(logNH[(thin_obscura
 #logNH[(rest_obscured)] = random.uniform(22, 24, len(logNH[(rest_obscured)]))
 #obs_type[(rest_obscured)] =  n.ones_like(logNH[(rest_obscured)])
 
+#logNH_host[logNH_host<=20] = n.random.uniform(20, 22, len(logNH_host[logNH_host<=20]))
+#logNH_host[logNH_host>=26] = n.random.uniform(24, 26, len(logNH_host[logNH_host>=26]))
+#logNH = logNH_host
 
 obscuration_z_grid, obscuration_nh_grid, obscuration_fraction_obs_erosita = n.loadtxt( os.path.join( os.environ['GIT_NBODY_NPT'], "data", "AGN", "fraction_observed_by_erosita_due_2_obscuration.txt"), unpack=True)
 nh_vals = 10**n.arange(-2,4,0.05)
@@ -138,13 +159,23 @@ percent_observed = n.array([ obscuration_interpolation_grid[ind]( nh) for ind, n
 # converts in the erosita band 0.5-2 keV
 lx_absorbed_05_20 = n.log10(10**lx * percent_observed)
 
-d_L = cosmoMD.comoving_distance(z)
+d_L = cosmoMD.luminosity_distance(z)
 dl_cm = (d_L.to(u.cm)).value
 adjusting_factor = 0.
 fx_05_20 = 10**(lx_absorbed_05_20-adjusting_factor) / (4 * n.pi * dl_cm**2.)
 
-f['/agn_properties'].create_dataset('rxay_flux_05_20', data = fx_05_20 )
-f['/agn_properties'].create_dataset('logNH', data = logNH )
+fx_05_20_out = n.ones_like(f['/sky_position/redshift_S'].value)*-9999.
+logNH_out = n.ones_like(f['/sky_position/redshift_S'].value)*-9999.
+fx_05_20_out[is_agn] = fx_05_20
+logNH_out[is_agn] = logNH
+
+if status == 'create':
+  f['/agn_properties'].create_dataset('rxay_flux_05_20', data = fx_05_20_out )
+  f['/agn_properties'].create_dataset('logNH', data = logNH_out )
+
+if status == 'update':
+  f['/agn_properties/rxay_flux_05_20'][:] = fx_05_20_out 
+  f['/agn_properties/logNH'][:] = logNH_out 
 
 #ds = f['/agn_properties'].create_dataset('rxay_flux_05_20', data = fx_05_20 )
 #ds.attrs['units'] = 'erg/cm2/s'
