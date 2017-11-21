@@ -101,7 +101,7 @@ if __name__ == '__main__':
 	# out6 = p.starmap(f6, n.transpose([x0, y0, z0]))
 	# write_mapped_coordinates(f1, out6, L_box,  group_name = 'remaped_position_L6', status='update')
 	# map to L15
-	out6 = p.starmap(f15, n.transpose([x0, y0, z0]))
-	write_mapped_coordinates(f1, out3, L_box,  group_name = 'remaped_position_L15', status='update')
+	out15 = p.starmap(f15, n.transpose([x0, y0, z0]))
+	write_mapped_coordinates(f1, out15, L_box,  group_name = 'remaped_position_L15', status='create')
 	f1.close()
 
