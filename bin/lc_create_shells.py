@@ -37,6 +37,11 @@ if positions_group_name == 'remaped_position_L6' :
 	positions_group = 'remaped_position_L6'
 	x_obs, y_obs, z_obs = 0., 0.4140/2.*L_box, 0.4082/2.*L_box
 
+if positions_group_name == 'remaped_position_L15' :
+	positions_group = 'remaped_position_L15'
+	#1.4142', '1.0000', '0.7071
+	x_obs, y_obs, z_obs = 0., 1.0000/2.*L_box, 0.7071/2.*L_box
+
 
 import h5py    # HDF5 support
 import os
