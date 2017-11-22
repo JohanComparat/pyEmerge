@@ -45,6 +45,15 @@ if positions_group_name=='remaped_position_L6':
   strech_factor_y = 0.4140
   strech_factor_z = 0.4082
 
+if positions_group_name=='remaped_position_L15':
+  z_max = 3.
+  x_obs, y_obs, z_obs = 0., 1.0/2.*L_box, 0.7071/2.*L_box
+  strech_factor_los = 1.4142
+  d_min = strech_factor_los * L_box * 0.
+  d_max = strech_factor_los * L_box * 1.
+  strech_factor_y = 1.0
+  strech_factor_z = 0.7071
+
 
 import h5py    # HDF5 support
 import os

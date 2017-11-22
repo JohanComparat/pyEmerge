@@ -86,12 +86,20 @@ cosmoMD = FlatLambdaCDM(H0=67.77*u.km/u.s/u.Mpc, Om0=0.307115, Ob0=0.048206)
 #dec_max = 4.134909746242654
 #ra_max = 3.3764628588325674
 
-path_to_lc = '/data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_remaped_position_L6.hdf5'
-out_filename = '/data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_remaped_position_L6.fits'
+#path_to_lc = '/data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_remaped_position_L6.hdf5'
+#out_filename = '/data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_remaped_position_L6.fits'
+#z_min = 0.
+#z_max = 3.0
+#dec_max = 2.0047373031569915
+#ra_max = 1.9766516114702513
+
+path_to_lc = '/data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_remaped_position_L15.hdf5'
+out_filename = '/data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_remaped_position_L15.fits'
 z_min = 0.
-z_max = 3.0
-dec_max = 2.0047373031569915
-ra_max = 1.9766516114702513
+z_max = 0.54
+dec_max = 20.257311381848154
+ra_max = 14.323944878104827
+# z< 0.5423857379098544 |ra [deg]|< 14.323944878104827 |dec [deg]|< 20.257311381848154
 
 # L3 characteristics :
 # z< 1.0889947373832305 |ra [deg]|< 6.7529257176359 |dec [deg]|< 8.269819492449505
