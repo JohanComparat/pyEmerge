@@ -430,7 +430,7 @@ class MultiDarkSimulation :
 		,('rvir'                              , 'float64' )
 		,('rs'                                , 'float64' )
 		,('vrms'                              , 'float64' )
-		,('mmp?'                              , 'float64' )
+		,('mmp'                              , 'float64' )
 		,('scale_of_last_MM'                  , 'float64' )
 		,('vmax'                              , 'float64' )
 		,('x'                                 , 'float64' )
@@ -511,7 +511,7 @@ class MultiDarkSimulation :
 		rvir                              ,
 		rs                                ,
 		vrms                              ,
-		mmp?                              ,
+		mmp                              ,
 		scale_of_last_MM                  ,
 		vmax                              ,
 		x                                 ,
@@ -633,7 +633,7 @@ class MultiDarkSimulation :
 		ds = halo_data.create_dataset('rvir'                               , data=rvir                             )
 		ds = halo_data.create_dataset('rs'                                 , data=rs                               )
 		ds = halo_data.create_dataset('vrms'                               , data=vrms                             )
-		ds = halo_data.create_dataset('mmp?'                               , data=mmp?                             )
+		ds = halo_data.create_dataset('mmp'                               , data=mmp                             )
 		ds = halo_data.create_dataset('scale_of_last_MM'                   , data=scale_of_last_MM                 )
 		ds = halo_data.create_dataset('vmax'                               , data=vmax                             )
 		ds = halo_data.create_dataset('Jx'                                 , data=Jx                               )
