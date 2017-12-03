@@ -14,6 +14,6 @@ aexps = n.array([ float(os.path.basename(path_2_snap)[6:-5]) for path_2_snap in 
 
 for path_snap, path_h5, aexp in zip(path_2_snaps, path_2_h5_files, aexps):
 	print(path_snap, path_h5, aexp)
-	box.convert_to_h5_format_cluster(self, snap_name, path_2_h5_file, aexp, 1./aexp-1.)
+	box.convert_to_h5_format_cluster(path_snap, path_h5, aexp, 1./aexp-1.)
 	print(time.time()-t0)
 
