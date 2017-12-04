@@ -123,10 +123,10 @@ if status=='create':
   ds.attrs['units'] = 'log10(Lce 0.5-2.4 keV/[erg/s])'
 
 if status=='update':
-  ds = f1['/cluster_data/log_Mgas'][:] = VAL_Mgas )
-  ds = f1['/cluster_data/kT'][:] = VAL_kT )
-  ds = f1['/cluster_data/log_LX_05_24'][:] = VAL_L )
-  ds = f1['/cluster_data/log_LceX_05_24'][:] = VAL_Lce )
+  ds = f1['/cluster_data/log_Mgas'][:] = VAL_Mgas 
+  ds = f1['/cluster_data/kT'][:] = VAL_kT 
+  ds = f1['/cluster_data/log_LX_05_24'][:] = VAL_L 
+  ds = f1['/cluster_data/log_LceX_05_24'][:] = VAL_Lce 
 
 f1.close()
 
