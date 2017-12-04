@@ -52,21 +52,21 @@ from astropy.cosmology import FlatLambdaCDM
 import astropy.units as u
 cosmoMD = FlatLambdaCDM(H0=67.77*u.km/u.s/u.Mpc, Om0=0.307115, Ob0=0.048206)
 
-h5_lc_dir = os.path.join(os.environ[env], 'h5_lc', 'shells_'+positions_group_name )
+h5_lc_dir = os.path.join(os.environ[env], 'h5_lc', 'cluster_shells_'+positions_group_name )
 if os.path.isdir(h5_lc_dir)==False:
 	os.mkdir(h5_lc_dir)
 
 h5_dir = os.path.join(os.environ[env], 'h5' )
 
-input_list_i = n.array(glob.glob(os.path.join(h5_dir, "hlist_?.?????_emerge.hdf5")))
+input_list_i = n.array(glob.glob(os.path.join(h5_dir, "hlist_?.?????.hdf5")))
 input_list_i.sort()
 
 # removing snapshots that cannote be remapped ...
 input_list = n.delete(input_list_i,n.array([
-  n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.16620_emerge.hdf5")), # LSAR  issue
-  n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.17770_emerge.hdf5")), # LSAR  issue
-  n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.18990_emerge.hdf5")), # LSAR  issue
-  n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.19410_emerge.hdf5")), # LSAR  issue
+  #n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.16620_emerge.hdf5")), # LSAR  issue
+  #n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.17770_emerge.hdf5")), # LSAR  issue
+  #n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.18990_emerge.hdf5")), # LSAR  issue
+  #n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.19410_emerge.hdf5")), # LSAR  issue
   n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.21210_emerge.hdf5")), # LSAR  issue
   n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.24230_emerge.hdf5")), # LSAR  issue
   n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.28920_emerge.hdf5")), # LSAR  issue
@@ -117,84 +117,108 @@ def copylc_data(ii, option=False):
 		halo_data = f.create_group('halo_position')
 
 		ds = halo_data.create_dataset('x', data = x[selection] )
-		ds.attrs['units'] = 'Mpc/h'
-		ds.attrs['long_name'] = 'x' 
 		ds = halo_data.create_dataset('y', data = y[selection] )
-		ds.attrs['units'] = 'Mpc/h'
-		ds.attrs['long_name'] = 'y' 
 		ds = halo_data.create_dataset('z', data = z[selection] )
-		ds.attrs['units'] = 'Mpc/h'
-		ds.attrs['long_name'] = 'z' 
-
+		
 		ds = halo_data.create_dataset('vx', data = f1['/halo_position/vx'].value[selection] )
-		ds.attrs['units'] = 'km/s'
-		ds.attrs['long_name'] = 'vx' 
 		ds = halo_data.create_dataset('vy', data = f1['/halo_position/vy'].value[selection] )
-		ds.attrs['units'] = 'km/s'
-		ds.attrs['long_name'] = 'vy' 
 		ds = halo_data.create_dataset('vz', data = f1['/halo_position/vz'].value[selection] )
-		ds.attrs['units'] = 'km/s'
-		ds.attrs['long_name'] = 'vz' 
-
+		
+		halo_data = f.create_group('moster_2013_data')
+		ds = halo_data.create_dataset('stellar_mass', data = f1['/moster_2013_data/stellar_mass'].value[selection] )
+		
+		halo_data = f.create_group('remaped_position_L15')
+		ds = halo_data.create_dataset('xyz_Lbox', data = f1['/remaped_position_L15/xyz_Lbox'].value[selection] )
+		
+		halo_data = f.create_group('remaped_position_L3')
+		ds = halo_data.create_dataset('xyz_Lbox', data = f1['/remaped_position_L15/xyz_Lbox'].value[selection] )
+		
+		halo_data = f.create_group('remaped_position_L6')
+		ds = halo_data.create_dataset('xyz_Lbox', data = f1['/remaped_position_L15/xyz_Lbox'].value[selection] )
+		
+		halo_data = f.create_group('cluster_data')
+		ds = halo_data.create_dataset('cool_class', data = f1['/cluster_data/cool_class'].value[selection] )
+		ds = halo_data.create_dataset('kT', data = f1['/cluster_data/kT'].value[selection] )
+		ds = halo_data.create_dataset('log_LX_05_24', data = f1['/cluster_data/log_LX_05_24'].value[selection] )
+		ds = halo_data.create_dataset('log_LceX_05_24', data = f1['/cluster_data/log_LceX_05_24'].value[selection] )
+		ds = halo_data.create_dataset('log_Mgas', data = f1['/cluster_data/log_Mgas'].value[selection] )
+		
 		halo_data = f.create_group('halo_properties')
-		
-		ds = halo_data.create_dataset('id', data = f1['/halo_properties/id'].value[selection] )
-		ds.attrs['units'] = '-'
-		ds.attrs['long_name'] = 'halo identifier' 
+		halo_data.attrs['N_halos'] =  N_halo
 
-		ds = halo_data.create_dataset('pid', data = f1['/halo_properties/pid'].value[selection] )
-		ds.attrs['units'] = '-'
-		ds.attrs['long_name'] = 'parent identifier, -1 if distinct halo' 
-
-		ds = halo_data.create_dataset('mvir', data = f1['/halo_properties/mvir'].value[selection] )
-		ds.attrs['units'] = r'$h^{-1} M_\odot$'
-		ds.attrs['long_name'] = r'$M_{vir}$' 
-
-		ds = halo_data.create_dataset('rvir', data = f1['/halo_properties/rvir'].value[selection] )
-		ds.attrs['units'] = r'$h^{-1} kpc$'
-		ds.attrs['long_name'] = r'$r_{vir}$' 
-
-		ds = halo_data.create_dataset('rs', data = f1['/halo_properties/rs'].value[selection] )
-		ds.attrs['units'] = r'$h^{-1} kpc$'
-		ds.attrs['long_name'] = r'$r_{s}$' 
-
-		ds = halo_data.create_dataset('Vmax' , data = f1['/halo_properties/Vmax'].value[selection])
-		ds.attrs['units'] = 'km/s'
-		ds.attrs['long_name'] = r'$V_{max}$' 
-
-		ds = halo_data.create_dataset('Mpeak' , data = f1['/halo_properties/Mpeak'].value[selection])
-		ds.attrs['units'] = r'$h^{-1} M_\odot$'
-		ds.attrs['long_name'] = r'$M_{peak}$' 
-
-		moster_2013_data = f.create_group('moster_2013_data')
-		
-		ds = moster_2013_data.create_dataset('stellar_mass', data = f1['/moster_2013_data/stellar_mass'].value[selection])
-		ds.attrs['units'] = r'$ M_\odot$'
-		ds.attrs['long_name'] = 'stellar mass' 
-
-		agn_properties = f.create_group('agn_properties')
-		
-		ds = agn_properties.create_dataset('log_lambda_sar', data = f1['/agn_properties/log_lambda_sar'].value[selection])
-		ds.attrs['units'] = r'log lambda SAR'
-		ds.attrs['long_name'] = 'log lambda SAR' 
-		
-		ds = agn_properties.create_dataset('agn_activity', data = f1['/agn_properties/agn_activity'].value[selection])
-
-		emerge_data = f.create_group('emerge_data')
-		
-		ds = emerge_data.create_dataset('dMdt', data = f1['/emerge_data/dMdt'].value[selection])
-		ds.attrs['units'] = r'$ M_\odot/yr$'
-		ds.attrs['long_name'] = 'halo growth rate' 
-
-		ds = emerge_data.create_dataset('mvir_dot', data = f1['/emerge_data/mvir_dot'].value[selection] )
-		ds.attrs['units'] = r'$ M_\odot/yr$'
-		ds.attrs['long_name'] = 'mvir variation with respect to last snapshot' 
-
-		ds = emerge_data.create_dataset('rvir_dot', data = f1['/emerge_data/rvir_dot'].value[selection]                     )
-		ds.attrs['units'] = r'$ kpc /yr $'
-		ds.attrs['long_name'] = 'rvir variation with respect to last snapshot' 
+		ds = halo_data.create_dataset('scale'                              , data=scale                            [selection])
+		ds = halo_data.create_dataset('id'                                 , data=id                               [selection])
+		ds = halo_data.create_dataset('desc_scale'                         , data=desc_scale                       [selection])
+		ds = halo_data.create_dataset('desc_id'                            , data=desc_id                          [selection])
+		ds = halo_data.create_dataset('num_prog'                           , data=num_prog                         [selection])
+		ds = halo_data.create_dataset('pid'                                , data=pid                              [selection])
+		ds = halo_data.create_dataset('upid'                               , data=upid                             [selection])
+		ds = halo_data.create_dataset('desc_pid'                           , data=desc_pid                         [selection])
+		ds = halo_data.create_dataset('mvir'                               , data=mvir                             [selection])
+		ds = halo_data.create_dataset('rvir'                               , data=rvir                             [selection])
+		ds = halo_data.create_dataset('rs'                                 , data=rs                               [selection])
+		ds = halo_data.create_dataset('vrms'                               , data=vrms                             [selection])
+		ds = halo_data.create_dataset('mmp'                                , data=mmp                              [selection])
+		ds = halo_data.create_dataset('scale_of_last_MM'                   , data=scale_of_last_MM                 [selection])
+		ds = halo_data.create_dataset('vmax'                               , data=vmax                             [selection])
+		ds = halo_data.create_dataset('Jx'                                 , data=Jx                               [selection])
+		ds = halo_data.create_dataset('Jy'                                 , data=Jy                               [selection])
+		ds = halo_data.create_dataset('Jz'                                 , data=Jz                               [selection])
+		ds = halo_data.create_dataset('Spin'                               , data=Spin                             [selection])
+		ds = halo_data.create_dataset('Breadth_first_ID'                   , data=Breadth_first_ID                 [selection])
+		ds = halo_data.create_dataset('Depth_first_ID'                     , data=Depth_first_ID                   [selection])
+		ds = halo_data.create_dataset('Tree_root_ID'                       , data=Tree_root_ID                     [selection])
+		ds = halo_data.create_dataset('Orig_halo_ID'                       , data=Orig_halo_ID                     [selection])
+		ds = halo_data.create_dataset('Next_coprogenitor_depthfirst_ID'    , data=Next_coprogenitor_depthfirst_ID  [selection])
+		ds = halo_data.create_dataset('Last_progenitor_depthfirst_ID'      , data=Last_progenitor_depthfirst_ID    [selection])
+		ds = halo_data.create_dataset('Last_mainleaf_depthfirst_ID'        , data=Last_mainleaf_depthfirst_ID      [selection])
+		ds = halo_data.create_dataset('Tidal_Force'                        , data=Tidal_Force                      [selection])
+		ds = halo_data.create_dataset('Tidal_ID'                           , data=Tidal_ID                         [selection])
+		ds = halo_data.create_dataset('Rs_Klypin'                          , data=Rs_Klypin                        [selection])
+		ds = halo_data.create_dataset('Mmvir_all'                          , data=Mmvir_all                        [selection])
+		ds = halo_data.create_dataset('M200b'                              , data=M200b                            [selection])
+		ds = halo_data.create_dataset('M200c'                              , data=M200c                            [selection])
+		ds = halo_data.create_dataset('M500c'                              , data=M500c                            [selection])
+		ds = halo_data.create_dataset('M2500c'                             , data=M2500c                           [selection])
+		ds = halo_data.create_dataset('Xoff'                               , data=Xoff                             [selection])
+		ds = halo_data.create_dataset('Voff'                               , data=Voff                             [selection])
+		ds = halo_data.create_dataset('Spin_Bullock'                       , data=Spin_Bullock                     [selection])
+		ds = halo_data.create_dataset('b_to_a'                             , data=b_to_a                           [selection])
+		ds = halo_data.create_dataset('c_to_a'                             , data=c_to_a                           [selection])
+		ds = halo_data.create_dataset('Ax'                                 , data=Ax                               [selection])
+		ds = halo_data.create_dataset('Ay'                                 , data=Ay                               [selection])
+		ds = halo_data.create_dataset('Az'                                 , data=Az                               [selection])
+		ds = halo_data.create_dataset('b_to_a_500c'                        , data=b_to_a_500c                      [selection])
+		ds = halo_data.create_dataset('c_to_a_500c'                        , data=c_to_a_500c                      [selection])
+		ds = halo_data.create_dataset('Ax_500c'                            , data=Ax_500c                          [selection])
+		ds = halo_data.create_dataset('Ay_500c'                            , data=Ay_500c                          [selection])
+		ds = halo_data.create_dataset('Az_500c'                            , data=Az_500c                          [selection])
+		ds = halo_data.create_dataset('TU'                                 , data=TU                               [selection])
+		ds = halo_data.create_dataset('M_pe_Behroozi'                      , data=M_pe_Behroozi                    [selection])
+		ds = halo_data.create_dataset('M_pe_Diemer'                        , data=M_pe_Diemer                      [selection])
+		ds = halo_data.create_dataset('Macc'                               , data=Macc                             [selection])
+		ds = halo_data.create_dataset('Mpeak'                              , data=Mpeak                            [selection])
+		ds = halo_data.create_dataset('Vacc'                               , data=Vacc                             [selection])
+		ds = halo_data.create_dataset('Vpeak'                              , data=Vpeak                            [selection])
+		ds = halo_data.create_dataset('Halfmass_Scale'                     , data=Halfmass_Scale                   [selection])
+		ds = halo_data.create_dataset('Acc_Rate_Inst'                      , data=Acc_Rate_Inst                    [selection])
+		ds = halo_data.create_dataset('Acc_Rate_100Myr'                    , data=Acc_Rate_100Myr                  [selection])
+		ds = halo_data.create_dataset('Acc_Rate_1Tdyn'                     , data=Acc_Rate_1Tdyn                   [selection])
+		ds = halo_data.create_dataset('Acc_Rate_2Tdyn'                     , data=Acc_Rate_2Tdyn                   [selection])
+		ds = halo_data.create_dataset('Acc_Rate_Mpeak'                     , data=Acc_Rate_Mpeak                   [selection])
+		ds = halo_data.create_dataset('Mpeak_Scale'                        , data=Mpeak_Scale                      [selection])
+		ds = halo_data.create_dataset('Acc_Scale'                          , data=Acc_Scale                        [selection])
+		ds = halo_data.create_dataset('First_Acc_Scale'                    , data=First_Acc_Scale                  [selection])
+		ds = halo_data.create_dataset('First_Acc_Mvir'                     , data=First_Acc_Mvir                   [selection])
+		ds = halo_data.create_dataset('First_Acc_Vmax'                     , data=First_Acc_Vmax                   [selection])
+		ds = halo_data.create_dataset('VmaxAtMpeak'                        , data=VmaxAtMpeak                      [selection])
+		ds = halo_data.create_dataset('Tidal_Force_Tdyn'                   , data=Tidal_Force_Tdyn                 [selection])
+		ds = halo_data.create_dataset('logVmaxVmaxmaxTdynTmpeak'           , data=logVmaxVmaxmaxTdynTmpeak         [selection])
+		ds = halo_data.create_dataset('Time_to_future_merger'              , data=Time_to_future_merger            [selection])
+		ds = halo_data.create_dataset('Future_merger_MMP_ID'               , data=Future_merger_MMP_ID             [selection])
 
 		f.close()
+
 	f1.close()
 
 

@@ -12,6 +12,13 @@ python3.4 tabulate_xoff_distribution.py
 sh run_add_coolcore.sh
 # uses snapshots_add_coolness.py
 
+# adds remaped coordinates
+sh run_remap_MD10_f15.sh
+# uses remap_lc.py
+
+# create light cone shells
+sh lc_create_shells_run_L15.sh
+# uses lc_create_shells.py
 
 
 
