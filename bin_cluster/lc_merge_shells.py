@@ -60,7 +60,7 @@ print("creates redshift list")
 # creates the redshift list 
 aexp = []
 for file_1 in input_list : 
-	aexp.append(float(os.path.basename(file_1).split('_')[-2]))
+	aexp.append(float(os.path.basename(file_1)[:-5].split('_')[-1]))
 
 aexp = n.array(aexp)
 
