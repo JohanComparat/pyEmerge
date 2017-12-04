@@ -20,11 +20,10 @@ input_list.sort()
 from scipy.stats import lognorm
 from scipy.stats import norm
 
-import astropy.cosmoMDlogy as co
 import astropy.units as u
 import astropy.constants as cc
-from astropy.cosmoMDlogy import FlatLambdaCDM
-cosmoMDMD = FlatLambdaCDM(H0=67.77*u.km/u.s/u.Mpc, Om0=0.307115)
+from astropy.cosmology import FlatLambdaCDM
+cosmoMD = FlatLambdaCDM(H0=67.77*u.km/u.s/u.Mpc, Om0=0.307115)
 
 from scipy.interpolate import interp1d
 
@@ -94,37 +93,40 @@ f1 = h5py.File(file_1,  "r+")
 
 z = f1.attrs['redshift']
 log_m500c = n.log10(f1['/halo_properties/M500c'].value)
-
+nCluster = len(log_m500c)
 rds = (n.random.rand(len(log_m500c))-0.5)*2.                   
-norm.rvs(loc=0,scale=0.086,size=5)
 
-Mean_Mgas	= n.log10(logM500_to_logMgas	(log_m500c, z))
-scatter_Mgas = norm.cdf(rds*3*scatter_Mgas, scale=scatter_Mgas)
-VAL_Mgas    = Mean_Mgas + scatter_Mgas
+Mean_Mgas = n.log10(logM500_to_logMgas	(log_m500c, z))
+V_scatter_Mgas = norm.rvs(loc=0,scale=scatter_Mgas,size=nCluster)
+VAL_Mgas = Mean_Mgas + V_scatter_Mgas
 
-Mean_kT 		= logM500_to_kT		(log_m500c, z)
-scatter_kT = norm.cdf(rds, scale=scatter_kT)
-VAL_kT    = Mean_kT + scatter_kT
+Mean_kT = logM500_to_kT(log_m500c, z)
+V_scatter_kT = norm.rvs(loc=0,scale=scatter_kT,size=nCluster)
+VAL_kT = Mean_kT + V_scatter_kT
 
-Mean_L 		= logM500_to_L 		(log_m500c, z)
-scatter_L = norm.cdf(rds, scale=scatter_L)
-VAL_L    = Mean_L + scatter_L
+Mean_L = n.log10(logM500_to_L(log_m500c, z))
+V_scatter_L = norm.rvs(loc=0,scale=scatter_L,size=nCluster)
+VAL_L = Mean_L + V_scatter_L
 
-Mean_Lce		= logM500_to_Lce	(log_m500c, z)
-scatter_Lce = norm.cdf(rds, scale=scatter_Lce)
-VAL_Lce    = Mean_Lce + scatter_Lce
-
-
+Mean_Lce = n.log10(logM500_to_Lce(log_m500c, z))
+V_scatter_Lce = norm.rvs(loc=0,scale=scatter_Lce,size=nCluster)
+VAL_Lce = Mean_Lce + V_scatter_Lce
 
 if status=='create':
-  halo_data = f1.create_group('cluster_data')
-
-  ds = halo_data.create_dataset('cool_class', data = cool_class.astype('int') )
-  ds.attrs['units'] = 'coolness class'
-  ds.attrs['long_name'] = '1: very relaxed cool core, 2: relaxed cool core, 3: disturbed non cool core, 4: very disturbed non cool core' 
+  ds = f1['/cluster_data'].create_dataset('log_Mgas', data = VAL_Mgas )
+  ds.attrs['units'] = 'log10(Msun)'
+  ds = f1['/cluster_data'].create_dataset('kT', data = VAL_kT )
+  ds.attrs['units'] = 'keV'
+  ds = f1['/cluster_data'].create_dataset('log_LX_05_24', data = VAL_L )
+  ds.attrs['units'] = 'log10(L 0.5-2.4 keV/[erg/s])'
+  ds = f1['/cluster_data'].create_dataset('log_LceX_05_24', data = VAL_Lce )
+  ds.attrs['units'] = 'log10(Lce 0.5-2.4 keV/[erg/s])'
 
 if status=='update':
-  f1['/cluster_data/cool_class'][:] = cool_class.astype('int')
+  ds = f1['/cluster_data/log_Mgas'][:] = VAL_Mgas )
+  ds = f1['/cluster_data/kT'][:] = VAL_kT )
+  ds = f1['/cluster_data/log_LX_05_24'][:] = VAL_L )
+  ds = f1['/cluster_data/log_LceX_05_24'][:] = VAL_Lce )
 
 f1.close()
 
