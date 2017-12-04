@@ -56,7 +56,7 @@ h5_lc_dir = os.path.join(os.environ[env], 'h5_lc', 'cluster_shells_'+positions_g
 if os.path.isdir(h5_lc_dir)==False:
 	os.mkdir(h5_lc_dir)
 
-h5_dir = os.path.join(os.environ[env], 'h5' )
+h5_dir = os.path.join(os.environ[env], 'cluster_h5' )
 
 input_list_i = n.array(glob.glob(os.path.join(h5_dir, "hlist_?.?????.hdf5")))
 input_list_i.sort()
