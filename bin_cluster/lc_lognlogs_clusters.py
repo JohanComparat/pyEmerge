@@ -68,11 +68,10 @@ p.errorbar(x_out, n.log10(c_out), yerr = c_err, rasterized = True, label = 'L15 
 
 path_2_logNlogS_data = os.path.join(os.environ["DARKSIM_DIR"], 'observations', 'logNlogS', 'logNlogS_Finoguenov_cosmos_2007_clusters.data')
 x_data, y_data, y_data_min, y_data_max = n.loadtxt(path_2_logNlogS_data, unpack=True)
-p.fill_between(n.log10(x_data), y1 = n.log10(y_data_min), y2=n.log10(y_data_max), color='b' , rasterized = True, alpha=0.5, label = 'F07 COSMOS' )
-#p.plot(x_data, n.log10(y_data))
+p.fill_between(n.log10(x_data), y1 = n.log10(y_data_min), y2=n.log10(y_data_max) , rasterized = True, alpha=0.5, label = 'F07 COSMOS' )
 path_2_logNlogS_data = os.path.join(os.environ["DARKSIM_DIR"], 'observations', 'logNlogS', 'logNlogS_Finoguenov_ecdfs_2015_clusters.data')
 x_data, y_data, y_data_min, y_data_max  = n.loadtxt(path_2_logNlogS_data, unpack=True)
-p.fill_between(n.log10(x_data), y1 = n.log10(y_data_min), y2=n.log10(y_data_max), color='r' , rasterized = True, alpha=0.5, label = 'F15 CDFS' )
+p.fill_between(n.log10(x_data), y1 = n.log10(y_data_min), y2=n.log10(y_data_max) , rasterized = True, alpha=0.5, label = 'F15 CDFS' )
 
 p.axhline(7, ls='dashed')
 p.xlabel('log(F[0.5-2 keV])')
