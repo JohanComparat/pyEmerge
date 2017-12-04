@@ -8,8 +8,8 @@ from astropy.cosmology import FlatLambdaCDM
 import astropy.units as u
 cosmoMD = FlatLambdaCDM(H0=67.77*u.km/u.s/u.Mpc, Om0=0.307115, Ob0=0.048206)
 
-status = 'create'
-#status = 'update'
+#status = 'create'
+status = 'update'
 
 path_to_lc = sys.argv[1]
 #path_to_lc = '/data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_cluster_remaped_position_L3.hdf5'
@@ -26,7 +26,7 @@ lx_absorbed_05_24 = n.log10(10**lx * percent_observed)
 
 d_L = cosmoMD.luminosity_distance(z)
 dl_cm = (d_L.to(u.cm)).value
-adjusting_factor = 0.8
+adjusting_factor = 0.8 # accounts for absorption for now !
 fx_05_24 = 10**(lx_absorbed_05_24-adjusting_factor) / (4 * n.pi * dl_cm**2.)
 
 fx_05_24_out = n.ones_like(f['/sky_position/redshift_S'].value)*-9999.
