@@ -102,7 +102,7 @@ def copylc_data(ii, option=False):
 	print(file_1, "==>>", file_out)
 	f1 = h5py.File(file_1,  "r")
 	print( "n halos=",f1['/halo_properties/'].attrs['N_halos'])
-	x,y,z=f1[positions_group + '/xyx_Lbox'].value.T*L_box
+	x,y,z=f1[positions_group + '/xyz_Lbox'].value.T*L_box
 
 	distance = ((x-x_obs)**2.+(y-y_obs)**2.+(z-z_obs)**2.)**0.5
 	selection = (distance>=Dmin[ii])&(distance<Dmax[ii])
