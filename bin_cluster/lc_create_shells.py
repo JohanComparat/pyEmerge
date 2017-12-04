@@ -137,11 +137,11 @@ def copylc_data(ii, option=False):
 		ds = halo_data.create_dataset('xyz_Lbox', data = f1['/remaped_position_L15/xyz_Lbox'].value[selection] )
 		
 		halo_data = f.create_group('cluster_data')
-		ds = halo_data.create_dataset('cool_class', data = f1['/cluster_data/cool_class'].value[selection] )
-		ds = halo_data.create_dataset('kT', data = f1['/cluster_data/kT'].value[selection] )
-		ds = halo_data.create_dataset('log_LX_05_24', data = f1['/cluster_data/log_LX_05_24'].value[selection] )
+		ds = halo_data.create_dataset('cool_class',     data = f1['/cluster_data/cool_class'].value[selection] )
+		ds = halo_data.create_dataset('kT',             data = f1['/cluster_data/kT'].value[selection] )
+		ds = halo_data.create_dataset('log_LX_05_24',   data = f1['/cluster_data/log_LX_05_24'].value[selection] )
 		ds = halo_data.create_dataset('log_LceX_05_24', data = f1['/cluster_data/log_LceX_05_24'].value[selection] )
-		ds = halo_data.create_dataset('log_Mgas', data = f1['/cluster_data/log_Mgas'].value[selection] )
+		ds = halo_data.create_dataset('log_Mgas',       data = f1['/cluster_data/log_Mgas'].value[selection] )
 		
 		halo_data = f.create_group('halo_properties')
 		halo_data.attrs['N_halos'] =  len(distance[selection])
