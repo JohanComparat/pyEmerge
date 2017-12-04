@@ -22,16 +22,16 @@ sh lc_create_shells_run.sh
 
 
 # merges the shells into a single light cone file
-python3 lc_merge_shells.py L3
-python3 lc_merge_shells.py L3_z1
-python3 lc_merge_shells.py L6
-python3 lc_merge_shells.py L15
+python3.4 lc_merge_shells.py L3
+python3.4 lc_merge_shells.py L3_z1
+python3.4 lc_merge_shells.py L6
+python3.4 lc_merge_shells.py L15
 
 # Adds ra, dec, z 
-python3 lc_add_sky_coordinates.py remaped_position_L6
-python3 lc_add_sky_coordinates.py remaped_position_L3
-python3 lc_add_sky_coordinates.py remaped_position_L3_z1
-python3 lc_add_sky_coordinates.py remaped_position_L15
+python3.4 lc_add_sky_coordinates.py remaped_position_L6
+python3.4 lc_add_sky_coordinates.py remaped_position_L3
+python3.4 lc_add_sky_coordinates.py remaped_position_L3_z1
+python3.4 lc_add_sky_coordinates.py remaped_position_L15
  
 # L3 characteristics :
 # z< 1.0889947373832305 |ra [deg]|< 6.7529257176359 |dec [deg]|< 8.269819492449505
@@ -51,12 +51,12 @@ python3 lc_add_sky_coordinates.py remaped_position_L15
 
 # converts the Bongiorno luminosity into the eRosita band assuming a NH distribution and following Buchner et al. 2017.
 # 
-python3 lc_add_agns.py /data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_remaped_position_L6.hdf5
-python3 lc_add_agns.py /data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_remaped_position_L3.hdf5
-python3 lc_add_agns.py /data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_remaped_position_L3_z1.hdf5
-python3 lc_add_agns.py /data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_remaped_position_L15.hdf5
+python3 lc_add_clusters.py /data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_cluster_remaped_position_L6.hdf5
+python3 lc_add_clusters.py /data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_cluster_remaped_position_L3.hdf5
+python3 lc_add_clusters.py /data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_cluster_remaped_position_L3_z1.hdf5
+python3 lc_add_clusters.py /data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_cluster_remaped_position_L15.hdf5
 
-python3 lc_lognlogs_agns.py
+python3 lc_lognlogs_clusters.py
 # results are shown here : 
 # http://www.mpe.mpg.de/~comparat/eRoMok/logNlogS/
 # logs logn is still too bright by 0.6 dex. Probably an issue when applying the NH attenuation.
