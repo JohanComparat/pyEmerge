@@ -17,23 +17,9 @@ sh run_remap_MD10_f15.sh
 # uses remap_lc.py
 
 # create light cone shells
-sh lc_create_shells_run_L15.sh
+sh lc_create_shells_run.sh
 # uses lc_create_shells.py
 
-
-
-
-#########################################
-# LIGHT CONES
-#########################################
-# create the shells of the light cone
-
-sh lc_create_shells_run.sh
-sh lc_create_shells_run_z1.sh
-sh lc_create_shells_run_L6.sh
-sh lc_create_shells_run_L15.sh
-# remains a problem for L6, some logSAR are not written
-# based on  lc_create_shells.py
 
 # merges the shells into a single light cone file
 python3 lc_merge_shells.py L3
