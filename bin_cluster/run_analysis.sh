@@ -51,15 +51,23 @@ python3.4 lc_add_sky_coordinates.py remaped_position_L15
 
 # converts the Bongiorno luminosity into the eRosita band assuming a NH distribution and following Buchner et al. 2017.
 # 
-python3 lc_add_clusters.py /data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_cluster_remaped_position_L6.hdf5
-python3 lc_add_clusters.py /data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_cluster_remaped_position_L3.hdf5
-python3 lc_add_clusters.py /data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_cluster_remaped_position_L3_z1.hdf5
-python3 lc_add_clusters.py /data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_cluster_remaped_position_L15.hdf5
+python3.4 lc_add_clusters.py /data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_cluster_remaped_position_L6.hdf5
+python3.4 lc_add_clusters.py /data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_cluster_remaped_position_L3.hdf5
+python3.4 lc_add_clusters.py /data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_cluster_remaped_position_L3_z1.hdf5
+python3.4 lc_add_clusters.py /data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_cluster_remaped_position_L15.hdf5
 
 python3 lc_lognlogs_clusters.py
 # results are shown here : 
 # http://www.mpe.mpg.de/~comparat/eRoMok/logNlogS/
-# logs logn is still too bright by 0.6 dex. Probably an issue when applying the NH attenuation.
+
+
+############3 START HERE AGAIN
+
+# FIND CLUSTER GALAXY MEMBERS IN THE OTHER LIGHT CONE, ASSIGN THEM CLUSTER XRAY FLUX + ID ?
+
+# ADD MAGNITUDE R BAND TO THE CLUSTERS
+# LINK TO TEMPLATES
+
 
 # create fits files for each light cone. Modify the script according to which LC you want to generate
 python3 lc_convert_2_fits.py
