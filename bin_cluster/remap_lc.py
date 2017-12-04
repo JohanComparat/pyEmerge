@@ -61,7 +61,7 @@ def read_data(ii, L_box = 1000., env= 'MD10'):
 	 - the coordinates to be mapped: x, y, z
 	"""
 	h5_dir = os.path.join(os.environ[env], 'cluster_h5' )
-	input_list = n.array(glob.glob(os.path.join(h5_dir, "hlist_?.?????_emerge.hdf5")))
+	input_list = n.array(glob.glob(os.path.join(h5_dir, "hlist_?.?????.hdf5")))
 	input_list.sort()
 	file_1 = input_list[ii]
 	print("opens ",file_1)
