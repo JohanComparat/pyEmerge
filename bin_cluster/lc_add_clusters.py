@@ -22,7 +22,7 @@ z = f['/sky_position/redshift_S'].value[is_gal]
 lx = f['/cluster_data/log_LceX_05_24'].value[is_gal] 
 
 percent_observed = 1.
-lx_absorbed_05_20 = n.log10(10**lx * percent_observed)
+lx_absorbed_05_24 = n.log10(10**lx * percent_observed)
 
 d_L = cosmoMD.luminosity_distance(z)
 dl_cm = (d_L.to(u.cm)).value
@@ -30,9 +30,7 @@ adjusting_factor = 0.
 fx_05_24 = 10**(lx_absorbed_05_24-adjusting_factor) / (4 * n.pi * dl_cm**2.)
 
 fx_05_24_out = n.ones_like(f['/sky_position/redshift_S'].value)*-9999.
-logNH_out = n.ones_like(f['/sky_position/redshift_S'].value)*-9999.
-fx_05_24_out[is_agn] = fx_05_24
-logNH_out[is_agn] = logNH
+fx_05_24_out[is_gal] = fx_05_24
 
 if status == 'create':
   f['/cluster_data'].create_dataset('rxay_flux_05_24', data = fx_05_24_out )
