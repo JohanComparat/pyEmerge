@@ -144,7 +144,7 @@ def copylc_data(ii, option=False):
 		ds = halo_data.create_dataset('log_Mgas', data = f1['/cluster_data/log_Mgas'].value[selection] )
 		
 		halo_data = f.create_group('halo_properties')
-		halo_data.attrs['N_halos'] =  distance[selection]
+		halo_data.attrs['N_halos'] =  len(distance[selection])
 
 		ds = halo_data.create_dataset('scale'                              , data=scale                            [selection])
 		ds = halo_data.create_dataset('id'                                 , data=id                               [selection])
