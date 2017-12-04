@@ -18,7 +18,7 @@ cosmoMD = FlatLambdaCDM(H0=67.77*u.km/u.s/u.Mpc, Om0=0.307115, Ob0=0.048206)
 
 def get_lognlogs(path_to_lc, area, z_max=3.):
   f = h5py.File(path_to_lc, 'r+')
-  is_gal = (f['/sky_position/selection'].value)&(f['/sky_position/redshift_R'].value<z_max)&(f['/agn_properties/rxay_flux_05_20'].value>0)
+  is_gal = (f['/sky_position/selection'].value)&(f['/sky_position/redshift_R'].value<z_max)&(f['/cluster_data/rxay_flux_05_24'].value>0)
   n_gal = len(f['/sky_position/redshift_S'].value[is_gal])
   z = f['/sky_position/redshift_S'].value[is_gal]
   log_f_05_20 = n.log10(f['/cluster_data/rxay_flux_05_24'].value[is_gal]) #- 0.6
