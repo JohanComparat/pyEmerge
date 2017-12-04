@@ -194,7 +194,6 @@ ds = halo_data.create_dataset('log_LceX_05_24', data = DATA[11] )
 ds = halo_data.create_dataset('log_Mgas',       data = DATA[12] )
 
 halo_data = f.create_group('halo_properties')
-halo_data.attrs['N_halos'] =  len(distance[selection])
 
 ds = halo_data.create_dataset('scale'                              , data=DATA[13])
 ds = halo_data.create_dataset('id'                                 , data=DATA[14])
