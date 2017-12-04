@@ -1,0 +1,80 @@
+#!/bin/bash
+
+# python3 snapshots_add_Ms_Mo13.py 50 MD10 update
+# python3 snapshots_add_Ms_Mo13.py 65 MD10 update
+# python measure_SMF_Mo13.py 
+# python plot_SMF.py
+
+python3.4 snapshots_add_coolness.py 0   MD10 create
+python3.4 snapshots_add_coolness.py 1   MD10 create
+python3.4 snapshots_add_coolness.py 2   MD10 create
+python3.4 snapshots_add_coolness.py 3   MD10 create
+python3.4 snapshots_add_coolness.py 4   MD10 create
+python3.4 snapshots_add_coolness.py 5   MD10 create
+python3.4 snapshots_add_coolness.py 6   MD10 create
+python3.4 snapshots_add_coolness.py 7   MD10 create
+python3.4 snapshots_add_coolness.py 8   MD10 create
+python3.4 snapshots_add_coolness.py 9   MD10 create
+python3.4 snapshots_add_coolness.py 10  MD10 create
+python3.4 snapshots_add_coolness.py 11  MD10 create
+python3.4 snapshots_add_coolness.py 12  MD10 create
+python3.4 snapshots_add_coolness.py 13  MD10 create
+python3.4 snapshots_add_coolness.py 14  MD10 create
+python3.4 snapshots_add_coolness.py 15  MD10 create
+python3.4 snapshots_add_coolness.py 16  MD10 create
+python3.4 snapshots_add_coolness.py 17  MD10 create
+python3.4 snapshots_add_coolness.py 18  MD10 create
+python3.4 snapshots_add_coolness.py 19  MD10 create
+python3.4 snapshots_add_coolness.py 20  MD10 create
+python3.4 snapshots_add_coolness.py 21  MD10 create
+python3.4 snapshots_add_coolness.py 22  MD10 create
+python3.4 snapshots_add_coolness.py 23  MD10 create
+python3.4 snapshots_add_coolness.py 24  MD10 create
+python3.4 snapshots_add_coolness.py 25  MD10 create
+python3.4 snapshots_add_coolness.py 26  MD10 create
+python3.4 snapshots_add_coolness.py 27  MD10 create
+python3.4 snapshots_add_coolness.py 28  MD10 create
+python3.4 snapshots_add_coolness.py 29  MD10 create
+python3.4 snapshots_add_coolness.py 30  MD10 create
+python3.4 snapshots_add_coolness.py 31  MD10 create
+python3.4 snapshots_add_coolness.py 32  MD10 create
+python3.4 snapshots_add_coolness.py 33  MD10 create
+python3.4 snapshots_add_coolness.py 34  MD10 create
+python3.4 snapshots_add_coolness.py 35  MD10 create
+python3.4 snapshots_add_coolness.py 36  MD10 create
+python3.4 snapshots_add_coolness.py 37  MD10 create
+python3.4 snapshots_add_coolness.py 38  MD10 create
+python3.4 snapshots_add_coolness.py 39  MD10 create
+python3.4 snapshots_add_coolness.py 40  MD10 create
+python3.4 snapshots_add_coolness.py 41  MD10 create
+python3.4 snapshots_add_coolness.py 42  MD10 create
+python3.4 snapshots_add_coolness.py 43  MD10 create
+python3.4 snapshots_add_coolness.py 44  MD10 create
+python3.4 snapshots_add_coolness.py 45  MD10 create
+python3.4 snapshots_add_coolness.py 46  MD10 create
+python3.4 snapshots_add_coolness.py 47  MD10 create
+python3.4 snapshots_add_coolness.py 48  MD10 create
+python3.4 snapshots_add_coolness.py 49  MD10 create
+python3.4 snapshots_add_coolness.py 50  MD10 create
+python3.4 snapshots_add_coolness.py 51  MD10 create
+python3.4 snapshots_add_coolness.py 52  MD10 create
+python3.4 snapshots_add_coolness.py 53  MD10 create
+python3.4 snapshots_add_coolness.py 54  MD10 create
+python3.4 snapshots_add_coolness.py 55  MD10 create
+python3.4 snapshots_add_coolness.py 56  MD10 create
+python3.4 snapshots_add_coolness.py 57  MD10 create
+python3.4 snapshots_add_coolness.py 58  MD10 create
+python3.4 snapshots_add_coolness.py 59  MD10 create
+python3.4 snapshots_add_coolness.py 60  MD10 create
+python3.4 snapshots_add_coolness.py 61  MD10 create
+python3.4 snapshots_add_coolness.py 62  MD10 create
+python3.4 snapshots_add_coolness.py 63  MD10 create
+python3.4 snapshots_add_coolness.py 64  MD10 create
+python3.4 snapshots_add_coolness.py 65  MD10 create
+python3.4 snapshots_add_coolness.py 66  MD10 create
+python3.4 snapshots_add_coolness.py 67  MD10 create
+python3.4 snapshots_add_coolness.py 68  MD10 create
+python3.4 snapshots_add_coolness.py 69  MD10 create
+python3.4 snapshots_add_coolness.py 70  MD10 create
+python3.4 snapshots_add_coolness.py 71  MD10 create
+python3.4 snapshots_add_coolness.py 72  MD10 create
