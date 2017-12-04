@@ -74,7 +74,7 @@ x_data, y_data, y_data_min, y_data_max  = n.loadtxt(path_2_logNlogS_data, unpack
 p.fill_between(n.log10(x_data), y1 = n.log10(y_data_min), y2=n.log10(y_data_max) , rasterized = True, alpha=0.5, label = 'F15 CDFS' )
 
 p.axhline(7, ls='dashed')
-p.xlabel('log(F[0.5-2 keV])')
+p.xlabel('log(F[0.5-2.4 keV])')
 p.ylabel('log(>F) [/deg2]')
 p.legend(frameon=False, loc=0)
 #p.yscale('log')
