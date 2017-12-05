@@ -81,7 +81,7 @@ from astropy.cosmology import FlatLambdaCDM
 import astropy.units as u
 cosmoMD = FlatLambdaCDM(H0=67.77*u.km/u.s/u.Mpc, Om0=0.307115, Ob0=0.048206)
 from scipy.special import erf
-fraction_ricci = lambda lsar : 0.22+0.58*(0.5+0.5*erf((-lsar+32.7)/0.4))
+fraction_ricci = lambda lsar : 0.3+0.5*(0.5+0.5*erf((-lsar+32.7)/0.4))
 
 #status = 'create'
 status = 'update'
