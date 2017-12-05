@@ -81,7 +81,8 @@ from astropy.cosmology import FlatLambdaCDM
 import astropy.units as u
 cosmoMD = FlatLambdaCDM(H0=67.77*u.km/u.s/u.Mpc, Om0=0.307115, Ob0=0.048206)
 from scipy.special import erf
-fraction_ricci = lambda lsar : 0.3+0.5*(0.5+0.5*erf((-lsar+32.7)/0.4))
+ricci_ct_f = 0.3
+fraction_ricci = lambda lsar : ricci_ct_f+(0.8-ricci_ct_f)*(0.5+0.5*erf((-lsar+32.7)/0.4))
 
 #status = 'create'
 status = 'update'
@@ -113,7 +114,7 @@ if model_NH == 'ricci_2017':
 	# obscuration, Ricci + 2017
 	randomNH = n.random.rand(n_agn)
 	# 22% of thick, 24-26
-	thick = (randomNH < 0.22)
+	thick = (randomNH < ricci_ct_f)
 	logNH[thick] = n.random.uniform(24, 26, len(logNH[thick]))
 	obs_type[thick] = n.ones_like(logNH[thick])*2
 	frac_thin = fraction_ricci(lsar)
