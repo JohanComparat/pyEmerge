@@ -85,15 +85,15 @@ sh run_MSMo13_md10.sh
 # uses snapshots_add_Ms_Mo13.py
 
 # DATA MODEL FOR SNAPSHOTS
-python3 print_data_structure.py 22 MD10
-python3 print_data_structure.py 22 MD04
+python3.4 print_data_structure.py 22 MD10
+python3.4 print_data_structure.py 22 MD04
 
 # stellar mass function
-python3 measure_SMF.py
-python3 measure_SMF_Mo13.py
+python3.4 measure_SMF.py
+python3.4 measure_SMF_Mo13.py
 # model for the host galaxy mass function for AGN
 #tabulates the duty cycles and AGN host galaxy function for the Mo13 implementation
-python3 tabulate_HGMF_per_snapshot.py
+python3.4 tabulate_HGMF_per_snapshot.py
 
 sh run_LSAR_md10.sh
 # uses snapshots_add_LSAR_Bo16.py
@@ -119,7 +119,7 @@ sh run_AGN_activity_md10.sh
 #python measure_SFRD.py
 #python plot_SFRD.py
 
-python3 plot_SMF.py
+python3.4 plot_SMF.py
 # plots are here: http://www.mpe.mpg.de/~comparat/eRoMok/h5/stellar_mass_function/
 
 #########################################
@@ -135,16 +135,16 @@ sh lc_create_shells_run_L15.sh
 # based on  lc_create_shells.py
 
 # merges the shells into a single light cone file
-python3 lc_merge_shells.py L3
-python3 lc_merge_shells.py L3_z1
-python3 lc_merge_shells.py L6
-python3 lc_merge_shells.py L15
+python3.4 lc_merge_shells.py L3
+python3.4 lc_merge_shells.py L3_z1
+python3.4 lc_merge_shells.py L6
+python3.4 lc_merge_shells.py L15
 
 # Adds ra, dec, z 
-python3 lc_add_sky_coordinates.py remaped_position_L6
-python3 lc_add_sky_coordinates.py remaped_position_L3
-python3 lc_add_sky_coordinates.py remaped_position_L3_z1
-python3 lc_add_sky_coordinates.py remaped_position_L15
+python3.4 lc_add_sky_coordinates.py remaped_position_L6
+python3.4 lc_add_sky_coordinates.py remaped_position_L3
+python3.4 lc_add_sky_coordinates.py remaped_position_L3_z1
+python3.4 lc_add_sky_coordinates.py remaped_position_L15
  
 # L3 characteristics :
 # z< 1.0889947373832305 |ra [deg]|< 6.7529257176359 |dec [deg]|< 8.269819492449505
@@ -164,24 +164,24 @@ python3 lc_add_sky_coordinates.py remaped_position_L15
 
 # converts the Bongiorno luminosity into the eRosita band assuming a NH distribution and following Buchner et al. 2017.
 # 
-python3 lc_add_agns.py /data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_remaped_position_L6.hdf5
-python3 lc_add_agns.py /data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_remaped_position_L3.hdf5
-python3 lc_add_agns.py /data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_remaped_position_L3_z1.hdf5
-python3 lc_add_agns.py /data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_remaped_position_L15.hdf5
+python3.4 lc_add_agns.py /data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_remaped_position_L6.hdf5
+python3.4 lc_add_agns.py /data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_remaped_position_L3.hdf5
+python3.4 lc_add_agns.py /data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_remaped_position_L3_z1.hdf5
+python3.4 lc_add_agns.py /data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_remaped_position_L15.hdf5
 
-python3 lc_lognlogs_agns.py
+python3.4 lc_lognlogs_agns.py
 # results are shown here : 
 # http://www.mpe.mpg.de/~comparat/eRoMok/logNlogS/
 # logs logn is still too bright by 0.6 dex. Probably an issue when applying the NH attenuation.
 
 # create fits files for each light cone. Modify the script according to which LC you want to generate
-python3 lc_convert_2_fits.py
+python3.4 lc_convert_2_fits.py
 
 
 # now creates clustering catalogs equivalent to SPIDERS
-python3 lc_create_random_ra_dec.py
-python3 lc_write_clustering_sample.py
-python3 lc_write_CUTE_param_files.py
+python3.4 lc_create_random_ra_dec.py
+python3.4 lc_write_clustering_sample.py
+python3.4 lc_write_CUTE_param_files.py
 
 # and compute the clustering 
 cd /data17s/darksim/MD/MD_1.0Gpc/h5_lc/clustering_catalogs_remaped_position_L3/
@@ -192,9 +192,9 @@ cd /data17s/darksim/MD/MD_1.0Gpc/h5_lc/clustering_catalogs_remaped_position_L15/
 sh  run_clustering.sh
 
 # Adds cluster related columns 
-python3 lc_add_clusters.py  
+python3.4 lc_add_clusters.py  
 # Adds galaxy related columns 
-python3 lc_add_galaxies.py  
+python3.4 lc_add_galaxies.py  
 
 
 
