@@ -120,7 +120,7 @@ if model_NH == 'ricci_2017':
 	frac_thin = fraction_ricci(lsar)
 	thinest = (randomNH > frac_thin)
 	obscured = (thinest==False)&(thick==False)
-	print(n_agn, len(thick.nonzero()[0]), len(obscured.nonzero()[0]), len(thin.nonzero()[0]))
+	print(n_agn, len(thick.nonzero()[0]), len(obscured.nonzero()[0]), len(thinest.nonzero()[0]))
 	logNH[obscured] = n.random.uniform(22, 24, len(logNH[obscured]))
 	obs_type[obscured] =  n.ones_like(logNH[obscured])
 	
