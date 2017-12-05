@@ -81,9 +81,9 @@ from astropy.cosmology import FlatLambdaCDM
 import astropy.units as u
 cosmoMD = FlatLambdaCDM(H0=67.77*u.km/u.s/u.Mpc, Om0=0.307115, Ob0=0.048206)
 from scipy.special import erf
-ricci_ct_f = 0.35
+ricci_ct_f = 0.25
 fraction_ricci = lambda lsar : ricci_ct_f+(0.8-ricci_ct_f)*(0.5+0.5*erf((-lsar+32.7)/0.4))
-
+print(fraction_ricci(n.array([32, 32.7, 33, 34, 35, 36, 37])))
 #status = 'create'
 status = 'update'
 
@@ -105,6 +105,7 @@ n_agn = len(f['/sky_position/redshift_S'].value[is_agn])
 z = f['/sky_position/redshift_S'].value[is_agn]
 logm = n.log10(f['/moster_2013_data/stellar_mass'].value[is_agn])
 lsar = f['/agn_properties/log_lambda_sar'].value[is_agn]
+print('lsar',lsar, n.min(lsar), n.max(lsar))
 lx = logm + lsar 
 
 logNH = n.random.uniform(20, 22, n_agn)
@@ -118,6 +119,7 @@ if model_NH == 'ricci_2017':
 	logNH[thick] = n.random.uniform(24, 26, len(logNH[thick]))
 	obs_type[thick] = n.ones_like(logNH[thick])*2
 	frac_thin = fraction_ricci(lsar)
+	print('frac thin min', n.min(frac_thin))
 	thinest = (randomNH > frac_thin)
 	obscured = (thinest==False)&(thick==False)
 	print(n_agn, len(thick.nonzero()[0]), len(obscured.nonzero()[0]), len(thinest.nonzero()[0]))
