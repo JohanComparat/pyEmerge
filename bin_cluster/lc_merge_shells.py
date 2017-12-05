@@ -55,6 +55,8 @@ input_list = n.array(glob.glob(os.path.join(h5_lc_dir, "shell_hlist_?.?????.hdf5
 input_list.sort()
 
 file_out = os.path.join(os.environ[env], 'h5_lc', 'lc_cluster_'+positions_group_name+'.hdf5')
+if os.path.isfile(file_out):
+	os.system('rm '+file_out)
 
 print("creates redshift list")
 # creates the redshift list 

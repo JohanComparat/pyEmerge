@@ -100,6 +100,9 @@ def copylc_data(ii, option=False):
 	file_1 = input_list[ii]
 	file_out = os.path.join(h5_lc_dir, 'shell_'+os.path.basename( input_list[ii] ) )
 	print(file_1, "==>>", file_out)
+	if os.path.isfile(file_out):
+	    os.system('rm '+file_out)
+	    
 	f1 = h5py.File(file_1,  "r")
 	print( "n halos=",f1['/halo_properties/'].attrs['N_halos'])
 	x,y,z=f1[positions_group + '/xyz_Lbox'].value.T*L_box

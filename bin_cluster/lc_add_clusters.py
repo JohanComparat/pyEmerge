@@ -26,7 +26,7 @@ lx_absorbed_05_24 = n.log10(10**lx * percent_observed)
 
 d_L = cosmoMD.luminosity_distance(z)
 dl_cm = (d_L.to(u.cm)).value
-adjusting_factor = 0.8 # accounts for absorption for now !
+adjusting_factor = 0.35 # accounts for absorption for now !
 fx_05_24 = 10**(lx_absorbed_05_24-adjusting_factor) / (4 * n.pi * dl_cm**2.)
 
 fx_05_24_out = n.ones_like(f['/sky_position/redshift_S'].value)*-9999.

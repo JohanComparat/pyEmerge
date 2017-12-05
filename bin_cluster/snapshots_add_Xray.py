@@ -56,25 +56,48 @@ Workflow
 
 """
 
-N_Mgas = 31.98
+# DIETRICH 2017
+N_Mgas = 31.92 # Dietrich 17
 N_kT 	= 2.18
 N_L 	= 103.7
 N_Lce 	= 102.66
 
-slope_E_Mgas 	= -0.11
+slope_E_Mgas 	= 0.05 # Dietrich 17
 slope_E_kT 	= 0.61
-slope_E_L 		= 1.20
+slope_E_L 	= 1.20
 slope_E_Lce 	= 1.82
 
-slope_M500_Mgas= 1.04
+slope_M500_Mgas= 1.398 # Dietrich 17
 slope_M500_kT 	= 0.66
-slope_M500_L 	= 1.26
-slope_M500_Lce = 1.06
+slope_M500_L 	= 1.43 # 1.26*(1.+0.33*0.43)
+slope_M500_Lce = 1.36 # 1.06*(1.+0.33*0.88)
 
-scatter_Mgas = 0.086
+scatter_Mgas = 0.106 # Dietrich 17
 scatter_kT = 0.18
 scatter_L = 0.24
 scatter_Lce = 0.17
+
+# MANTZ 2016
+
+#N_Mgas = 31.98 
+#N_kT 	= 2.18
+#N_L 	= 103.7
+#N_Lce 	= 102.66
+
+#slope_E_Mgas 	= -0.11 
+#slope_E_kT 	= 0.61
+#slope_E_L 	= 1.20
+#slope_E_Lce 	= 1.82
+
+#slope_M500_Mgas= 1.04
+#slope_M500_kT 	= 0.66
+#slope_M500_L 	= 1.26
+#slope_M500_Lce = 1.06
+
+#scatter_Mgas = 0.086
+#scatter_kT = 0.18
+#scatter_L = 0.24
+#scatter_Lce = 0.17
 
 E035 = cosmoMD.efunc(0.35)
 
@@ -94,7 +117,7 @@ f1 = h5py.File(file_1,  "r+")
 z = f1.attrs['redshift']
 log_m500c = n.log10(f1['/halo_properties/M500c'].value)
 nCluster = len(log_m500c)
-rds = (n.random.rand(len(log_m500c))-0.5)*2.                   
+#rds = (n.random.rand(len(log_m500c))-0.5)*2.                   
 
 Mean_Mgas = n.log10(logM500_to_logMgas	(log_m500c, z))
 V_scatter_Mgas = norm.rvs(loc=0,scale=scatter_Mgas,size=nCluster)

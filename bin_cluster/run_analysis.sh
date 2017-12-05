@@ -16,10 +16,12 @@ sh run_add_coolcore.sh
 sh run_remap_MD10_f15.sh
 # uses remap_lc.py
 
+# adds Xray using basic scaling relations Matz 2016 or Dietrich 2017
+sh run_xray.sh
+
 # create light cone shells
 sh lc_create_shells_run.sh
 # uses lc_create_shells.py
-
 
 # merges the shells into a single light cone file
 python3.4 lc_merge_shells.py L3
@@ -56,21 +58,18 @@ python3.4 lc_add_clusters.py /data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_cluster_rema
 python3.4 lc_add_clusters.py /data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_cluster_remaped_position_L3_z1.hdf5
 python3.4 lc_add_clusters.py /data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_cluster_remaped_position_L15.hdf5
 
-python3 lc_lognlogs_clusters.py
+python3.4 lc_lognlogs_clusters.py
 # results are shown here : 
 # http://www.mpe.mpg.de/~comparat/eRoMok/logNlogS/
 
 
-############3 START HERE AGAIN
-
-# FIND CLUSTER GALAXY MEMBERS IN THE OTHER LIGHT CONE, ASSIGN THEM CLUSTER XRAY FLUX + ID ?
-
-# ADD MAGNITUDE R BAND TO THE CLUSTERS
-# LINK TO TEMPLATES
-
+python3.4 lc_identify_cluster_members.py L6
+python3.4 lc_identify_cluster_members.py L3
+python3.4 lc_identify_cluster_members.py L15
+python3.4 lc_identify_cluster_members.py L3_z1
 
 # create fits files for each light cone. Modify the script according to which LC you want to generate
-python3 lc_convert_2_fits.py
+python3.4 lc_convert_2_fits.py
 
 
 # now creates clustering catalogs equivalent to SPIDERS
