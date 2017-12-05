@@ -86,6 +86,9 @@ fraction_ricci = lambda lsar : 0.22+0.58*(0.5+0.5*erf((-lsar+32.7)/0.4))
 #status = 'create'
 status = 'update'
 
+model_NH = 'ricci_2017'
+# model_NH = 'buchner_2017'
+
 path_to_lc = sys.argv[1]
 #path_to_lc = '/data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_remaped_position_L3.hdf5'
 
@@ -106,7 +109,7 @@ lx = logm + lsar
 logNH = n.random.uniform(20, 22, n_agn)
 obs_type = n.zeros(n_agn)
 
-if model_NH == 'ricci_2017'
+if model_NH == 'ricci_2017':
 	# obscuration, Ricci + 2017
 	randomNH = n.random.rand(n_agn)
 	# 22% of thick, 24-26
