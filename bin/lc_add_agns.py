@@ -80,9 +80,11 @@ import sys
 from astropy.cosmology import FlatLambdaCDM
 import astropy.units as u
 cosmoMD = FlatLambdaCDM(H0=67.77*u.km/u.s/u.Mpc, Om0=0.307115, Ob0=0.048206)
+from scipy.special import erf
+fraction_ricci = lambda lsar : 0.22+0.58*(0.5+0.5*erf((-lsar+32.7)/0.4))
 
-status = 'create'
-#status = 'update'
+#status = 'create'
+status = 'update'
 
 path_to_lc = sys.argv[1]
 #path_to_lc = '/data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_remaped_position_L3.hdf5'
@@ -101,44 +103,59 @@ logm = n.log10(f['/moster_2013_data/stellar_mass'].value[is_agn])
 lsar = f['/agn_properties/log_lambda_sar'].value[is_agn]
 lx = logm + lsar 
 
-# randomX = n.random.rand(n_gal)
-# lambda SAR addition
-
-# randomObscuration = n.random.rand(n_gal)		
-# obscured = (xr.obscured_fraction_optical_Merloni2015(lsar + stellar_mass) < randomObscuration )
-
-# obscuration Buchner et al. 2015 + 2017
-# add the log NH of the logNH_host
-# 35 % have a thick obscuration 24 - 26
-# 65 % have a thin obscuration that depends on stellar mass and Xray luminosity
 logNH = n.random.uniform(20, 22, n_agn)
 obs_type = n.zeros(n_agn)
 
-# 35% of thick, 24-26
-randomNH = n.random.rand(n_agn)
-thick_obscuration = (randomNH < 0.35)
-thin_obscuration = (randomNH >= 0.35)
-#med_obscuration = (randomNH >= 0.6)
+if model_NH == 'ricci_2017'
+	# obscuration, Ricci + 2017
+	randomNH = n.random.rand(n_agn)
+	# 22% of thick, 24-26
+	thick = (randomNH < 0.22)
+	logNH[thick] = n.random.uniform(24, 26, len(logNH[thick]))
+	obs_type[thick] = n.ones_like(logNH[thick])*2
+	frac_thin = fraction_ricci(lsar)
+	thinest = (randomNH > frac_thin)
+	obscured = (thinest==False)&(thick==False)
+	logNH[obscured] = n.random.uniform(22, 24, len(logNH[obscured]))
+	obs_type[obscured] =  n.ones_like(logNH[obscured])
+	
 
-logNH[thick_obscuration] = n.random.uniform(24, 26, len(logNH[thick_obscuration]))
-obs_type[thick_obscuration] = n.ones_like(logNH[thick_obscuration])*2
+if model_NH == 'buchner_2017':
+	# randomObscuration = n.random.rand(n_gal)		
+	# obscured = (xr.obscured_fraction_optical_Merloni2015(lsar + stellar_mass) < randomObscuration )
 
-# the thin : about 40 % are thin whatever happens: 22-24
-logNH_host_mean = 21.7 + (logm- 9.5)*0.38
-logNH_host = n.random.normal(logNH_host_mean, 0.5)
-L_transition  = 21.62
-logNH[(thin_obscuration)&(logNH_host>= L_transition)] = n.random.uniform(22, 24, len(logNH[(thin_obscuration)&(logNH_host>=L_transition)]))
-obs_type[(thin_obscuration)&(logNH_host>= L_transition)] =  n.ones_like(logNH[(thin_obscuration)&(logNH_host>=L_transition)])
-# a few more are thin depending on their Xray luminosity: 22-24
-#rest = (thin_obscuration)&(logNH_host<22)
-#randomNH2 = n.random.rand(n_agn)
-#rest_obscured = (rest)&(randomNH2 < obscured_fraction_interpolated(lsar + logm))
-#logNH[(rest_obscured)] = random.uniform(22, 24, len(logNH[(rest_obscured)]))
-#obs_type[(rest_obscured)] =  n.ones_like(logNH[(rest_obscured)])
+	# obscuration Buchner et al. 2015 + 2017
+	# add the log NH of the logNH_host
+	# 35 % have a thick obscuration 24 - 26
+	# 65 % have a thin obscuration that depends on stellar mass and Xray luminosity
+	logNH = n.random.uniform(20, 22, n_agn)
+	obs_type = n.zeros(n_agn)
 
-#logNH_host[logNH_host<=20] = n.random.uniform(20, 22, len(logNH_host[logNH_host<=20]))
-#logNH_host[logNH_host>=26] = n.random.uniform(24, 26, len(logNH_host[logNH_host>=26]))
-#logNH = logNH_host
+	# 35% of thick, 24-26
+	randomNH = n.random.rand(n_agn)
+	thick_obscuration = (randomNH < 0.35)
+	thin_obscuration = (randomNH >= 0.35)
+	#med_obscuration = (randomNH >= 0.6)
+
+	logNH[thick_obscuration] = n.random.uniform(24, 26, len(logNH[thick_obscuration]))
+	obs_type[thick_obscuration] = n.ones_like(logNH[thick_obscuration])*2
+
+	# the thin : about 40 % are thin whatever happens: 22-24
+	logNH_host_mean = 21.7 + (logm- 9.5)*0.38
+	logNH_host = n.random.normal(logNH_host_mean, 0.5)
+	L_transition  = 21.62
+	logNH[(thin_obscuration)&(logNH_host>= L_transition)] = n.random.uniform(22, 24, len(logNH[(thin_obscuration)&(logNH_host>=L_transition)]))
+	obs_type[(thin_obscuration)&(logNH_host>= L_transition)] =  n.ones_like(logNH[(thin_obscuration)&(logNH_host>=L_transition)])
+	# a few more are thin depending on their Xray luminosity: 22-24
+	#rest = (thin_obscuration)&(logNH_host<22)
+	#randomNH2 = n.random.rand(n_agn)
+	#rest_obscured = (rest)&(randomNH2 < obscured_fraction_interpolated(lsar + logm))
+	#logNH[(rest_obscured)] = random.uniform(22, 24, len(logNH[(rest_obscured)]))
+	#obs_type[(rest_obscured)] =  n.ones_like(logNH[(rest_obscured)])
+
+	#logNH_host[logNH_host<=20] = n.random.uniform(20, 22, len(logNH_host[logNH_host<=20]))
+	#logNH_host[logNH_host>=26] = n.random.uniform(24, 26, len(logNH_host[logNH_host>=26]))
+	#logNH = logNH_host
 
 obscuration_z_grid, obscuration_nh_grid, obscuration_fraction_obs_erosita = n.loadtxt( os.path.join( os.environ['GIT_NBODY_NPT'], "data", "AGN", "fraction_observed_by_erosita_due_2_obscuration.txt"), unpack=True)
 nh_vals = 10**n.arange(-2,4,0.05)
