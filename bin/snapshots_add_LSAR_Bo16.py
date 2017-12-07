@@ -20,9 +20,9 @@ from astropy.cosmology import FlatLambdaCDM
 import astropy.units as u
 cosmoMD = FlatLambdaCDM(H0=67.77*u.km/u.s/u.Mpc, Om0=0.307115, Ob0=0.048206)
 
-from multiprocessing import Pool
-n_proc=12
-pool = Pool(n_proc)
+#from multiprocessing import Pool
+#n_proc=12
+#pool = Pool(n_proc)
 
 
 h5_dir = os.path.join(os.environ[env], 'h5' )
@@ -52,7 +52,8 @@ log_lambda_SAR_values = n.arange(32-dl,36+2*dl,dl)
 def f_lambda_sar( DATA ):
   logM, log_lambda_SAR = DATA
   log_lambda_SAR_var = 10**( log_lambda_SAR - 33.8 + 0.48 * (logM - 11.) )
-  return 1. / ( log_lambda_SAR_var**(1.01 - 0.58 * (z - 1.1)) + log_lambda_SAR_var**(3.72) )
+  #return 1. / ( log_lambda_SAR_var**(1.01 - 0.58 * (z - 1.1)) + log_lambda_SAR_var**(3.72) )
+  return 1. / ( log_lambda_SAR_var**(1.01 - 0.58 * (z - 1.1)) + log_lambda_SAR_var**(2.72) )
 
 
 t0 = time.time()
@@ -66,14 +67,14 @@ for ii0 in n.arange(0, len(logM), ii_step):
   norm = n.sum(probas_un, axis=0)
   probas = probas_un / norm
   cmat = n.array([ agn_random_number[ii0:ii1] > n.sum(probas.T[:,jj:], axis=1) for jj in n.arange(len(log_lambda_SAR_values)) ])
-  print(cmat.shape, cmat[0])
-  print(cmat.T[1])
+  #print(cmat.shape, cmat[0])
+  #print(cmat.T[1])
   values = log_lambda_SAR_values[n.array([n.min(n.where(cmat.T[jj]==True)) for jj in n.arange(len(cmat.T)) ])]
-  print(values.shape, values[:10])
+  #print(values.shape, values[:10])
   log_lSAR[ii0:ii1] = values
-  print(ii0, len(logM), time.time()-t0)
+  print(ii0, len(logM), n.max(log_lSAR), time.time()-t0)
 
-
+print('max lsar',n.max(log_lSAR))
 if status=='create':
   
   halo_data = f1.create_group('agn_properties')

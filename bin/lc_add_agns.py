@@ -80,10 +80,12 @@ import sys
 from astropy.cosmology import FlatLambdaCDM
 import astropy.units as u
 cosmoMD = FlatLambdaCDM(H0=67.77*u.km/u.s/u.Mpc, Om0=0.307115, Ob0=0.048206)
+
 from scipy.special import erf
-ricci_ct_f = 0.22
-fraction_ricci = lambda lsar : ricci_ct_f+(0.8-ricci_ct_f)*(0.5+0.5*erf((-lsar+34.7)/0.4))
-print(fraction_ricci(n.array([32, 32.7, 33, 34, 35, 36, 37])))
+ricci_ct_f = lambda z: 0.22 + 0.18 * z**0.4
+fraction_ricci = lambda lsar, z : ricci_ct_f(z)+(0.8-ricci_ct_f(z))*(0.5+0.5*erf((-lsar+34.7)/0.4))
+print(fraction_ricci(n.array([32, 32.7, 33, 34, 35, 36, 37]), 0.))
+
 #status = 'create'
 status = 'update'
 
@@ -115,10 +117,10 @@ if model_NH == 'ricci_2017':
 	# obscuration, Ricci + 2017
 	randomNH = n.random.rand(n_agn)
 	# 22% of thick, 24-26
-	thick = (randomNH < ricci_ct_f)
+	thick = (randomNH < ricci_ct_f(0.))
 	logNH[thick] = n.random.uniform(24, 26, len(logNH[thick]))
 	obs_type[thick] = n.ones_like(logNH[thick])*2
-	frac_thin = fraction_ricci(lsar)
+	frac_thin = fraction_ricci(lsar, z)
 	print('frac thin min', n.min(frac_thin))
 	thinest = (randomNH > frac_thin)
 	obscured = (thinest==False)&(thick==False)
