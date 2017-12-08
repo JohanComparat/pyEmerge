@@ -100,18 +100,6 @@ sh run_LSAR_md10.sh
 # BLACKLIST LSAR FAILS
 # hlist_0.28920_emerge.hdf5    
 
-970000 2956779 332.835337638855
-Traceback (most recent call last):
-  File "snapshots_add_LSAR_Bo16.py", line 69, in <module>
-    log_lSAR[ii0:ii1] = log_lambda_SAR_values[n.array([n.min(n.where(cmat.T[jj]==True)) for jj in n.arange(len(cmat.T)) ])]
-  File "snCapshots_add_LSAR_Bo16.py", line 69, in <listcomp>
-    log_lSAR[ii0:ii1] = log_lambda_SAR_values[n.array([n.min(n.where(cmat.T[jj]==True)) for jj in n.arange(len(cmat.T)) ])]
-  File "/home/comparat/.local/lib/python3.4/site-packages/numpy/core/fromnumeric.py", line 2372, in amin
-    out=out, **kwargs)
-  File "/home/comparat/.local/lib/python3.4/site-packages/numpy/core/_methods.py", line 29, in _amin
-    return umr_minimum(a, axis, None, out, keepdims)
-ValueError: zero-size array to reduction operation minimum which has no identity
-
 sh run_AGN_activity_md10.sh
 # uses snapshots_add_AGN_activity_Bo16.py
 

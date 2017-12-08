@@ -122,31 +122,29 @@ def write_fits_lcC(path_to_lc, out_filename, z_min, z_max, dec_max, ra_max):
     os.system("rm "+out_filename)
   thdulist.writeto(out_filename)
 
-#path_to_lc = '/data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_agn_Bongiorno_Ricci_Zevol/lc_remaped_position_L3_z1.hdf5'
-#out_filename = '/data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_cluster_remaped_position_L3_z1.fits'
-#z_min = 1.08
-#z_max = 3.0
-#dec_max = 4.134909746242654
-#ra_max = 3.3764628588325674
-#write_fits_lcC(path_to_lc, out_filename, z_min, z_max, dec_max, ra_max)
+path_to_lc = '/data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_agn_Bongiorno_Ricci_Zevol/lc_remaped_position_L3_z1.hdf5'
+out_filename = '/data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_cluster_remaped_position_L3_z1.fits'
+z_min = 1.08
+z_max = 3.0
+dec_max = 4.134909746242654
+ra_max = 3.3764628588325674
+write_fits_lcC(path_to_lc, out_filename, z_min, z_max, dec_max, ra_max)
 
+path_to_lc = '/data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_agn_Bongiorno_Ricci_Zevol/lc_remaped_position_L3.hdf5'
+out_filename = '/data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_cluster_remaped_position_L3.fits'
+z_min = 0.
+z_max = 1.08
+dec_max = 8.269819492449505
+ra_max = 6.7529257176359
+write_fits_lcC(path_to_lc, out_filename, z_min, z_max, dec_max, ra_max)
 
-
-#path_to_lc = '/data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_agn_Bongiorno_Ricci_Zevol/lc_remaped_position_L3.hdf5'
-#out_filename = '/data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_cluster_remaped_position_L3.fits'
-#z_min = 0.
-#z_max = 1.08
-#dec_max = 8.269819492449505
-#ra_max = 6.7529257176359
-#write_fits_lcC(path_to_lc, out_filename, z_min, z_max, dec_max, ra_max)
-
-#path_to_lc = '/data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_agn_Bongiorno_Ricci_Zevol/lc_remaped_position_L6.hdf5'
-#out_filename = '/data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_cluster_remaped_position_L6.fits'
-#z_min = 0.
-#z_max = 3.0
-#dec_max = 2.0047373031569915
-#ra_max = 1.9766516114702513
-#write_fits_lcC(path_to_lc, out_filename, z_min, z_max, dec_max, ra_max)
+path_to_lc = '/data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_agn_Bongiorno_Ricci_Zevol/lc_remaped_position_L6.hdf5'
+out_filename = '/data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_cluster_remaped_position_L6.fits'
+z_min = 0.
+z_max = 3.0
+dec_max = 2.0047373031569915
+ra_max = 1.9766516114702513
+write_fits_lcC(path_to_lc, out_filename, z_min, z_max, dec_max, ra_max)
 
 path_to_lc = '/data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_agn_Bongiorno_Ricci_Zevol/lc_remaped_position_L15.hdf5'
 out_filename = '/data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_cluster_remaped_position_L15.fits'
