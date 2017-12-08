@@ -68,10 +68,32 @@ python3.4 lc_identify_cluster_members.py L3
 python3.4 lc_identify_cluster_members.py L15
 python3.4 lc_identify_cluster_members.py L3_z1
 
+# identifies statistically the fraction of galaxies with higher age as a function of its distance to the cluster radius
+python3.4 lc_add_red_sequence.py L3
+python3.4 lc_add_red_sequence.py L3_z1
+python3.4 lc_add_red_sequence.py L6
+python3.4 lc_add_red_sequence.py L15
+
 # create fits files for each light cone. Modify the script according to which LC you want to generate
 python3.4 lc_convert_2_fits.py
 
+# create a 4MOST mock by linking to templates :
+python3.4 fits_add_templates.py
 
+###################3
+###################3
+###################3
+
+###################3
+###################3
+###################3
+
+###################3
+###################3
+###################3
+
+###################3
+###################3###################3
 # now creates clustering catalogs equivalent to SPIDERS
 python3 lc_create_random_ra_dec.py
 python3 lc_write_clustering_sample.py
@@ -84,12 +106,6 @@ cd /data17s/darksim/MD/MD_1.0Gpc/h5_lc/clustering_catalogs_remaped_position_L6/
 sh  run_clustering.sh
 cd /data17s/darksim/MD/MD_1.0Gpc/h5_lc/clustering_catalogs_remaped_position_L15/
 sh  run_clustering.sh
-
-# Adds cluster related columns 
-python3 lc_add_clusters.py  
-# Adds galaxy related columns 
-python3 lc_add_galaxies.py  
-
 
 
 
