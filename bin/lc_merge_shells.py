@@ -68,7 +68,7 @@ aexp = n.array(aexp)
 
 def get_data(ii):
 	f = h5py.File(input_list[ii],  "r")
-	DATA = n.array([n.ones_like( f['/halo_position/x'].value)*(1./aexp[ii]-1.), f['/halo_position/x'].value, f['/halo_position/y'].value, f['/halo_position/z'].value, f['/halo_position/vx'].value, f['/halo_position/vy'].value, f['/halo_position/vz'].value, f['/halo_properties/id'].value, f['/halo_properties/pid'].value, f['/halo_properties/mvir'].value, f['/halo_properties/rvir'].value, f['/halo_properties/rs'].value, f['/halo_properties/Vmax'].value, f['/halo_properties/Mpeak'].value, f['/moster_2013_data/stellar_mass'].value, f['/agn_properties/log_lambda_sar'].value,f['/agn_properties/agn_activity'].value, f['/emerge_data/dMdt'].value, f['/emerge_data/mvir_dot'].value, f['/emerge_data/rvir_dot'].value ])
+	DATA = n.array([n.ones_like( f['/halo_position/x'].value)*(1./aexp[ii]-1.), f['/halo_position/x'].value, f['/halo_position/y'].value, f['/halo_position/z'].value, f['/halo_position/vx'].value, f['/halo_position/vy'].value, f['/halo_position/vz'].value, f['/halo_properties/id'].value, f['/halo_properties/pid'].value, f['/halo_properties/mvir'].value, f['/halo_properties/rvir'].value, f['/halo_properties/rs'].value, f['/halo_properties/Vmax'].value, f['/halo_properties/Mpeak'].value, f['/moster_2013_data/stellar_mass'].value, f['/agn_properties/log_lambda_sar'].value,f['/agn_properties/agn_activity'].value, f['/emerge_data/dMdt'].value, f['/emerge_data/mvir_dot'].value, f['/emerge_data/rvir_dot'].value, f['/cosmo_4most/is_BG_lz'].value, f['/cosmo_4most/is_BG_hz'].value, f['/cosmo_4most/is_ELG'].value, f['/cosmo_4most/is_QSO'].value, f['/cosmo_4most/is_Lya'].value ])
 	f.close()
 	return DATA
 
@@ -154,5 +154,12 @@ emerge_data = f.create_group('emerge_data')
 ds = emerge_data.create_dataset('dMdt'          , data = DATA[17]  )
 ds = emerge_data.create_dataset('mvir_dot'          , data = DATA[18]  )
 ds = emerge_data.create_dataset('rvir_dot'          , data = DATA[19]  )
+
+c4 = f.create_group('cosmo_4most')
+ds = c4.create_dataset('is_BG_lz', data = DATA[20])
+ds = c4.create_dataset('is_BG_hz', data = DATA[21])
+ds = c4.create_dataset('is_ELG'  ,   data = DATA[22])
+ds = c4.create_dataset('is_QSO'  ,   data = DATA[23])
+ds = c4.create_dataset('is_Lya'  ,   data = DATA[24])
 
 f.close()
