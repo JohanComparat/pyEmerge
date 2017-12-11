@@ -54,7 +54,7 @@ h5_lc_dir = os.path.join(os.environ[env], 'h5_lc', 'shells_'+positions_group_nam
 input_list = n.array(glob.glob(os.path.join(h5_lc_dir, "shell_hlist_?.?????_emerge.hdf5")))
 input_list.sort()
 
-file_out = os.path.join(os.environ[env], 'h5_lc', 'lc_'+positions_group_name+'.hdf5')
+file_out = os.path.join(os.environ[env], 'h5_lc', 'lc_'+remap+'.hdf5')
 
 print("creates redshift list")
 # creates the redshift list 
