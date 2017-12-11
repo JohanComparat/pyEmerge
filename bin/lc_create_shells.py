@@ -194,6 +194,14 @@ def copylc_data(ii, option=False):
 		ds.attrs['units'] = r'$ kpc /yr $'
 		ds.attrs['long_name'] = 'rvir variation with respect to last snapshot' 
 
+		c4 = f.create_group('cosmo_4most')
+		ds = c4.create_dataset('is_BG_lz', data = f1['cosmo_4most/is_BG_lz'].value[selection])
+		ds = c4.create_dataset('is_BG_hz', data = f1['cosmo_4most/is_BG_hz'].value[selection])
+		ds = c4.create_dataset('is_ELG', data = f1['cosmo_4most/is_ELG'].value[selection])
+		ds = c4.create_dataset('is_QSO', data = f1['cosmo_4most/is_QSO'].value[selection])
+		ds = c4.create_dataset('is_Lya', data = f1['cosmo_4most/is_Lya'].value[selection])
+
+
 		f.close()
 	f1.close()
 
