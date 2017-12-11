@@ -15,10 +15,11 @@ L_box = 1000./0.6777 # float(sys.argv[2]) / 0.6777
 
 positions_group_name = sys.argv[1] # 'remaped_position_L3'
 
-status = 'create'
-# status = 'update'
+# status = 'create'
+status = 'update'
 
 if positions_group_name=='remaped_position_L3':
+  file_name = 'L3'
   z_max = 1.3
   x_obs, y_obs, z_obs = 0., 0.7071/2.*L_box, 0.5774/2.*L_box
   strech_factor_los = 2.4495
@@ -28,6 +29,7 @@ if positions_group_name=='remaped_position_L3':
   strech_factor_z = 0.5774
 
 if positions_group_name=='remaped_position_L3_z1':
+  file_name = 'L3_z1'
   z_max = 8.
   strech_factor_los = 2.4495 
   d_min = strech_factor_los * L_box
@@ -37,6 +39,7 @@ if positions_group_name=='remaped_position_L3_z1':
   x_obs, y_obs, z_obs = -2.4495*L_box, 0.7071/2.*L_box, 0.5774/2.*L_box
   
 if positions_group_name=='remaped_position_L6':
+  file_name = 'L6'
   z_max = 10.
   x_obs, y_obs, z_obs = 0., 0.4140/2.*L_box, 0.4082/2.*L_box
   strech_factor_los = 5.9161
@@ -46,6 +49,7 @@ if positions_group_name=='remaped_position_L6':
   strech_factor_z = 0.4082
 
 if positions_group_name=='remaped_position_L15':
+  file_name = 'L15'
   z_max = 3.
   x_obs, y_obs, z_obs = 0., 1.0/2.*L_box, 0.7071/2.*L_box
   strech_factor_los = 1.4142
@@ -66,7 +70,7 @@ import astropy.units as u
 cosmoMD = FlatLambdaCDM(H0=67.77*u.km/u.s/u.Mpc, Om0=0.307115, Ob0=0.048206)
 
 print("reads the light cone")
-file_lc = os.path.join(os.environ[env], 'h5_lc', 'lc_'+positions_group_name+'.hdf5')
+file_lc = os.path.join(os.environ[env], 'h5_lc', 'lc_'+file_name+'.hdf5')
 f = h5py.File(file_lc,  "r+")
 
 a = 1. / ( 1. + f['/halo_position/z_snap'].value ) # scale factor
