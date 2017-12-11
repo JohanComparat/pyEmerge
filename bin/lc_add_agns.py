@@ -88,8 +88,8 @@ ricci_ct_f = lambda z: 0.22 + 0.18 * z**0.4
 fraction_ricci = lambda lsar, z : ricci_ct_f(z)+(0.8-ricci_ct_f(z))*(0.5+0.5*erf((-lsar+35.2)/0.4))
 print(fraction_ricci(n.array([32, 32.7, 33, 34, 35, 36, 37]), 0.))
 
-#status = 'create'
-status = 'update'
+status = 'create'
+#status = 'update'
 
 model_NH = 'ricci_2017'
 # model_NH = 'buchner_2017'
