@@ -103,7 +103,7 @@ def get_lognlogs(path_to_lc, area, z_max=3.):
 
 p.figure(1, (6,6))
 
-path_to_lc = '/data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_remaped_position_L3.hdf5'
+path_to_lc = '/data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_L3.hdf5'
 area = 6.7529257176359*2. * 2* 8.269819492449505
 x_out, c_out, c_err = get_lognlogs(path_to_lc, area, z_max=1.1)
 #p.plot(x_out, n.log10(c_out), lw=2, rasterized = True, label = 'z<1.08' )
@@ -117,7 +117,7 @@ x_out_a, c_out_a, c_err_a = x_out, c_out, c_err
 #p.errorbar(x_out, n.log10(c_out), yerr = c_err, rasterized = True, label = 'L3 1.08<z<3.' )
 #p.plot(x_out, n.log10(c_out+c_out_a), ls='dashed', label='total')
 
-path_to_lc = '/data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_remaped_position_L6.hdf5'
+path_to_lc = '/data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_L6.hdf5'
 area = 1.9766516114702513*2. * 2*2.0047373031569915
 x_out, c_out, c_err = get_lognlogs(path_to_lc, area, z_max=3.)
 p.errorbar(x_out, n.log10(c_out), yerr = c_err, rasterized = True, label = 'L6 z<3., 15deg2'  )
@@ -129,7 +129,7 @@ p.errorbar(x_out, n.log10(c_out), yerr = c_err, rasterized = True, label = 'L6 z
 #p.plot(x_out, n.log10(c_out*(1+frac_err_3deg2)), 'r--', lw=1, rasterized = True)
 #p.plot(x_out_0, n.log10(c_out_0), 'm--', rasterized = True, label = 'Planck mock v0.0' )
 
-path_to_lc = '/data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_remaped_position_L15.hdf5'
+path_to_lc = '/data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_L15.hdf5'
 area = 14.323944878104827*2. * 2*20.257311381848154
 x_out, c_out, c_err = get_lognlogs(path_to_lc, area, z_max=3.)
 p.errorbar(x_out, n.log10(c_out), yerr = c_err, rasterized = True, label = 'L15 z<0.54 1160deg2'  )

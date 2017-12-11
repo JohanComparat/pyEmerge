@@ -15,8 +15,8 @@ L_box = 1000./0.6777 # float(sys.argv[2]) / 0.6777
 
 positions_group_name = sys.argv[1] # 'remaped_position_L3'
 
-# status = 'create'
-status = 'update'
+status = 'create'
+# status = 'update'
 
 if positions_group_name=='remaped_position_L3':
   file_name = 'L3'
@@ -67,7 +67,7 @@ import numpy as n
 from scipy.interpolate import interp1d
 from astropy.cosmology import FlatLambdaCDM
 import astropy.units as u
-cosmoMD = FlatLambdaCDM(H0=67.77*u.km/u.s/u.Mpc, Om0=0.307115, Ob0=0.048206)
+cosmoMD = FlatLambdaCDM(H0=67.77*u.km/u.s/u.Mpc, Om0=0.307115)#, Ob0=0.048206)
 
 print("reads the light cone")
 file_lc = os.path.join(os.environ[env], 'h5_lc', 'lc_'+file_name+'.hdf5')
@@ -110,7 +110,6 @@ print("select data in the LC",  len(redshift_R[selection]), " out of ",  len(red
 
 if status == 'create' :
   halo_data = f.create_group('sky_position')
-
   ds = halo_data.create_dataset('redshift_R', data = redshift_R )
   ds = halo_data.create_dataset('redshift_S', data = redshift_S )
   ds = halo_data.create_dataset('RA', data = ra )
