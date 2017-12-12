@@ -54,7 +54,7 @@ elg_selection =  (n.ones(N_halos)==0)
 
 # ELG parameters
 # ELG select on Mvir
-all_mvir = n.log10(f1['halo_properties/mvir'].value)
+all_mvir = n.log10(f['halo_properties/mvir'].value)
 mh_mean, mh_scatter = 12.2, 0.25
 
 for zmin,zmax,N_p_deg2 in zip(EBE_zmin, EBE_zmax, EBE_SGC_long):
@@ -69,17 +69,17 @@ for zmin,zmax,N_p_deg2 in zip(EBE_zmin, EBE_zmax, EBE_SGC_long):
 		for id_bin in range(len(mh_bins)-1):
 			id_in_bin =(z_sel) & (all_mvir > mh_bins[id_bin]) &( all_mvir < mh_bins[id_bin+1]) 
 			N_avail = len(id_in_bin.nonzero()[0])
-			rds = n.random.rand(len(all_MS))
+			rds = n.random.rand(len(all_mvir))
 			bin_selection = (id_in_bin)&(rds < N_2_select_per_bin[id_bin]*1./N_avail)
 			elg_selection = (bin_selection)|(elg_selection)
 
 
 
 if status == 'create' :
-  halo_data = f1.create_group('cosmo_4most')
-  ds = halo_data.create_dataset('is_ELG_eBOSS', data = elg_selection )
+  #halo_data = f.create_group('cosmo_4most')
+  f['/cosmo_4most'].create_dataset('is_ELG_eBOSS', data = elg_selection )
   
 if status=='update' :
-  f1['/cosmo_4most/is_ELG_eBOSS'][:]  = elg_selection 
+  f['/cosmo_4most/is_ELG_eBOSS'][:]  = elg_selection 
   
-f1.close()
+f.close()
