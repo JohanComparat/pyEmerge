@@ -30,7 +30,7 @@ if positions_group_name=='remaped_position_L3':
 
 if positions_group_name=='remaped_position_L3_z1':
   file_name = 'L3_z1'
-  z_max = 8.
+  z_max = 3.
   strech_factor_los = 2.4495 
   d_min = strech_factor_los * L_box
   d_max = strech_factor_los * L_box * 2.
