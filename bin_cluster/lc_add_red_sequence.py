@@ -23,14 +23,14 @@ lc_id = sys.argv[1]
 status = 'create'
 #status = 'update'
 
-path_to_glc =  '/data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_agn_Bongiorno_Ricci_Zevol/lc_remaped_position_'+lc_id+'.hdf5'
+path_to_glc =  '/data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_'+lc_id+'.hdf5'
 f = h5py.File(path_to_glc, 'r+')
 
-is_gal = (f['/sky_position/selection'].value)&(f['/cluster_galaxies/cluster_id'].value > 0 ) & (f['/cluster_galaxies/cluster_flux_05_24'].value> 0) &(f['/cluster_galaxies/d_cluster_center'].value<3.)
+is_gal = (f['/sky_position/selection'].value)&(f['/cluster_galaxies/cluster_id'].value > 0 ) & (f['/cluster_galaxies/cluster_flux_05_24'].value> 0) &(f['/cluster_galaxies/d_cluster_center'].value<2.5)
 
 red_sequence_flag = n.ones_like(f['/cluster_galaxies/d_cluster_center']).astype('int')
 
-r_bins = n.arange(0,3.1,0.5)
+r_bins = n.arange(0,2.6,0.5)
 
 t0 = time.time()
 
@@ -45,27 +45,21 @@ for cl_id in  cl_ids:
 		N_total = len(cluster.nonzero()[0])
 		x = 0.5*(r_bins[:-1] + r_bins[1:])
 		frac_old = ( x**(-0.25) - x/100. - 0.47 )*(1.+ z_mean)**2./3.2
-		print(cl_id, z_mean, N_total, frac_old)
+		#print(cl_id, z_mean, N_total, frac_old)
 		for ii, (rmin, rmax) in enumerate(zip(r_bins[:-1], r_bins[1:])):
 			sel=(f['/cluster_galaxies/d_cluster_center'].value>rmin) &(f['/cluster_galaxies/d_cluster_center'].value<rmax) &(cluster)
 			NGAL = len(sel.nonzero()[0])
-			print(NGAL)
+			#print(NGAL)
 			if NGAL>0:
 				rds = n.random.rand(NGAL)
 				red_sequence_flag[sel][rds < frac_old[ii]] = n.ones_like(red_sequence_flag[sel][rds < frac_old[ii]]).astype('int')
  
 #sys.exit()
 
-#f['/cluster_galaxies'].create_dataset('mag_r', data = mag_r )
 if status == 'create' :
-  f['/cluster_galaxies/red_sequence_flag'].create_dataset('red_sequence_flag', data = red_sequence_flag )
+  f['/cluster_galaxies'].create_dataset('red_sequence_flag', data = red_sequence_flag )
   
 if status=='update' :
-  f['/cluster_galaxies/cluster_id'][:]  = clus_id 
-  f['/cluster_galaxies/cluster_flux_05_24'][:]  = clus_flux_05_24 
-  #f['/cluster_galaxies/mag_r'][:]  = mag_r 
-  f['/cluster_galaxies/bcg_flag'][:] = bcg_flag 
-  f['/cluster_galaxies/d_cluster_center'][:] = radial_separation
+  f['/cluster_galaxies/red_sequence_flag'][:]  = red_sequence_flag 
 
-fc.close()
 f.close()

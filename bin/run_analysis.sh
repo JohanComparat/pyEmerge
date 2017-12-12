@@ -99,6 +99,7 @@ sh run_LSAR_md10.sh
 # uses snapshots_add_LSAR_Bo16.py
 # BLACKLIST LSAR FAILS
 # hlist_0.28920_emerge.hdf5    
+#######################  high SAR end power law was changed to a a shallower slope #############################
 
 sh run_AGN_activity_md10.sh
 # uses snapshots_add_AGN_activity_Bo16.py
@@ -152,10 +153,10 @@ python3.4 lc_add_sky_coordinates.py remaped_position_L15
 
 # converts the Bongiorno luminosity into the eRosita band assuming a NH distribution and following Buchner et al. 2017.
 # 
-python3.4 lc_add_agns.py /data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_remaped_position_L6.hdf5
-python3.4 lc_add_agns.py /data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_remaped_position_L3.hdf5
-python3.4 lc_add_agns.py /data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_remaped_position_L3_z1.hdf5
-python3.4 lc_add_agns.py /data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_remaped_position_L15.hdf5
+python3.4 lc_add_agns.py /data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_L6.hdf5
+python3.4 lc_add_agns.py /data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_L3.hdf5
+python3.4 lc_add_agns.py /data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_L3_z1.hdf5
+python3.4 lc_add_agns.py /data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_L15.hdf5
 
 python3.4 lc_lognlogs_agns.py
 # results are shown here : 
