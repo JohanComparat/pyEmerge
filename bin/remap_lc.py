@@ -11,6 +11,10 @@ data = n.loadtxt("/data17s/darksim/software/cuboidremap-1.0/genremap/list7.txt",
 lx = data[0].astype('float')
 ly = data[1].astype('float')
 lz = data[2].astype('float')
+
+sel = (ly>1.082)&(ly<1.1)#&(ly<1.)&(lz<1.)
+data.T[sel]
+
 sel = (ly>1.085)&(ly<1.1)#&(ly<1.)&(lz<1.)
 data.T[sel]
 sel = (lx>5.9)&(lx<6.2)&(ly<0.5)&(lz<0.5)
@@ -18,10 +22,11 @@ data.T[sel]
 sel = (lx>2.2)&(lx<3.5)&(ly<0.8)&(lz<0.8)
 data.T[sel]
 L1 L2 L3   u11 u12 u13   u21 u22 u23   u31 u32 u33   (periodicity)
-#'2.2361', '1.0954', '0.4082', '2', '1', '0', '1', '0', '1', '1', '0', '0', '(1)'
-'1.4142', '1.0000', '0.7071', '1', '1', '0', '0', '0', '1', '1', '0', '0', '(12)'
-'5.9161', '0.4140', '0.4082', '5', '3', '1', '1', '1', '0', '0', '1', '0', '(1)'
-'2.4495', '0.7071', '0.5774', '2', '1', '1', '1', '1', '0', '0', '1', '0', '(1)'
+#
+C2  '2.2361', '1.0954', '0.4082', '2', '1', '0', '1', '0', '1', '1', '0', '0', '(1)'
+C15 '1.4142', '1.0000', '0.7071', '1', '1', '0', '0', '0', '1', '1', '0', '0', '(12)'
+C6  '5.9161', '0.4140', '0.4082', '5', '3', '1', '1', '1', '0', '0', '1', '0', '(1)'
+C3  '2.4495', '0.7071', '0.5774', '2', '1', '1', '1', '1', '0', '0', '1', '0', '(1)'
 
 writes in the h5 files
 
@@ -41,9 +46,10 @@ import numpy as n
 from multiprocessing import Pool
 # imports the remapping library
 from remap import Cuboid
-C6 = Cuboid(u1=(5, 3, 1), u2=(1, 1, 0), u3=(0, 1, 0))
-C3 = Cuboid(u1=(2, 1, 1), u2=(1, 1, 0), u3=(0, 1, 0))
 C15 = Cuboid(u1=(1, 1, 0), u2=(0, 0, 1), u3=(1, 0, 0))
+C2 = Cuboid(u1=(2, 1, 0), u2=(1, 0, 1), u3=(1, 0, 0))
+C3 = Cuboid(u1=(2, 1, 1), u2=(1, 1, 0), u3=(0, 1, 0))
+C6 = Cuboid(u1=(5, 3, 1), u2=(1, 1, 0), u3=(0, 1, 0))
 
 def f6(aa,bb,cc):
 	return C6.Transform(aa,bb,cc)
@@ -53,6 +59,9 @@ def f3(aa,bb,cc):
 
 def f15(aa,bb,cc):
 	return C15.Transform(aa,bb,cc)
+
+def f2(aa,bb,cc):
+	return C2.Transform(aa,bb,cc)
     
 def read_data(ii, L_box = 400., env= 'MD04'):
 	"""
@@ -101,7 +110,9 @@ if __name__ == '__main__':
 	# out6 = p.starmap(f6, n.transpose([x0, y0, z0]))
 	# write_mapped_coordinates(f1, out6, L_box,  group_name = 'remaped_position_L6', status='update')
 	# map to L15
-	out15 = p.starmap(f15, n.transpose([x0, y0, z0]))
-	write_mapped_coordinates(f1, out15, L_box,  group_name = 'remaped_position_L15', status='create')
+	#out15 = p.starmap(f15, n.transpose([x0, y0, z0]))
+	#write_mapped_coordinates(f1, out15, L_box,  group_name = 'remaped_position_L15', status='create')
+	out2 = p.starmap(f2, n.transpose([x0, y0, z0]))
+	write_mapped_coordinates(f1, out2, L_box,  group_name = 'remaped_position_L2', status='create')
 	f1.close()
 
