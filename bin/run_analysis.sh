@@ -187,4 +187,7 @@ python3.4 lc_add_galaxies.py
 
 
 
-
+ tar -czvf ~/wwwDir/eRoMok/mocks/lc_L3.fits.tar.gz /data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_L3.fits
+ tar -czvf ~/wwwDir/eRoMok/mocks/lc_L6.fits.tar.gz /data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_L6.fits
+ tar -czvf ~/wwwDir/eRoMok/mocks/lc_L3_z1.fits.tar.gz /data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_L3_z1.fits
+ tar -czvf ~/wwwDir/eRoMok/mocks/lc_L15.fits.tar.gz /data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_L15.fits
