@@ -2,8 +2,10 @@
 Routine to create the light cones shells
 
 L1 L2 L3   u11 u12 u13   u21 u22 u23   u31 u32 u33   (periodicity)
-'5.9161', '0.4140', '0.4082', '5', '3', '1', '1', '1', '0', '0', '1', '0', '(1)'
-'2.4495', '0.7071', '0.5774', '2', '1', '1', '1', '1', '0', '0', '1', '0', '(1)'
+C2  '2.2361', '1.0954', '0.4082', '2', '1', '0', '1', '0', '1', '1', '0', '0', '(1)'
+C15 '1.4142', '1.0000', '0.7071', '1', '1', '0', '0', '0', '1', '1', '0', '0', '(12)'
+C6  '5.9161', '0.4140', '0.4082', '5', '3', '1', '1', '1', '0', '0', '1', '0', '(1)'
+C3  '2.4495', '0.7071', '0.5774', '2', '1', '1', '1', '1', '0', '0', '1', '0', '(1)'
 
 python3 create_light_cone_shells.py 10 MD10 1000
 
@@ -32,6 +34,10 @@ if positions_group_name == 'remaped_position_L3' :
 if positions_group_name == 'remaped_position_L3_z1' :
 	positions_group = 'remaped_position_L3'
 	x_obs, y_obs, z_obs = -2.4495*L_box, 0.7071/2.*L_box, 0.5774/2.*L_box
+
+if positions_group_name == 'remaped_position_L2' :
+	positions_group = 'remaped_position_L2'
+	x_obs, y_obs, z_obs = 2.2361/2.*L_box, -1.5400*L_box, 0.4082/2.*L_box
 
 if positions_group_name == 'remaped_position_L6' :
 	positions_group = 'remaped_position_L6'

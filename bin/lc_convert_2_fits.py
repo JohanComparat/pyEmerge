@@ -16,24 +16,36 @@ def write_fits_lc(path_to_lc, out_filename, z_min, z_max, dec_max, ra_max):
   is_gal = (f['/sky_position/selection'].value)&(f['/sky_position/redshift_R'].value<z_max)#&(f['/agn_properties/agn_activity'].value==1)
 
   hdu_cols  = fits.ColDefs([
-  #fits.Column(name='is_agn',format='K',array= (f['/agn_properties/agn_activity'].value[is_gal]).astype('int'), unit='=1 is AGN' ) 
-  fits.Column(name='logNH',format='D',    array= f['/agn_properties/logNH'].value[is_gal], unit='log10(NH/[cm2])' ) 
+  # agn related columns
+  fits.Column(name='is_agn',format='K',array= (f['/agn_properties/agn_activity'].value[is_gal]).astype('int'), unit='=1 is AGN' ) 
+  ,fits.Column(name='logNH',format='D',    array= f['/agn_properties/logNH'].value[is_gal], unit='log10(NH/[cm2])' ) 
   ,fits.Column(name='log_lambda_sar',format='D',    array= f['/agn_properties/log_lambda_sar'].value[is_gal], unit='log10(LSAR/[erg/s/Msun])' ) 
   ,fits.Column(name='log_xray_flux_05_20',format='D',    array= n.log10(f['/agn_properties/rxay_flux_05_20'].value[is_gal]), unit='log10(Xray flux 0.5-2 keV [erg/cm2/s])' ) 
   ,fits.Column(name='log_xray_luminosity_2_10',format='D',    array= f['/agn_properties/log_lambda_sar'].value[is_gal]+n.log10(f['/moster_2013_data/stellar_mass'].value[is_gal]), unit='log10(LX [2-10keV] / erg/s])' ) 
-  ,fits.Column(name='Mpeak',format='D',    array= f['/halo_properties/Mpeak'].value[is_gal], unit='Msun'  ) 
+  # cluster related columns
+  ,fits.Column(name='cluster_log_xray_flux_05_20',format='D',    array= n.log10(f['/cluster_galaxies/cluster_flux_05_24'].value[is_gal]), unit='cluster log10(Xray flux 0.5-2 keV [erg/cm2/s])' ) 
+  ,fits.Column(name='cluster_id',format='K',    array= f['/cluster_galaxies/cluster_id'].value[is_gal], unit='cluster unique identifier' ) 
+  ,fits.Column(name='red_sequence_flag',format='K',    array= f['/cluster_galaxies/red_sequence_flag'].value[is_gal], unit='red sequence flag'  ) 
+  ,fits.Column(name='d_cluster_center',format='D',    array= f['/cluster_galaxies/d_cluster_center'].value[is_gal], unit='distance to cluster most massive halo center [rvir]'  ) 
+  # simulation related columns
+  #,fits.Column(name='Mpeak',format='D',    array= f['/halo_properties/Mpeak'].value[is_gal], unit='Msun'  ) 
   ,fits.Column(name='Vmax',format='D',    array= f['/halo_properties/Vmax'].value[is_gal], unit='km/s'  ) 
   ,fits.Column(name='mvir',format='D',    array= f['/halo_properties/mvir'].value[is_gal], unit='Msun'  ) 
+  ,fits.Column(name='rvir',format='D',    array= f['/halo_properties/rvir'].value[is_gal], unit='kpc/h'  ) 
+  ,fits.Column(name='rs',format='D',    array= f['/halo_properties/rs'].value[is_gal], unit='kpc/h'  ) 
   #,fits.Column(name='id',format='K',    array= (f['/halo_properties/id'].value[is_gal]).astype('int'), unit='MDPL ID integer'  ) 
   #,fits.Column(name='pid',format='K',    array= (f['/halo_properties/pid'].value[is_gal]).astype('int'), unit='MDPL PID integer'   ) 
   ,fits.Column(name='log_stellar_mass',format='D', array= n.log10(f['/moster_2013_data/stellar_mass'].value[is_gal]) , unit='log10(stellar_mass/[Msun])'  ) 
+  # positions
   ,fits.Column(name='RA',format='D',    array= f['/sky_position/RA'].value[is_gal] , unit='RA/[deg]'  ) 
   ,fits.Column(name='DEC',format='D',    array= f['/sky_position/DEC'].value[is_gal], unit='DEC/[deg]'   ) 
   ,fits.Column(name='redshift_R',format='D',    array= f['/sky_position/redshift_R'].value[is_gal], unit='real space redshift'  ) 
   ,fits.Column(name='redshift_S',format='D',    array= f['/sky_position/redshift_S'].value[is_gal], unit='redshift space redshift'  ) 
+  # 4MOST tracers
   ,fits.Column(name='is_BG_lz',format='L',    array=f['/cosmo_4most/is_BG_lz'].value[is_gal]) 
   ,fits.Column(name='is_BG_hz',format='L',    array=f['/cosmo_4most/is_BG_hz'].value[is_gal]) 
   ,fits.Column(name='is_ELG',format='L',    array=f['/cosmo_4most/is_ELG'].value[is_gal]) 
+  ,fits.Column(name='is_ELG_eBOSS',format='L',    array=f['/cosmo_4most/is_ELG_eBOSS'].value[is_gal]) 
   ,fits.Column(name='is_QSO',format='L',    array=f['/cosmo_4most/is_QSO'].value[is_gal]) 
   #,fits.Column(name='is_Lya',format='L',    array=f['/cosmo_4most/is_Lya'].value[is_gal]) 
   ])
