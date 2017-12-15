@@ -13,7 +13,7 @@ cosmoMD = FlatLambdaCDM(H0=67.77*u.km/u.s/u.Mpc, Om0=0.307115, Ob0=0.048206)
 def write_fits_lc(path_to_lc, out_filename, z_min, z_max, dec_max, ra_max):
   f = h5py.File(path_to_lc, 'r')
 
-  is_gal = (f['/sky_position/selection'].value)&(f['/sky_position/redshift_R'].value<z_max)#&(f['/agn_properties/agn_activity'].value==1)
+  is_gal = (f['/sky_position/selection'].value)&(f['/sky_position/redshift_R'].value<z_max)&(f['/halo_properties/Vmax'].value[is_gal]>0.)#&(f['/agn_properties/agn_activity'].value==1)
 
   hdu_cols  = fits.ColDefs([
   # agn related columns
@@ -25,8 +25,10 @@ def write_fits_lc(path_to_lc, out_filename, z_min, z_max, dec_max, ra_max):
   # cluster related columns
   ,fits.Column(name='cluster_log_xray_flux_05_20',format='D',    array= n.log10(f['/cluster_galaxies/cluster_flux_05_24'].value[is_gal]), unit='cluster log10(Xray flux 0.5-2 keV [erg/cm2/s])' ) 
   ,fits.Column(name='cluster_id',format='K',    array= f['/cluster_galaxies/cluster_id'].value[is_gal], unit='cluster unique identifier' ) 
-  ,fits.Column(name='red_sequence_flag',format='K',    array= f['/cluster_galaxies/red_sequence_flag'].value[is_gal], unit='red sequence flag'  ) 
-  ,fits.Column(name='d_cluster_center',format='D',    array= f['/cluster_galaxies/d_cluster_center'].value[is_gal], unit='distance to cluster most massive halo center [rvir]'  ) 
+  #,fits.Column(name='red_sequence_flag',format='K',    array= f['/cluster_galaxies/red_sequence_flag'].value[is_gal], unit='red sequence flag'  ) 
+  ,fits.Column(name='d_cluster_center',format='D',    array= f['/cluster_galaxies/d_cluster_center'].value[is_gal], unit='distance to cluster most massive halo center [rvir]'  )
+  # r magnitude
+  ,fits.Column(name='mag_r',format='D',    array= f['/cluster_galaxies/mag_r'].value[is_gal], unit='sdss r band magnitude for cluster members' ) 
   # simulation related columns
   #,fits.Column(name='Mpeak',format='D',    array= f['/halo_properties/Mpeak'].value[is_gal], unit='Msun'  ) 
   ,fits.Column(name='Vmax',format='D',    array= f['/halo_properties/Vmax'].value[is_gal], unit='km/s'  ) 
