@@ -13,7 +13,7 @@ cosmoMD = FlatLambdaCDM(H0=67.77*u.km/u.s/u.Mpc, Om0=0.307115, Ob0=0.048206)
 def write_fits_lc(path_to_lc, out_filename, z_min, z_max, dec_max, ra_max):
   f = h5py.File(path_to_lc, 'r')
 
-  is_gal = (f['/sky_position/selection'].value)&(f['/sky_position/redshift_R'].value<z_max)&(f['/halo_properties/Vmax'].value[is_gal]>0.)#&(f['/agn_properties/agn_activity'].value==1)
+  is_gal = (f['/sky_position/selection'].value)&(f['/sky_position/redshift_R'].value<z_max)&(f['/halo_properties/Vmax'].value>0.)#&(f['/agn_properties/agn_activity'].value==1)
 
   hdu_cols  = fits.ColDefs([
   # agn related columns
