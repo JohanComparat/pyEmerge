@@ -52,8 +52,8 @@ log_lambda_SAR_values = n.arange(32-dl,36+2*dl,dl)
 def f_lambda_sar( DATA ):
   logM, log_lambda_SAR = DATA
   log_lambda_SAR_var = 10**( log_lambda_SAR - 33.8 + 0.48 * (logM - 11.) )
-  #return 1. / ( log_lambda_SAR_var**(1.01 - 0.58 * (z - 1.1)) + log_lambda_SAR_var**(3.72) )
-  return 1. / ( log_lambda_SAR_var**(1.01 - 0.58 * (z - 1.1)) + log_lambda_SAR_var**(3.22) )
+  return 1. / ( log_lambda_SAR_var**(1.01 - 0.58 * (z - 1.1)) + log_lambda_SAR_var**(3.72) )
+  #return 1. / ( log_lambda_SAR_var**(1.01 - 0.58 * (z - 1.1)) + log_lambda_SAR_var**(3.22) )
 
 
 t0 = time.time()

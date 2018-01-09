@@ -6,15 +6,15 @@ from scipy.interpolate import interp1d
 import sys
 from astropy.cosmology import FlatLambdaCDM
 import astropy.units as u
-cosmoMD = FlatLambdaCDM(H0=67.77*u.km/u.s/u.Mpc, Om0=0.307115, Ob0=0.048206)
+cosmoMD = FlatLambdaCDM(H0=67.77*u.km/u.s/u.Mpc, Om0=0.307115)#, Ob0=0.048206)
 
 from scipy.special import erf
-thick_fraction = 0.25
+thick_fraction = 0.22
 ricci_ct_f = lambda z: thick_fraction + 0.18 * z**0.4
-fraction_ricci = lambda lsar, z : ricci_ct_f(z)+(0.8-ricci_ct_f(z))*(0.5+0.5*erf((-lsar+34.75)/0.4))
+#fraction_ricci = lambda lsar, z : ricci_ct_f(z)+(0.8-ricci_ct_f(z))*(0.5+0.5*erf((-lsar+34.75)/0.4))
 #print(fraction_ricci(n.array([32, 32.7, 33, 34, 35, 36, 37]), 0.))
 #fraction_ricci = lambda lsar, z : ricci_ct_f(z)+(0.8-ricci_ct_f(z))*(0.5+0.5*erf((-lsar+35.2)/0.4))
-#fraction_ricci = lambda lsar, z : ricci_ct_f(z)+(0.8-ricci_ct_f(z))*(0.5+0.5*erf((-lsar+32.75)/0.4))
+fraction_ricci = lambda lsar, z : ricci_ct_f(z)+(0.8-ricci_ct_f(z))*(0.5+0.5*erf((-lsar+32.75)/0.4))
 print(fraction_ricci(n.array([32, 32.7, 33, 34, 35, 36, 37]), 0.))
 
 #status = 'create'
@@ -35,7 +35,7 @@ n_gal = len(f['/sky_position/redshift_S'].value[is_gal])
 
 n_agn = len(f['/sky_position/redshift_S'].value[is_agn])
 
-z = f['/sky_position/redshift_S'].value[is_agn]
+z = f['/sky_position/redshift_R'].value[is_agn]
 logm = n.log10(f['/moster_2013_data/stellar_mass'].value[is_agn])
 lsar = f['/agn_properties/log_lambda_sar'].value[is_agn]
 print('lsar',lsar, n.min(lsar), n.max(lsar))
@@ -126,8 +126,8 @@ lx_absorbed_05_20 = n.log10(10**lx * percent_observed)
 
 d_L = cosmoMD.luminosity_distance(z)
 dl_cm = (d_L.to(u.cm)).value
-adjusting_factor = 0.
-fx_05_20 = 10**(lx_absorbed_05_20-adjusting_factor) / (4 * n.pi * dl_cm**2.)
+adjusting_factor = 0.#n.log10(0.6777*0.6777)
+fx_05_20 = 10**(lx_absorbed_05_20-adjusting_factor) / (4 * n.pi * (dl_cm)**2.)
 
 fx_05_20_out = n.ones_like(f['/sky_position/redshift_S'].value)*-9999.
 logNH_out = n.ones_like(f['/sky_position/redshift_S'].value)*-9999.
