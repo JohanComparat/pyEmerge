@@ -57,8 +57,8 @@ def plot_XLF(h5_file):
 
 #plot_SMF(h5_files[50])
 #plot_SMF(h5_files[65])
-for h5_file in h5_files[::-1]:
-  ##try:
-  plot_XLF(h5_file)
-  ##except( ValueError, KeyError ):
-  ##  pass
+for h5_file in h5_files:#[::-1]:
+  try:
+    plot_XLF(h5_file)
+  except( ValueError, KeyError ):
+    pass

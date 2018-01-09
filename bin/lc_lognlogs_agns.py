@@ -1,66 +1,3 @@
-"""
-
-+ + + + + + + HEADER + + + + + + + + +
-file_name lc_remaped_position_L3_.hdf5
-HDF5_Version 1.8.18
-h5py_version 2.7.1
-
-
-+ + + + + + + DATA   + + + + + + + + + +
-========================================
-agn_properties <HDF5 group "/agn_properties" (2 members)>
-- - - - - - - - - - - - - - - - - - - - 
-agn_activity <HDF5 dataset "agn_activity": shape (23191107,), type "<f8">
-log_lambda_sar <HDF5 dataset "log_lambda_sar": shape (23191107,), type "<f8">
-========================================
-emerge_data <HDF5 group "/emerge_data" (3 members)>
-- - - - - - - - - - - - - - - - - - - - 
-dMdt <HDF5 dataset "dMdt": shape (23191107,), type "<f8">
-mvir_dot <HDF5 dataset "mvir_dot": shape (23191107,), type "<f8">
-rvir_dot <HDF5 dataset "rvir_dot": shape (23191107,), type "<f8">
-========================================
-halo_position <HDF5 group "/halo_position" (7 members)>
-- - - - - - - - - - - - - - - - - - - - 
-vx <HDF5 dataset "vx": shape (23191107,), type "<f8">
-vy <HDF5 dataset "vy": shape (23191107,), type "<f8">
-vz <HDF5 dataset "vz": shape (23191107,), type "<f8">
-x <HDF5 dataset "x": shape (23191107,), type "<f8">
-y <HDF5 dataset "y": shape (23191107,), type "<f8">
-z <HDF5 dataset "z": shape (23191107,), type "<f8">
-z_snap <HDF5 dataset "z_snap": shape (23191107,), type "<f8">
-========================================
-halo_properties <HDF5 group "/halo_properties" (7 members)>
-- - - - - - - - - - - - - - - - - - - - 
-Mpeak <HDF5 dataset "Mpeak": shape (23191107,), type "<f8">
-Vmax <HDF5 dataset "Vmax": shape (23191107,), type "<f8">
-id <HDF5 dataset "id": shape (23191107,), type "<f8">
-mvir <HDF5 dataset "mvir": shape (23191107,), type "<f8">
-pid <HDF5 dataset "pid": shape (23191107,), type "<f8">
-rs <HDF5 dataset "rs": shape (23191107,), type "<f8">
-rvir <HDF5 dataset "rvir": shape (23191107,), type "<f8">
-========================================
-moster_2013_data <HDF5 group "/moster_2013_data" (1 members)>
-- - - - - - - - - - - - - - - - - - - - 
-stellar_mass <HDF5 dataset "stellar_mass": shape (23191107,), type "<f8">
-========================================
-sky_position <HDF5 group "/sky_position" (5 members)>
-- - - - - - - - - - - - - - - - - - - - 
-DEC <HDF5 dataset "DEC": shape (23191107,), type "<f8">
-RA <HDF5 dataset "RA": shape (23191107,), type "<f8">
-redshift_R <HDF5 dataset "redshift_R": shape (23191107,), type "<f8">
-redshift_S <HDF5 dataset "redshift_S": shape (23191107,), type "<f8">
-selection <HDF5 dataset "selection": shape (23191107,), type "|b1">
-"""
-"""
-Convert to observed fluxes
-
-intrinsic extinction. Thin / thick obscuration
-
-Follows Buchner et al. 2016
-
-"""
-
-
 import h5py    # HDF5 support
 import os
 import glob
@@ -101,13 +38,15 @@ def get_lognlogs(path_to_lc, area, z_max=3.):
   c_err = (n.log10(c_out_up) - n.log10(c_out_low))/2.
   return x_out, c_out, c_err
 
+SYST=0.0
+
 p.figure(1, (6,6))
 
 path_to_lc = '/data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_L3.hdf5'
 area = 6.7529257176359*2. * 2* 8.269819492449505
 x_out, c_out, c_err = get_lognlogs(path_to_lc, area, z_max=1.1)
 #p.plot(x_out, n.log10(c_out), lw=2, rasterized = True, label = 'z<1.08' )
-p.errorbar(x_out, n.log10(c_out), yerr = c_err, rasterized = True, label = 'L3 z<1.08, 223deg2'  )
+p.errorbar(x_out-SYST, n.log10(c_out), yerr = c_err, rasterized = True, label = 'L3 z<1.08, 223deg2'  )
 x_out_a, c_out_a, c_err_a = x_out, c_out, c_err 
 
 
@@ -120,7 +59,7 @@ x_out_a, c_out_a, c_err_a = x_out, c_out, c_err
 path_to_lc = '/data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_L6.hdf5'
 area = 1.9766516114702513*2. * 2*2.0047373031569915
 x_out, c_out, c_err = get_lognlogs(path_to_lc, area, z_max=3.)
-p.errorbar(x_out, n.log10(c_out), yerr = c_err, rasterized = True, label = 'L6 z<3., 15deg2'  )
+p.errorbar(x_out-SYST, n.log10(c_out), yerr = c_err, rasterized = True, label = 'L6 z<3., 15deg2'  )
 
 #p.plot(x_out-0.1, n.log10(c_out), 'k', lw=2, rasterized = True, label = 'L3 lc-0.1' )
 #p.plot(x_out, n.log10(c_out*(1-frac_err_13deg2)), 'k--', lw=1, rasterized = True, label = 'v0.6, 13.3deg2 scatter' )
@@ -132,7 +71,7 @@ p.errorbar(x_out, n.log10(c_out), yerr = c_err, rasterized = True, label = 'L6 z
 path_to_lc = '/data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_L15.hdf5'
 area = 14.323944878104827*2. * 2*20.257311381848154
 x_out, c_out, c_err = get_lognlogs(path_to_lc, area, z_max=3.)
-p.errorbar(x_out, n.log10(c_out), yerr = c_err, rasterized = True, label = 'L15 z<0.54 1160deg2'  )
+p.errorbar(x_out-SYST, n.log10(c_out), yerr = c_err, rasterized = True, label = 'L15 z<0.54 1160deg2'  )
 
 path_2_logNlogS_data = os.path.join(os.environ["DARKSIM_DIR"], 'observations', 'logNlogS', 'logNlogS_Georgakakis_08_AGN.data')
 x_data, y_data, yerr = n.loadtxt(path_2_logNlogS_data, unpack=True)
@@ -149,7 +88,7 @@ p.legend(frameon=False, loc=0)
 #p.yscale('log')
 p.xlim((-17, -12))
 p.ylim((-2, 4.))
-#p.title('Mocks')
+#p.title('No extinction applied')
 p.grid()
 p.savefig(os.path.join(plotDir, "logN_logS_AGN.jpg"))
 p.clf()

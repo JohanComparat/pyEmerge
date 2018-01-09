@@ -1,76 +1,3 @@
-"""
-
-+ + + + + + + HEADER + + + + + + + + +
-file_name lc_remaped_position_L3_.hdf5
-HDF5_Version 1.8.18
-h5py_version 2.7.1
-
-
-+ + + + + + + DATA   + + + + + + + + + +
-========================================
-agn_properties <HDF5 group "/agn_properties" (2 members)>
-- - - - - - - - - - - - - - - - - - - - 
-agn_activity <HDF5 dataset "agn_activity": shape (23191107,), type "<f8">
-log_lambda_sar <HDF5 dataset "log_lambda_sar": shape (23191107,), type "<f8">
-========================================
-emerge_data <HDF5 group "/emerge_data" (3 members)>
-- - - - - - - - - - - - - - - - - - - - 
-dMdt <HDF5 dataset "dMdt": shape (23191107,), type "<f8">
-mvir_dot <HDF5 dataset "mvir_dot": shape (23191107,), type "<f8">
-rvir_dot <HDF5 dataset "rvir_dot": shape (23191107,), type "<f8">
-========================================
-halo_position <HDF5 group "/halo_position" (7 members)>
-- - - - - - - - - - - - - - - - - - - - 
-vx <HDF5 dataset "vx": shape (23191107,), type "<f8">
-vy <HDF5 dataset "vy": shape (23191107,), type "<f8">
-vz <HDF5 dataset "vz": shape (23191107,), type "<f8">
-x <HDF5 dataset "x": shape (23191107,), type "<f8">
-y <HDF5 dataset "y": shape (23191107,), type "<f8">
-z <HDF5 dataset "z": shape (23191107,), type "<f8">
-z_snap <HDF5 dataset "z_snap": shape (23191107,), type "<f8">
-========================================
-halo_properties <HDF5 group "/halo_properties" (7 members)>
-- - - - - - - - - - - - - - - - - - - - 
-Mpeak <HDF5 dataset "Mpeak": shape (23191107,), type "<f8">
-Vmax <HDF5 dataset "Vmax": shape (23191107,), type "<f8">
-id <HDF5 dataset "id": shape (23191107,), type "<f8">
-mvir <HDF5 dataset "mvir": shape (23191107,), type "<f8">
-pid <HDF5 dataset "pid": shape (23191107,), type "<f8">
-rs <HDF5 dataset "rs": shape (23191107,), type "<f8">
-rvir <HDF5 dataset "rvir": shape (23191107,), type "<f8">
-========================================
-moster_2013_data <HDF5 group "/moster_2013_data" (1 members)>
-- - - - - - - - - - - - - - - - - - - - 
-stellar_mass <HDF5 dataset "stellar_mass": shape (23191107,), type "<f8">
-========================================
-sky_position <HDF5 group "/sky_position" (5 members)>
-- - - - - - - - - - - - - - - - - - - - 
-DEC <HDF5 dataset "DEC": shape (23191107,), type "<f8">
-RA <HDF5 dataset "RA": shape (23191107,), type "<f8">
-redshift_R <HDF5 dataset "redshift_R": shape (23191107,), type "<f8">
-redshift_S <HDF5 dataset "redshift_S": shape (23191107,), type "<f8">
-selection <HDF5 dataset "selection": shape (23191107,), type "|b1">
-
-TO DELETE PREVIOUS DATA : 
-
-path_to_lc = '/data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_remaped_position_L3.hdf5'
-
-f = h5py.File(path_to_lc, 'a')
-del f['/agn_properties/rxay_flux_05_20']
-del f['/agn_properties/logNH']
-f.close()
-
-"""
-"""
-Convert to observed fluxes
-
-intrinsic extinction. Thin / thick obscuration
-
-Follows Buchner et al. 2016
-
-"""
-
-
 import h5py    # HDF5 support
 import os
 import glob
@@ -82,14 +9,16 @@ import astropy.units as u
 cosmoMD = FlatLambdaCDM(H0=67.77*u.km/u.s/u.Mpc, Om0=0.307115, Ob0=0.048206)
 
 from scipy.special import erf
-ricci_ct_f = lambda z: 0.22 + 0.18 * z**0.4
-#fraction_ricci = lambda lsar, z : ricci_ct_f(z)+(0.8-ricci_ct_f(z))*(0.5+0.5*erf((-lsar+34.7)/0.4))
+thick_fraction = 0.25
+ricci_ct_f = lambda z: thick_fraction + 0.18 * z**0.4
+fraction_ricci = lambda lsar, z : ricci_ct_f(z)+(0.8-ricci_ct_f(z))*(0.5+0.5*erf((-lsar+34.75)/0.4))
 #print(fraction_ricci(n.array([32, 32.7, 33, 34, 35, 36, 37]), 0.))
-fraction_ricci = lambda lsar, z : ricci_ct_f(z)+(0.8-ricci_ct_f(z))*(0.5+0.5*erf((-lsar+35.2)/0.4))
+#fraction_ricci = lambda lsar, z : ricci_ct_f(z)+(0.8-ricci_ct_f(z))*(0.5+0.5*erf((-lsar+35.2)/0.4))
+#fraction_ricci = lambda lsar, z : ricci_ct_f(z)+(0.8-ricci_ct_f(z))*(0.5+0.5*erf((-lsar+32.75)/0.4))
 print(fraction_ricci(n.array([32, 32.7, 33, 34, 35, 36, 37]), 0.))
 
-status = 'create'
-#status = 'update'
+#status = 'create'
+status = 'update'
 
 model_NH = 'ricci_2017'
 # model_NH = 'buchner_2017'
@@ -123,7 +52,7 @@ if model_NH == 'ricci_2017':
 	print('frac thin min', n.min(frac_thin))
 	thinest = (randomNH >= frac_thin)
 	# 22% of thick, 24-26
-	thick = (randomNH < 0.22)
+	thick = (randomNH < thick_fraction)
 	# obscured 22-24
 	obscured = (thinest==False)&(thick==False)
 	# assigns logNH values randomly :
@@ -170,10 +99,15 @@ if model_NH == 'buchner_2017':
 	#logNH_host[logNH_host<=20] = n.random.uniform(20, 22, len(logNH_host[logNH_host<=20]))
 	#logNH_host[logNH_host>=26] = n.random.uniform(24, 26, len(logNH_host[logNH_host>=26]))
 	#logNH = logNH_host
+ 
+#obscuration_z_grid, obscuration_nh_grid, obscuration_fraction_obs_erosita = n.loadtxt( os.path.join( os.environ['GIT_NBODY_NPT'], "data", "AGN", "fraction_observed_by_erosita_due_2_obscuration.txt"), unpack=True)
+#nh_vals = 10**n.arange(-2,4,0.05)
+#z_vals = 10**n.arange(-3,0.68,0.025)
 
-obscuration_z_grid, obscuration_nh_grid, obscuration_fraction_obs_erosita = n.loadtxt( os.path.join( os.environ['GIT_NBODY_NPT'], "data", "AGN", "fraction_observed_by_erosita_due_2_obscuration.txt"), unpack=True)
-nh_vals = 10**n.arange(-2,4,0.05)
-z_vals = 10**n.arange(-3,0.68,0.025)
+obscuration_z_grid, obscuration_nh_grid, obscuration_fraction_obs_erosita = n.loadtxt("/data17s/darksim/model/fraction_observed_v1.txt", unpack=True)
+nh_vals = 10**n.arange(-2,4+0.01,0.2)#0.05)
+z_vals = n.hstack((0.001, n.arange(0.1,5.,0.25)))
+
 
 obscuration_interpolation_grid = n.array([ 
   interp1d(
