@@ -46,7 +46,7 @@ x_out, c_out, c_err = get_lognlogs(path_to_lc, area, 1.1, 6.7529257176359,  8.26
 #p.plot(x_out, n.log10(c_out), lw=2, rasterized = True, label = 'z<1.08' )
 p.errorbar(x_out, n.log10(c_out), yerr = c_err, rasterized = True, label = 'L3 z<1.08, 223deg2'  )
 x_out_a, c_out_a, c_err_a = x_out, c_out, c_err 
-p.axhline(n.log10(150), ls='dashed')
+p.axhline(n.log10(300), ls='dashed')
 
 #path_to_lc=='/data17s/darksim/MD/MD_1.0Gpc/h5_lc/lc_remaped_position_L3_z1.hdf5'
 #area = 3.3764628588325674*2. * 2* 4.134909746242654
