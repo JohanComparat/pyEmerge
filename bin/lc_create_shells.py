@@ -67,16 +67,36 @@ h5_dir = os.path.join(os.environ[env], 'h5' )
 input_list_i = n.array(glob.glob(os.path.join(h5_dir, "hlist_?.?????_emerge.hdf5")))
 input_list_i.sort()
 
-# removing snapshots that cannote be remapped ...
+# removing snapshots that cannot be remapped ...
 input_list = n.delete(input_list_i,n.array([
-  n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.16620_emerge.hdf5")), # LSAR  issue
-  n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.17770_emerge.hdf5")), # LSAR  issue
-  n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.18990_emerge.hdf5")), # LSAR  issue
-  n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.19410_emerge.hdf5")), # LSAR  issue
+  n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.08000_emerge.hdf5")), # Ms, LSAR  issue                                       
+  n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.08180_emerge.hdf5")), # Ms, LSAR  issue                                      
+  n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.08360_emerge.hdf5")), # Ms, LSAR  issue  
+  n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.13320_emerge.hdf5")), # Ms, LSAR  issue
+  n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.13620_emerge.hdf5")), # Ms, LSAR  issue
+  n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.15210_emerge.hdf5")), # Ms, LSAR  issue
+  n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.16620_emerge.hdf5")), # Ms, LSAR  issue
+  n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.17380_emerge.hdf5")), # Ms, LSAR  issue
+  n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.17770_emerge.hdf5")), # Ms, LSAR  issue
+  n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.18570_emerge.hdf5")), # Ms, LSAR  issue
+  n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.18990_emerge.hdf5")), # Ms, LSAR  issue
+  n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.19410_emerge.hdf5")), # Ms, LSAR  issue
+  n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.20750_emerge.hdf5")), # LSAR  issue
   n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.21210_emerge.hdf5")), # LSAR  issue
+  n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.22170_emerge.hdf5")), # LSAR  issue
+  n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.22670_emerge.hdf5")), # LSAR  issue
+  n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.23690_emerge.hdf5")), # LSAR  issue
   n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.24230_emerge.hdf5")), # LSAR  issue
+  n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.25320_emerge.hdf5")), # LSAR  issue
+  n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.25890_emerge.hdf5")), # LSAR  issue 51
+  n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.26470_emerge.hdf5")), # LSAR  issue 52
+  n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.27060_emerge.hdf5")), # LSAR + remap  issue
   n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.28920_emerge.hdf5")), # LSAR  issue
-  n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.27060_emerge.hdf5")), # remap issue
+  n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.29570_emerge.hdf5")), # LSAR  issue
+  n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.30910_emerge.hdf5")), # LSAR  issue
+  n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.34530_emerge.hdf5")), # LSAR  issue
+ 
+  #n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.27060_emerge.hdf5")), # remap issue
   n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.43090_emerge.hdf5")), # remap issue 
   n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.71730_emerge.hdf5")), # remap issue
   n.argwhere(input_list_i== os.path.join(h5_dir, "hlist_0.93570_emerge.hdf5"))  # remap issue

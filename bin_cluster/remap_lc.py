@@ -19,9 +19,12 @@ sel = (lx>2.2)&(lx<3.5)&(ly<0.8)&(lz<0.8)
 data.T[sel]
 L1 L2 L3   u11 u12 u13   u21 u22 u23   u31 u32 u33   (periodicity)
 #'2.2361', '1.0954', '0.4082', '2', '1', '0', '1', '0', '1', '1', '0', '0', '(1)'
-'1.4142', '1.0000', '0.7071', '1', '1', '0', '0', '0', '1', '1', '0', '0', '(12)'
-'5.9161', '0.4140', '0.4082', '5', '3', '1', '1', '1', '0', '0', '1', '0', '(1)'
-'2.4495', '0.7071', '0.5774', '2', '1', '1', '1', '1', '0', '0', '1', '0', '(1)'
+#'5.9161', '0.4140', '0.4082', '5', '3', '1', '1', '1', '0', '0', '1', '0', '(1)'
+#'2.4495', '0.7071', '0.5774', '2', '1', '1', '1', '1', '0', '0', '1', '0', '(1)'
+
+lz, along x : '1.4142', '1.0000', '0.7071', '1', '1', '0', '0', '0', '1', '1', '0', '0', '(12)'
+mz, along y : '1.4142', '1.2247', '0.5774', '1', '1', '0', '1', '0', '1', '1', '0', '0', '(1)'
+hz, along x : '1.7321', '0.8165', '0.7071', '1', '1', '1', '1', '0', '0', '0', '1', '0', '(1)'
 
 writes in the h5 files
 
@@ -41,9 +44,12 @@ import numpy as n
 from multiprocessing import Pool
 # imports the remapping library
 from remap import Cuboid
-C6 = Cuboid(u1=(5, 3, 1), u2=(1, 1, 0), u3=(0, 1, 0))
-C3 = Cuboid(u1=(2, 1, 1), u2=(1, 1, 0), u3=(0, 1, 0))
-C15 = Cuboid(u1=(1, 1, 0), u2=(0, 0, 1), u3=(1, 0, 0))
+#C6 = Cuboid(u1=(5, 3, 1), u2=(1, 1, 0), u3=(0, 1, 0))
+#C3 = Cuboid(u1=(2, 1, 1), u2=(1, 1, 0), u3=(0, 1, 0))
+#C15 = Cuboid(u1=(1, 1, 0), u2=(0, 0, 1), u3=(1, 0, 0))
+C15 = Cuboid(u1=(1, 1, 0), u2=(0, 0, 1), u3=(1, 0, 0)) 
+C3 = Cuboid(u1=(1, 1, 0), u2=(1, 0, 1), u3=(1, 0, 0)) 
+C6 = Cuboid(u1=(1, 1, 1), u2=(1, 0, 0), u3=(0, 1, 0))
 
 def f6(aa,bb,cc):
 	return C6.Transform(aa,bb,cc)
@@ -96,12 +102,12 @@ if __name__ == '__main__':
 	f1, x0, y0, z0 = read_data(ii, L_box, env)
 	# map to L3
 	out3 = p.starmap(f3, n.transpose([x0, y0, z0]))
-	write_mapped_coordinates(f1, out3, L_box,  group_name = 'remaped_position_L3', status='create')
+	write_mapped_coordinates(f1, out3, L_box,  group_name = 'remaped_position_L3', status='update')
 	# map to L6
 	out6 = p.starmap(f6, n.transpose([x0, y0, z0]))
-	write_mapped_coordinates(f1, out6, L_box,  group_name = 'remaped_position_L6', status='create')
+	write_mapped_coordinates(f1, out6, L_box,  group_name = 'remaped_position_L6', status='update')
 	# map to L15
 	out15 = p.starmap(f15, n.transpose([x0, y0, z0]))
-	write_mapped_coordinates(f1, out15, L_box,  group_name = 'remaped_position_L15', status='create')
+	write_mapped_coordinates(f1, out15, L_box,  group_name = 'remaped_position_L15', status='update')
 	f1.close()
 

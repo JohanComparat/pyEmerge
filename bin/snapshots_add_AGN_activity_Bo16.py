@@ -9,7 +9,7 @@ t0=time.time()
 import sys
 ii = int(sys.argv[1])
 env = sys.argv[2] 
-status = 'create'
+status = sys.argv[3] # 'create'
 
 import h5py    # HDF5 support
 import os
@@ -53,8 +53,8 @@ if status=='create':
   f1['/agn_properties'].create_dataset('agn_activity', data = activity)
   
 if status=='update':
-  f1['/agn_properties/activity'][:] = activity
-  f1['/agn_properties/random_number_actiity'][:] = agn_random_number
+  f1['/agn_properties/agn_activity'][:] = activity
+  f1['/agn_properties/random_number_activity'][:] = agn_random_number
 
 f1.close()
 

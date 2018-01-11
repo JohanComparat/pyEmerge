@@ -407,7 +407,6 @@ class MultiDarkSimulation :
 		f.close()
 
 	def convert_to_h5_format_cluster(self, path_2_snap, path_2_h5_file, aexp, redshift):
-
 		timestr = time.strftime("%Y%m%d-%H%M%S")
 		
 		if os.path.isfile(path_2_h5_file):
